@@ -1,0 +1,79 @@
+<!-- Fenêtre de récompense avec choix multiples -->
+<div id="gift-modal">
+    <h1>🎁 INCROYABLE ! 30 VICTOIRES ! 🎁</h1>
+    <p style="font-size: 20px;">Tu as travaillé comme une championne. Choisis ta récompense :</p>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+        <button onclick="choisirCadeau('un Produit de Beauté (Vernis, Gloss...)')" style="background:#ff9ff3; color:black;">💄 Beauté</button>
+        <button onclick="choisirCadeau('une Sortie Spéciale (Cinéma, Parc...)')" style="background:#feca57; color:black;">🎢 Sortie</button>
+        <button onclick="choisirCadeau('une surprise de ton choix !')" style="background:#54a0ff; color:black;">✨ Autre</button>
+    </div>
+    
+    <div id="choix-final" style="margin-top: 30px; font-weight: bold; color: #27ae60; font-size: 22px;"></div>
+    
+    <button onclick="fermerModal()" style="margin-top: 20px; background: #95a5a6;">Recommencer le défi</button>
+</div>
+
+<script>
+    // ... (gardez les fonctions précédentes : lireTexte, decouperSyllabes, etc.) ...
+
+    function choisirCadeau(type) {
+        const display = document.getElementById('choix-final');
+        display.innerHTML = `Bravo ! On va chercher ton cadeau : <br> ${type} ! 🏆`;
+        
+        // On envoie une petite pluie de confettis bonus pour le choix
+        confetti({
+            particleCount: 150,
+            velocity: 30,
+            spread: 360,
+            origin: { y: 0.5 }
+        });
+    }
+
+    // Modifiez la fonction validerExercice pour inclure l'alerte de progression
+    function validerExercice() {
+        if (document.getElementById('input-text').value.trim().length < 5) {
+            alert("Écris encore un petit peu pour valider !");
+            return;
+        }
+        
+        score++;
+        localStorage.setItem('dys_score', score);
+        actualiserScore();
+        
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+        
+        if (score >= 30) {
+            ouvrirModal();
+        } else {
+            // Petit message d'encouragement
+            const reste = 30 - score;
+            console.log("Encore " + reste + " pour le cadeau !");
+        }
+        
+        setTimeout(reinitialiser, 1000);
+    }
+
+    function ouvrirModal() {
+        document.getElementById('gift-modal').style.display = 'block';
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+        (function frame() {
+            confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff9ff3', '#feca57'] });
+            confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#54a0ff', '#27ae60'] });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+    }
+
+    function fermerModal() {
+        if(confirm("Es-tu sûre de vouloir remettre le score à zéro pour un nouveau défi ?")) {
+            document.getElementById('gift-modal').style.display = 'none';
+            document.getElementById('choix-final').innerHTML = "";
+            score = 0;
+            localStorage.setItem('dys_score', score);
+            actualiserScore();
+        }
+    }
+    
+    // N'oubliez pas d'inclure les autres fonctions (lireTexte, actualiserScore, etc.) du message précédent
+</script>
