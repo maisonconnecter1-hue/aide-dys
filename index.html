@@ -1,79 +1,348 @@
-<!-- Fenêtre de récompense avec choix multiples -->
-<div id="gift-modal">
-    <h1>🎁 INCROYABLE ! 30 VICTOIRES ! 🎁</h1>
-    <p style="font-size: 20px;">Tu as travaillé comme une championne. Choisis ta récompense :</p>
-    
-    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-        <button onclick="choisirCadeau('un Produit de Beauté (Vernis, Gloss...)')" style="background:#ff9ff3; color:black;">💄 Beauté</button>
-        <button onclick="choisirCadeau('une Sortie Spéciale (Cinéma, Parc...)')" style="background:#feca57; color:black;">🎢 Sortie</button>
-        <button onclick="choisirCadeau('une surprise de ton choix !')" style="background:#54a0ff; color:black;">✨ Autre</button>
-    </div>
-    
-    <div id="choix-final" style="margin-top: 30px; font-weight: bold; color: #27ae60; font-size: 22px;"></div>
-    
-    <button onclick="fermerModal()" style="margin-top: 20px; background: #95a5a6;">Recommencer le défi</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dys-Write & Read | Aide à l'apprentissage</title>
+
+  <!-- Police OpenDyslexic -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
+
+  <style>
+    :root {
+      --bg-page: #fdf6e3; /* Crème par défaut */
+      --text-main: #2c3e50;
+      --accent: #3498db;
+      --success: #27ae60;
+      --warning: #e67e22;
+      --danger: #e74c3c;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: 'OpenDyslexic', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      margin: 0;
+      transition: background-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Barre de navigation / Outils */
+    header {
+      padding: 10px 20px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f9fa;
+      padding: 5px 12px;
+      border-radius: 50px;
+      border: 1px solid #eee;
+    }
+
+    /* Zone principale */
+    #main-content {
+      flex-grow: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Barre de progression */
+    .progress-container {
+      width: 100%;
+      max-width: 850px;
+      background: #eee;
+      border-radius: 20px;
+      height: 25px;
+      overflow: hidden;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* Éditeur et Affichage */
+    #input-text, #output-display {
+      width: 95%;
+      max-width: 850px;
+      padding: 25px;
+      border-radius: 20px;
+      font-family: 'OpenDyslexic', sans-serif;
+      font-size: 24px;
+      line-height: 2;
+    }
+
+    #input-text {
+      height: 120px;
+      border: 3px solid var(--accent);
+      resize: vertical;
+    }
+
+    #output-display {
+      min-height: 150px;
+      background: var(--card-bg);
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    /* Mode lignes alternées */
+    .zebra-mode .line-wrap:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.05);
+      display: inline-block;
+      width: 100%;
+    }
+
+    /* Boutons */
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-family: inherit;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    button:hover { filter: brightness(1.1); transform: scale(1.02); }
+    button.active { background: var(--success); outline: 3px solid #fff; }
+
+    /* Couleurs Syllabes */
+    .syl1 { color: #2980b9; text-decoration: underline; }
+    .syl2 { color: #c0392b; }
+
+    /* Modals */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: white;
+      padding: 30px;
+      border-radius: 30px;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 10px;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tool-group">
+    <button onclick="lireTexte()" style="background: var(--success)">🔊 Lire</button>
+  </div>
+
+  <div class="tool-group">
+    <button id="btn-syl" onclick="toggleSyllabes()" class="active">🎨 Syllabes</button>
+    <button id="btn-zebra" onclick="toggleZebra()">🏁 Lignes</button>
+  </div>
+
+  <div class="tool-group">
+    <label>Taille</label>
+    <button onclick="changerTaille(2)">+</button>
+    <button onclick="changerTaille(-2)">-</button>
+  </div>
+
+  <div class="tool-group">
+    <label>Fond</label>
+    <select onchange="changerFond(this.value)">
+      <option value="#fdf6e3">Crème</option>
+      <option value="#ffffff">Blanc</option>
+      <option value="#eef7ff">Bleu doux</option>
+      <option value="#f2f2f2">Gris perle</option>
+    </select>
+  </div>
+</header>
+
+<div id="main-content">
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+  
+  <div id="score-text">Objectif : <span id="score-val">0</span> / 30 étoiles ⭐</div>
+
+  <section id="output-display" class="zebra-mode" title="Aperçu adapté"></section>
+
+  <textarea id="input-text" placeholder="Tape ton texte ici..." oninput="sync()"></textarea>
+
+  <div style="display:flex; gap:15px;">
+    <button onclick="valider()" style="background:var(--warning); font-size: 20px;">✅ Valider l'exercice</button>
+    <button onclick="nouveauPrompt()" style="background:var(--accent)">🎯 Changer de phrase</button>
+  </div>
+  
+  <div id="prompt-display" style="font-style: italic; opacity: 0.8;"></div>
 </div>
 
+<!-- Modal Final -->
+<div id="modal-win" class="modal">
+  <div class="modal-card">
+    <h2>🏆 PARCOURS TERMINÉ !</h2>
+    <p>Tu as obtenu tes 30 étoiles. C'est le moment de ta récompense !</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <button onclick="alert('Cadeau : Beauté !')" style="background:#ff9ff3">💄 Beauté</button>
+      <button onclick="alert('Cadeau : Sortie !')" style="background:#feca57">🎢 Sortie</button>
+      <button onclick="alert('Cadeau : Surprise !')" style="background:#54a0ff">✨ Surprise</button>
+    </div>
+    <hr>
+    <button onclick="resetTotal()" style="background:#95a5a6; margin-top:10px;">Tout recommencer</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
 <script>
-    // ... (gardez les fonctions précédentes : lireTexte, decouperSyllabes, etc.) ...
+  let score = parseInt(localStorage.getItem('dys_score_v2')) || 0;
+  let modeSyllabe = true;
+  let modeZebra = true;
+  let currentSize = 24;
 
-    function choisirCadeau(type) {
-        const display = document.getElementById('choix-final');
-        display.innerHTML = `Bravo ! On va chercher ton cadeau : <br> ${type} ! 🏆`;
-        
-        // On envoie une petite pluie de confettis bonus pour le choix
-        confetti({
-            particleCount: 150,
-            velocity: 30,
-            spread: 360,
-            origin: { y: 0.5 }
-        });
-    }
+  const prompts = [
+    "Le petit chat dort sur le tapis.",
+    "Je mange une pomme rouge et sucrée.",
+    "Il y a un grand dragon dans le château.",
+    "La lecture est un voyage magique.",
+    "Je réussis un peu plus chaque jour.",
+    "Le soleil brille très fort aujourd'hui."
+  ];
 
-    // Modifiez la fonction validerExercice pour inclure l'alerte de progression
-    function validerExercice() {
-        if (document.getElementById('input-text').value.trim().length < 5) {
-            alert("Écris encore un petit peu pour valider !");
-            return;
-        }
-        
-        score++;
-        localStorage.setItem('dys_score', score);
-        actualiserScore();
-        
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
-        
-        if (score >= 30) {
-            ouvrirModal();
-        } else {
-            // Petit message d'encouragement
-            const reste = 30 - score;
-            console.log("Encore " + reste + " pour le cadeau !");
-        }
-        
-        setTimeout(reinitialiser, 1000);
-    }
+  window.onload = () => {
+    updateUI();
+    nouveauPrompt();
+  };
 
-    function ouvrirModal() {
-        document.getElementById('gift-modal').style.display = 'block';
-        var duration = 3 * 1000;
-        var end = Date.now() + duration;
-        (function frame() {
-            confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff9ff3', '#feca57'] });
-            confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#54a0ff', '#27ae60'] });
-            if (Date.now() < end) requestAnimationFrame(frame);
-        }());
-    }
-
-    function fermerModal() {
-        if(confirm("Es-tu sûre de vouloir remettre le score à zéro pour un nouveau défi ?")) {
-            document.getElementById('gift-modal').style.display = 'none';
-            document.getElementById('choix-final').innerHTML = "";
-            score = 0;
-            localStorage.setItem('dys_score', score);
-            actualiserScore();
-        }
-    }
+  function sync() {
+    const rawText = document.getElementById('input-text').value;
+    const output = document.getElementById('output-display');
     
-    // N'oubliez pas d'inclure les autres fonctions (lireTexte, actualiserScore, etc.) du message précédent
+    if (!rawText) {
+      output.innerHTML = "";
+      return;
+    }
+
+    // Séparation par lignes pour le mode Zebra
+    const lines = rawText.split('\n');
+    let html = "";
+
+    lines.forEach(line => {
+      let processedLine = modeSyllabe ? colorierSyllabes(line) : line;
+      html += `<span class="line-wrap">${processedLine || ' '}</span><br>`;
+    });
+
+    output.innerHTML = html;
+  }
+
+  function colorierSyllabes(text) {
+    return text.split(' ').map(word => {
+      if (word.length <= 2) return word;
+      // Regex améliorée pour les sons français
+      let syllables = word.match(/[^aeiouyéèêàâîïûù]*[aeiouyéèêàâîïûù]+(?![aeiouyéèêàâîïûù])(?:[^aeiouyéèêàâîïûù](?![aeiouyéèêàâîïûù]))*/gi) || [word];
+      return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
+    }).join(' ');
+  }
+
+  function toggleSyllabes() {
+    modeSyllabe = !modeSyllabe;
+    document.getElementById('btn-syl').classList.toggle('active');
+    sync();
+  }
+
+  function toggleZebra() {
+    modeZebra = !modeZebra;
+    document.getElementById('output-display').classList.toggle('zebra-mode');
+    document.getElementById('btn-zebra').classList.toggle('active');
+  }
+
+  function changerTaille(delta) {
+    currentSize += delta;
+    document.getElementById('input-text').style.fontSize = currentSize + 'px';
+    document.getElementById('output-display').style.fontSize = currentSize + 'px';
+  }
+
+  function changerFond(color) {
+    document.body.style.backgroundColor = color;
+  }
+
+  function lireTexte() {
+    window.speechSynthesis.cancel();
+    const text = document.getElementById('input-text').value;
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'fr-FR';
+    msg.rate = 0.8;
+    window.speechSynthesis.speak(msg);
+  }
+
+  function valider() {
+    const val = document.getElementById('input-text').value.trim();
+    if (val.length < 5) return alert("Écris encore un peu !");
+
+    score++;
+    localStorage.setItem('dys_score_v2', score);
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    
+    updateUI();
+    
+    if (score >= 30) {
+      document.getElementById('modal-win').style.display = 'flex';
+    } else {
+      document.getElementById('input-text').value = "";
+      sync();
+      nouveauPrompt();
+    }
+  }
+
+  function updateUI() {
+    document.getElementById('score-val').textContent = score;
+    const percent = (score / 30) * 100;
+    document.getElementById('progress-bar').style.width = percent + "%";
+  }
+
+  function nouveauPrompt() {
+    const p = prompts[Math.floor(Math.random() * prompts.length)];
+    document.getElementById('prompt-display').textContent = `Modèle : ${p}`;
+  }
+
+  function resetTotal() {
+    if (confirm("Voulez-vous vraiment recommencer à zéro ?")) {
+      score = 0;
+      localStorage.setItem('dys_score_v2', 0);
+      location.reload();
+    }
+  }
 </script>
+
+</body>
+</html>
