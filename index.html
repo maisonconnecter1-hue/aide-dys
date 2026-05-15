@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L'Histoire Infinie dont tu es l'Héroïne</title>
+  <title>Aide à l'Écriture - Super Championne</title>
 
+  <!-- Police OpenDyslexic pour faciliter la lecture -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
 
   <style>
@@ -14,7 +15,6 @@
       --accent-color: #3498db;
       --success-color: #27ae60;
       --warning-color: #e67e22;
-      --danger-color: #e74c3c;
     }
 
     body {
@@ -49,10 +49,11 @@
       gap: 15px;
     }
 
+    /* Styles de l'éditeur */
     #input-text {
       width: 90%;
       max-width: 850px;
-      height: 120px;
+      height: 150px;
       font-size: 24px;
       font-family: 'OpenDyslexic', sans-serif;
       padding: 15px;
@@ -62,31 +63,23 @@
       background: #fff;
     }
 
-    #output-display, #story-book {
+    #output-display {
       width: 90%;
       max-width: 850px;
+      min-height: 100px;
       padding: 15px;
       background: white;
       border-radius: 15px;
       font-size: 24px;
       line-height: 1.8;
+      white-space: pre-wrap;
       border: 1px solid #ddd;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-      box-sizing: border-box;
     }
 
-    #story-book {
-      background: #fffdf3;
-      border-left: 5px solid #f1c40f;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
+    /* Syllabes alternées pour faciliter le décodage */
     .syl1 { color: #2980b9; text-decoration: underline; }
     .syl2 { color: #c0392b; }
-    
-    .word-correct { color: var(--success-color); font-weight: bold; }
-    .word-wrong { color: var(--danger-color); text-decoration: line-through; font-weight: bold; }
 
     button {
       padding: 10px 15px;
@@ -102,9 +95,10 @@
     }
     button:active { transform: scale(0.95); }
 
-    .btn-listen-ia { background-color: #9b59b6; font-size: 18px; }
+    .btn-dictation { background-color: #9b59b6; }
     .btn-validate { background-color: var(--success-color); font-size: 20px; padding: 15px 25px; width: 90%; max-width: 850px; }
 
+    /* Zone Défi & Score */
     #challenge {
       width: 90%;
       max-width: 850px;
@@ -112,19 +106,24 @@
       padding: 15px;
       border-radius: 15px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      box-sizing: border-box;
     }
 
-    .keyword {
-      background: #e8f4f8;
-      color: #2980b9;
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-weight: bold;
-      display: inline-block;
-      margin: 2px;
+    #progress-container {
+      width: 100%;
+      background: #eee;
+      height: 20px;
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
+      width: 0%;
+      transition: width 0.5s ease;
     }
 
+    /* Modals */
     .modal {
       position: fixed;
       inset: 0;
@@ -141,119 +140,92 @@
       border-radius: 20px;
       text-align: center;
       max-width: 500px;
+      animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
 
   <header>
-    <button onclick="lireTexte()" style="background:#2ecc71">🔊 Écouter l'IA lire</button>
-    <button onclick="verifierLectureIA()" class="btn-listen-ia">🤖 L'IA m'écoute lire</button>
+    <button onclick="lireTexte()" style="background:#2ecc71">🔊 Écouter</button>
+    <button onclick="demarrerDictee()" class="btn-dictation">🎤 Dictée Vocale</button>
     <button onclick="changerTaille(2)">➕ Agrandir</button>
     <button onclick="changerTaille(-2)">➖ Réduire</button>
-    <button onclick="resetHistoire()" style="background:#e74c3c">✨ Nouvelle Histoire</button>
+    <button onclick="effacerTout()" style="background:#95a5a6">🗑️ Effacer</button>
   </header>
 
   <div id="editor-container">
-    
-    <div id="story-title" style="width:90%; max-width:850px; font-weight:900; font-size:20px; color:var(--warning-color)">📖 Ton livre d'histoire :</div>
-    <div id="story-book">Ton histoire commencera dès que tu écriras ta première ligne...</div>
-
     <section id="challenge">
-      <div style="font-size: 18px; margin-bottom: 10px;">
-        ⭐ Chapitres validés : <b><span id="score-value">0</span></b>
+      <div style="display:flex; justify-content:space-between; align-items: center;">
+        <span style="font-size: 20px;">⭐ Victoires : <b><span id="score-value">0</span> / 30</b></span>
+        <button onclick="resetScoreManuel()" style="font-size:10px; padding:5px; background:#e74c3c;">Reset Score</button>
       </div>
-      <p id="prompt-box" style="margin: 5px 0; font-style: italic; color: #555;"></p>
-      <p id="keywords-box" style="margin: 5px 0; font-size: 16px;">Mots magiques à placer : </p>
+      <div id="progress-container"><div id="progress-fill"></div></div>
+      <p id="prompt-box" style="margin-top:10px; font-style:italic; color:#7f8c8d; border-left: 4px solid var(--accent-color); padding-left: 10px;"></p>
     </section>
 
-    <textarea id="input-text" placeholder="Écris la suite ici en utilisant les mots magiques..." oninput="decouperSyllabes()"></textarea>
+    <!-- Zone de saisie avec mise à jour en temps réel -->
+    <textarea id="input-text" placeholder="Écris ton texte ici..." oninput="decouperSyllabes()"></textarea>
     
-    <div id="ia-feedback" style="width:90%; max-width:850px; display:none; background:#fff; padding:10px; border-radius:10px; border:2px dashed #9b59b6;">
-      <b style="color:#9b59b6">Correction de l'IA en temps réel :</b> <span id="ia-diagnostic">En attente de ta lecture...</span>
-    </div>
+    <div id="output-display">L'aperçu coloré s'affichera ici...</div>
+    
+    <button class="btn-validate" onclick="validerExercice()">✅ Valider l'exercice</button>
+  </div>
 
-    <div id="output-display">L'aperçu de ton texte s'affichera ici...</div>
-    
-    <button class="btn-validate" onclick="validerEtapeHistoire()">✅ Enregistrer ce chapitre et continuer l'aventure</button>
+  <!-- Modal Récompense -->
+  <div id="gift-modal" class="modal">
+    <div class="modal-content">
+      <h1>🎁 BRAVO CHAMPIONNE ! 🎁</h1>
+      <p>Tu as atteint les 30 victoires ! Choisis ton cadeau :</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button onclick="choisirCadeau('un Produit de Beauté')" style="background:#ff9ff3; color:black;">💄 Beauté</button>
+        <button onclick="choisirCadeau('une Sortie')" style="background:#feca57; color:black;">🎢 Sortie</button>
+        <button onclick="choisirCadeau('une Surprise')" style="background:#54a0ff; color:black;">✨ Surprise</button>
+      </div>
+      <p id="choix-final" style="margin-top:20px; color:var(--success-color); font-weight:bold; font-size: 22px;"></p>
+      <button onclick="fermerModal()" style="margin-top:20px; width:100%; background: #34495e;">Recommencer un défi</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <script>
-    // Variables d'état sauvegardées dans le téléphone
-    let score = localStorage.getItem('dys_story_score') ? parseInt(localStorage.getItem('dys_story_score')) : 0;
-    let histoireComplete = localStorage.getItem('dys_story_text') ? localStorage.getItem('dys_story_text') : "";
-    let motsCourants = [];
-    let phraseModele = "";
-
-    // Banques de données pour faire grandir l'histoire à l'infini
-    const heros = ["Un petit lapin astronaute", "Une princesse mécanicienne", "Un chaton qui parlait aux arbres", "Un petit robot timide", "Une fée exploratrice"];
-    const actions = ["découvre une porte cachée", "construit une machine volante", "trouve une carte mystérieuse", "rencontre un dragon rigolo", "reçoit un message secret"];
-    const lieux = ["au fond de la forêt bleue", "sur une île flottant dans le ciel", "dans le grenier de sa mamie", "au milieu d'un désert de sucre", "derrière une cascade magique"];
-    
-    const dictionnaireMotsMagiques = [
-      "biscuit", "fusée", "château", "nuage", "couronne", "mystère", "étoile", "baguette", 
-      "boussole", "coffre", "clé", "miroir", "plume", "renard", "tambour", "valise"
-    ];
-
-    const suitesHistoires = [
-      "Soudain, un bruit étrange retentit.", "Mais tout ne se passa pas comme prévu.", 
-      "Heureusement, une idée géniale lui traversa l'esprit.", "C'est à ce moment-là que la magie commença.",
-      "Une lueur scintillante apparut au loin."
+    let score = localStorage.getItem('dys_score') ? parseInt(localStorage.getItem('dys_score')) : 0;
+    const prompts = [
+      "Le chat dort sur le tapis bleu.",
+      "J'aime manger des pommes rouges.",
+      "Le soleil brille dans le ciel.",
+      "Je suis capable de réussir mes exercices.",
+      "La lecture est une aventure magique.",
+      "Demain, nous irons au parc s'il fait beau.",
+      "Chaque petit pas me rapproche de mon but."
     ];
 
     window.onload = () => {
-      if (!histoireComplete) {
-        genererNouvelleEtape(true);
-      } else {
-        rafraichirAffichageLivre();
-        genererNouvelleEtape(false);
-      }
+      actualiserScore();
+      genererPrompt();
     };
 
-    function rafraichirAffichageLivre() {
-      const book = document.getElementById('story-book');
-      book.innerHTML = histoireComplete ? histoireComplete : "L'aventure n'attend que toi.";
+    function actualiserScore() {
       document.getElementById('score-value').textContent = score;
-      book.scrollTop = book.scrollHeight; // Fait défiler le livre automatiquement vers le bas
+      const pourcentage = (Math.min(score, 30) / 30) * 100;
+      document.getElementById('progress-fill').style.width = pourcentage + "%";
+      localStorage.setItem('dys_score', score);
     }
 
-    // Générateur d'étapes d'histoire à l'infini
-    function genererNouvelleEtape(estDebut) {
-      // 1. Sélectionner les mots magiques requis
-      motsCourants = [];
-      while(motsCourants.length < 2) {
-        let mot = dictionnaireMotsMagiques[Math.floor(Math.random() * dictionnaireMotsMagiques.length)];
-        if(!motsCourants.includes(mot)) motsCourants.push(mot);
-      }
-
-      // 2. Construire la phrase d'inspiration (Modèle)
-      if (estDebut) {
-        const h = heros[Math.floor(Math.random() * heros.length)];
-        const a = actions[Math.floor(Math.random() * actions.length)];
-        const l = lieux[Math.floor(Math.random() * lieux.length)];
-        phraseModele = `${h} ${a} ${l}.`;
-      } else {
-        const s = suitesHistoires[Math.floor(Math.random() * suitesHistoires.length)];
-        phraseModele = `${s} Il fallait absolument utiliser le mot ${motsCourants[0]} !`;
-      }
-
-      // 3. Mettre à jour l'interface
-      document.getElementById('prompt-box').innerHTML = `<b>Idée pour la suite :</b> "${phraseModele}"`;
-      document.getElementById('keywords-box').innerHTML = `<b>Mots magiques obligatoires :</b> ` + motsCourants.map(m => `<span class="keyword">${m}</span>`).join(' ');
-    }
-
-    // Colorisation syllabique en temps réel
+    // Colorisation automatique en TEMPS RÉEL
     function decouperSyllabes() {
       const text = document.getElementById('input-text').value;
       if (!text.trim()) {
         document.getElementById('output-display').innerHTML = "L'aperçu coloré s'affichera ici...";
         return;
       }
-      const words = text.split(/(\s+)/);
+      
+      const words = text.split(/(\s+)/); // Garde les espaces pour l'affichage
       const colored = words.map(word => {
         if (word.trim() === "") return word;
+        // Regex syllabique pour le français
         let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
         return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
       }).join('');
@@ -261,161 +233,93 @@
       document.getElementById('output-display').innerHTML = colored;
     }
 
-    // INTELLIGENCE ARTIFICIELLE : ÉCOUTE ET CORRECTION DE LA PRONONCIATION
-    function verifierLectureIA() {
+    // Dictée Vocale (Chrome/Edge recommandé)
+    function demarrerDictee() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert("L'analyse de lecture n'est pas disponible sur ce navigateur. Utilisez Google Chrome.");
+        alert("La dictée n'est pas supportée par ton navigateur.");
         return;
       }
-
-      const texteAAttendre = document.getElementById('input-text').value.trim();
-      if (!texteAAttendre) {
-        alert("Écris d'abord ton texte avant de le lire à l'IA !");
-        return;
-      }
-
       const recognition = new SpeechRecognition();
       recognition.lang = 'fr-FR';
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      const btn = document.querySelector('.btn-listen-ia');
-      btn.textContent = "👂 L'IA t'écoute attentivement...";
-      btn.style.background = "#e67e22";
       
-      document.getElementById('ia-feedback').style.display = "block";
-      document.getElementById('ia-diagnostic').innerHTML = "Dis les mots bien fort...";
-
+      recognition.onstart = () => { document.querySelector('.btn-dictation').textContent = "🔴 Écoute..."; };
+      recognition.onend = () => { document.querySelector('.btn-dictation').textContent = "🎤 Dictée Vocale"; };
+      
       recognition.onresult = (event) => {
-        const textePrononce = event.results[0][0].transcript.toLowerCase();
-        analyserPrononciation(texteAAttendre, textePrononce);
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('input-text');
+        input.value += (input.value ? " " : "") + transcript;
+        decouperSyllabes();
       };
-
-      recognition.onerror = () => {
-        document.getElementById('ia-diagnostic').textContent = "L'IA n'a pas bien entendu. Réessaye en parlant plus près !";
-        resetBoutonIA();
-      };
-
-      recognition.onend = () => { resetBoutonIA(); };
-
       recognition.start();
     }
 
-    function resetBoutonIA() {
-      const btn = document.querySelector('.btn-listen-ia');
-      btn.textContent = "🤖 L'IA m'écoute lire";
-      btn.style.background = "#9b59b6";
-    }
-
-    // Algorithme de diagnostic de prononciation
-    function analyserPrononciation(original, prononce) {
-      // Nettoyage sommaire de la ponctuation
-      const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
-      
-      const motsOriginaux = epurer(original);
-      const motsPrononces = epurer(prononce);
-      
-      let diagnosticHTML = "";
-      let fautes = 0;
-
-      motsOriginaux.forEach(mot => {
-        // L'IA regarde si le mot attendu a été prononcé ou s'il y ressemble fortement
-        if (motsPrononces.includes(mot)) {
-          diagnosticHTML += `<span class="word-correct">${mot}</span> `;
-        } else {
-          diagnosticHTML += `<span class="word-wrong" title="Mal prononcé ou oublié">${mot}</span> `;
-          fautes++;
-        }
-      });
-
-      const feedbackZone = document.getElementById('ia-diagnostic');
-      if (fautes === 0) {
-        feedbackZone.innerHTML = `🌟 Perfect ! Prononciation impeccable : <br>${diagnosticHTML}`;
-        confetti({ particleCount: 30, spread: 40 });
-      } else {
-        feedbackZone.innerHTML = `✏️ Essaie encore de mieux prononcer les mots en rouge : <br>${diagnosticHTML}`;
-      }
-    }
-
-    // Validation et prolongation de l'histoire
-    function validerEtapeHistoire() {
-      const inputZone = document.getElementById('input-text');
-      const texteSaisi = inputZone.value.trim();
-
-      if (texteSaisi.length < 10) {
-        alert("Ton chapitre est un peu court pour faire grandir l'histoire ! Écris encore un peu.");
-        return;
-      }
-
-      // Vérification facultative mais encourageante des mots magiques
-      let motsManquants = motsCourants.filter(m => !texteSaisi.toLowerCase().includes(m.toLowerCase()));
-      if (motsManquants.length > 0) {
-        if(!confirm(`Tu as oublié d'intégrer le mot magique : "${motsManquants[0]}". Veux-tu quand même enregistrer ?`)) {
-          return;
-        }
-      }
-
-      // Ajouter le nouveau chapitre à l'histoire globale
-      if (histoireComplete) {
-        histoireComplete += " " + texteSaisi;
-      } else {
-        histoireComplete = texteSaisi;
-      }
-
-      score++;
-      
-      // Sauvegarde immédiate
-      localStorage.setItem('dys_story_text', histoireComplete);
-      localStorage.setItem('dys_story_score', score);
-      
-      rafraichirAffichageLivre();
-      
-      // Animation féerique
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-
-      // Réinitialisation de la saisie pour l'étape suivante
-      inputZone.value = "";
-      document.getElementById('output-display').innerHTML = "L'aperçu de ton texte s'affichera ici...";
-      document.getElementById('ia-feedback').style.display = "none";
-
-      // Générer l'étape suivante instantanément
-      genererNouvelleEtape(false);
-    }
-
-    // Synthèse vocale de secours (L'IA lit le texte de l'enfant)
+    // Lecture par synthèse vocale
     function lireTexte() {
       const text = document.getElementById('input-text').value;
       if (!text) return;
       const msg = new SpeechSynthesisUtterance(text);
       msg.lang = 'fr-FR';
-      msg.rate = 0.8; 
+      msg.rate = 0.8; // Vitesse ralentie pour la compréhension
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(msg);
     }
 
-    function resetHistoire() {
-      if (confirm("Es-tu sûre de vouloir effacer tout ce grand livre et recommencer une nouvelle histoire à zéro ?")) {
+    function validerExercice() {
+      const input = document.getElementById('input-text').value.trim();
+      if (input.length < 5) {
+        alert("Écris au moins une petite phrase pour valider !");
+        return;
+      }
+
+      score++;
+      actualiserScore();
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+      if (score >= 30) {
+        setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
+      }
+
+      effacerTout();
+      genererPrompt();
+    }
+
+    function genererPrompt() {
+      const p = prompts[Math.floor(Math.random() * prompts.length)];
+      document.getElementById('prompt-box').innerHTML = `<b>Modèle :</b> "${p}"`;
+    }
+
+    function choisirCadeau(cadeau) {
+      document.getElementById('choix-final').textContent = "Gagné ! Tu recevras : " + cadeau + " ! 🏆";
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+    }
+
+    function fermerModal() {
+      score = 0;
+      actualiserScore();
+      document.getElementById('gift-modal').style.display = 'none';
+      document.getElementById('choix-final').textContent = "";
+    }
+
+    function resetScoreManuel() {
+      if(confirm("Veux-tu vraiment remettre ton score à zéro ?")) {
         score = 0;
-        histoireComplete = "";
-        localStorage.removeItem('dys_story_text');
-        localStorage.removeItem('dys_story_score');
-        rafraichirAffichageLivre();
-        genererNouvelleEtape(true);
-        document.getElementById('input-text').value = "";
-        document.getElementById('ia-feedback').style.display = "none";
+        actualiserScore();
       }
     }
 
+    function effacerTout() {
+      document.getElementById('input-text').value = "";
+      decouperSyllabes();
+    }
+
     function changerTaille(n) {
-      const elements = [document.getElementById('input-text'), document.getElementById('output-display'), document.getElementById('story-book')];
-      elements.forEach(el => {
-        let current = parseInt(window.getComputedStyle(el).fontSize);
-        let next = current + n;
-        if(next >= 16 && next <= 46) {
-          el.style.fontSize = next + "px";
-        }
-      });
+      let current = parseInt(window.getComputedStyle(document.getElementById('input-text')).fontSize);
+      let next = current + n;
+      if(next < 16 || next > 50) return;
+      document.getElementById('input-text').style.fontSize = next + "px";
+      document.getElementById('output-display').style.fontSize = next + "px";
     }
   </script>
 </body>
