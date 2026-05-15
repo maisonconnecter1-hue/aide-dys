@@ -2,577 +2,387 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Mission Écriture - Super Championne de la Galaxie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Écriture - Super Astronaute</title>
   
-  <!-- OpenDyslexic + polices modernes -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
+
   <style>
-    * {
+    body {
+      font-family: 'OpenDyslexic', sans-serif;
+      background: linear-gradient(135deg, #2b1055, #7597de);
+      color: white;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'OpenDyslexic', sans-serif;
-      background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #030514);
-      color: #f0f3ff;
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* --- Étoiles et planètes flottantes --- */
-    .stars-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
+    header {
       width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      box-shadow: 
-        1250px 340px 2px #fff, 890px 700px 1px #ffe9c7, 450px 120px 2px #ffe0b5,
-        1780px 900px 1px #fff, 80px 1020px 2px #ffd98c, 2100px 450px 1px #fff,
-        340px 1800px 2px #fef0c0, 1650px 1400px 1px #eee;
-      animation: twinkle 5s infinite alternate;
-    }
-    @keyframes twinkle {
-      0% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-    .planet {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(2px);
-      background: radial-gradient(circle at 30% 30%, rgba(255,200,100,0.3), rgba(80,40,120,0.6));
-      pointer-events: none;
-      z-index: 0;
-    }
-    .planet1 { width: 180px; height: 180px; top: 8%; left: -60px; background: radial-gradient(circle, #ffaa66, #aa4488); opacity: 0.2; animation: float 25s infinite ease-in-out; }
-    .planet2 { width: 100px; height: 100px; bottom: 5%; right: 5%; background: radial-gradient(circle, #4aaaff, #2a2a6e); opacity: 0.25; animation: float 18s infinite reverse; }
-    .planet3 { width: 60px; height: 60px; top: 60%; left: 85%; background: #f9b042; opacity: 0.3; animation: float 12s infinite alternate; }
-    @keyframes float {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(35px) rotate(8deg); }
-    }
-
-    /* --- Conteneur principal --- */
-    .main-container {
-      position: relative;
-      z-index: 2;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px 24px 60px;
-    }
-
-    /* --- Header spatial --- */
-    .space-header {
+      padding: 15px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      background: rgba(10, 15, 35, 0.55);
-      backdrop-filter: blur(12px);
-      border-radius: 60px;
-      padding: 10px 20px;
-      margin-bottom: 30px;
-      border: 1px solid rgba(120, 180, 255, 0.4);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    }
-    .logo-area h1 {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.5rem;
-      background: linear-gradient(135deg, #FFD966, #FF8C94);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: 1px;
-    }
-    .btn-group {
-      display: flex;
+      justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-    }
-    .galaxy-btn {
-      background: rgba(20, 25, 55, 0.75);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(100, 180, 250, 0.6);
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-family: 'OpenDyslexic', 'Inter', sans-serif;
-      font-weight: bold;
-      color: white;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .galaxy-btn i { font-size: 1rem; }
-    .galaxy-btn:hover {
-      background: rgba(80, 120, 255, 0.7);
-      border-color: #f3c26f;
-      transform: scale(0.96);
-    }
-    .galaxy-btn:active { transform: scale(0.94); }
-
-    /* --- Carte mission --- */
-    .mission-card {
-      background: rgba(8, 12, 30, 0.65);
-      backdrop-filter: blur(12px);
-      border-radius: 38px;
-      padding: 24px 28px;
-      margin-bottom: 28px;
-      border: 1px solid rgba(255, 215, 120, 0.5);
-    }
-    .score-panel {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-    .star-score {
-      font-size: 1.7rem;
-      font-weight: bold;
-      background: linear-gradient(45deg, #ffe6b0, #ffbc6e);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .progress-space {
-      width: 100%;
-      background: rgba(255,255,240,0.2);
-      border-radius: 30px;
-      height: 18px;
-      overflow: hidden;
-      margin: 18px 0;
-      border: 1px solid #f3bc5c;
-    }
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #f7b42c, #fc575e);
-      border-radius: 30px;
-      transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    .prompt-box {
-      font-size: 1.3rem;
-      line-height: 1.4;
-      background: rgba(0,0,0,0.4);
-      border-radius: 32px;
-      padding: 16px 20px;
-      border-left: 6px solid #fdca40;
-      margin-top: 10px;
+      background: rgba(0, 0, 0, 0.15);
     }
 
-    /* --- Zone d'édition --- */
-    .editor-panel {
-      background: rgba(20, 25, 50, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 44px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-    label {
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      font-size: 1rem;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-      background: #fef9ef;
-      border: 2px solid #ffcd94;
-      border-radius: 32px;
-      font-family: 'OpenDyslexic', monospace;
-      font-size: 1.5rem;
-      padding: 18px 20px;
-      color: #1e2a3a;
-      resize: vertical;
-    }
-    textarea:focus {
-      outline: none;
-      border-color: #ffaa44;
-      box-shadow: 0 0 0 3px rgba(255,200,100,0.4);
-    }
-    .preview-area {
-      margin-top: 20px;
-      background: #ffffffec;
-      border-radius: 32px;
-      padding: 18px;
-      min-height: 100px;
-      font-size: 1.5rem;
-      line-height: 1.5;
-      color: #1f2a44;
-      word-break: break-word;
-      box-shadow: inset 0 1px 6px #0002, 0 6px 14px rgba(0,0,0,0.2);
-    }
-    .ia-feedback {
-      margin-top: 15px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 28px;
-      padding: 12px 18px;
-      font-size: 1rem;
-      border-left: 4px solid #ffb347;
-      color: #ffecb3;
-    }
-    .btn-validate {
-      width: 100%;
-      background: linear-gradient(125deg, #ff8c42, #ff3b6f);
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
       border: none;
-      padding: 16px;
-      font-size: 1.6rem;
-      font-weight: bold;
-      border-radius: 60px;
-      margin-top: 12px;
+      border-radius: 20px;
+      background-color: #6c5ce7;
       color: white;
       cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.1s;
+      font-family: 'OpenDyslexic', sans-serif;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
-    .btn-validate:hover { transform: scale(0.98); }
 
-    /* Styles syllabes */
-    .syl1 { color: #2c7be5; font-weight: bold; text-decoration: underline; }
-    .syl2 { color: #e84118; font-weight: bold; }
-    .word-correct { color: #00b894; font-weight: bold; background: #e0ffe8; border-radius: 12px; padding: 0 4px; }
-    .word-wrong { color: #d63031; font-weight: bold; border-bottom: 2px dotted #ff7675; background: #fff0f0; border-radius: 12px; padding: 0 4px; }
+    button:active { transform: scale(0.95); }
+    button:hover { background-color: #a29bfe; }
 
-    /* Modal cadeau */
-    .galaxy-modal {
+    .btn-listen-ia { background-color: #fd79a8; }
+    .btn-listen-ia:hover { background-color: #fab1a0; }
+
+    #editor-container {
+      width: 90%;
+      max-width: 850px;
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      padding-bottom: 50px;
+    }
+
+    #challenge-zone {
+      width: 100%;
+    }
+
+    #progress-container {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.2);
+      height: 22px;
+      border-radius: 12px;
+      margin: 15px 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00cec9, #00b894);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    #prompt-box {
+      font-size: 22px;
+      line-height: 1.5;
+      color: #ffffff;
+      margin: 10px 0;
+      border-left: 4px solid #fdcb6e;
+      padding-left: 15px;
+    }
+
+    #input-text {
+      width: 100%;
+      height: 140px;
+      font-size: 24px;
+      font-family: 'OpenDyslexic', sans-serif;
+      padding: 15px;
+      border: 3px solid #fdcb6e;
+      border-radius: 15px;
+      background-color: white;
+      color: #2d3436;
+      box-sizing: border-box;
+    }
+
+    #output-display {
+      width: 100%;
+      min-height: 110px;
+      background-color: white;
+      color: #2d3436;
+      border-radius: 15px;
+      padding: 15px;
+      font-size: 24px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      box-sizing: border-box;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    /* Code couleur exact des syllabes de Méline */
+    .syl1 { color: #0984e3; font-weight: bold; text-decoration: underline; }
+    .syl2 { color: #d63031; font-weight: bold; }
+
+    /* Signalisation de la voix par l'IA */
+    .word-correct { color: #2d3436; } /* Mot bien prononcé reste normal */
+    .word-wrong { color: #d63031; font-weight: bold; border-bottom: 3px dashed #d63031; } /* Mot raté en rouge clignotant/souligné */
+
+    .btn-validate {
+      background-color: #00b894;
+      font-size: 22px;
+      padding: 15px;
+      width: 100%;
+      border-radius: 15px;
+    }
+    .btn-validate:hover { background-color: #00cec9; }
+
+    /* Fenêtre pop-up de récompense d'origine */
+    .modal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
       display: none;
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
-    .modal-cosmic {
-      background: radial-gradient(ellipse at 30% 20%, #1b1e3c, #020617);
-      border: 2px solid #ffd966;
-      border-radius: 48px;
-      padding: 30px 25px;
+
+    .modal-content {
+      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
       max-width: 500px;
       width: 90%;
-      text-align: center;
+      border: 3px solid #fdcb6e;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
-    .gift-options {
-      display: flex;
-      gap: 18px;
-      justify-content: center;
-      margin: 25px 0;
-      flex-wrap: wrap;
-    }
-    .gift-btn {
-      background: #2a235a;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 60px;
-      color: white;
-      font-weight: bold;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    .gift-btn:hover { background: #f39c12; }
   </style>
 </head>
 <body>
 
-<div class="stars-bg">
-  <div class="stars"></div>
-  <div class="planet planet1"></div>
-  <div class="planet planet2"></div>
-  <div class="planet planet3"></div>
-</div>
+  <header>
+    <button onclick="lireTexte()" style="background:#00b894">🔊 Écouter</button>
+    <button onclick="verifierLectureIA()" class="btn-listen-ia">🤖 L'IA m'écoute</button>
+    <button onclick="changerTaille(2)">➕ Agrandir</button>
+    <button onclick="changerTaille(-2)">➖ Réduire</button>
+    <button onclick="resetScore()" style="background:#d63031">✨ Recommencer</button>
+  </header>
 
-<div class="main-container">
-  <div class="space-header">
-    <div class="logo-area">
-      <h1><i class="fas fa-rocket"></i> SUPERNOVA ÉCRITURE</h1>
-      <p>⭐ Championne des galaxies · Défis d'écriture</p>
-    </div>
-    <div class="btn-group">
-      <button class="galaxy-btn" onclick="lireTexte()"><i class="fas fa-head-side-headphones"></i> Écouter</button>
-      <button class="galaxy-btn" onclick="demarrerDictee()"><i class="fas fa-microphone"></i> Dictée</button>
-      <button class="galaxy-btn" onclick="verifierLectureIA()"><i class="fas fa-robot"></i> IA compare</button>
-      <button class="galaxy-btn" onclick="changerTaille(2)"><i class="fas fa-text-height"></i> +</button>
-      <button class="galaxy-btn" onclick="changerTaille(-2)"><i class="fas fa-text-height"></i> -</button>
-      <button class="galaxy-btn" onclick="effacerTout()"><i class="fas fa-trash-alt"></i> Effacer</button>
-      <button class="galaxy-btn" onclick="resetScoreManuel()"><i class="fas fa-saturn"></i> Reset score</button>
-    </div>
-  </div>
-
-  <div class="mission-card">
-    <div class="score-panel">
-      <div><i class="fas fa-star-of-life"></i> Victoires cosmiques : <span id="score-value" class="star-score">0</span> / 30</div>
-      <div><i class="fas fa-chart-line"></i> Mission galactique</div>
-    </div>
-    <div class="progress-space">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-    <div id="prompt-box" class="prompt-box">✨ Chargement du défi...</div>
-  </div>
-
-  <div class="editor-panel">
-    <label><i class="fas fa-pen-fancy"></i> Ta composition :</label>
-    <textarea id="input-text" placeholder="Écris ou dicte la phrase modèle ci-dessus..." oninput="decouperSyllabes()"></textarea>
+  <div id="editor-container">
     
-    <label style="margin-top: 20px;"><i class="fas fa-eye"></i> Aperçu syllabique :</label>
-    <div id="output-display" class="preview-area">✨ Les syllabes colorées apparaîtront ici ✨</div>
-    
-    <div id="ia-feedback" class="ia-feedback">🤖 L'IA t'attend pour comparer ta voix au texte saisi.</div>
-    
-    <button class="galaxy-btn btn-validate" onclick="validerExercice()"><i class="fas fa-rocket"></i> VALIDER LA MISSION</button>
-  </div>
-</div>
+    <section id="challenge-zone">
+      <div style="font-size: 24px; font-weight: bold;">⭐ Étoiles : <span id="score-value">0</span> / 30</div>
+      <div id="progress-container">
+        <div id="progress-fill"></div>
+      </div>
+      <p id="prompt-box"></p>
+    </section>
 
-<!-- MODAL Cadeau -->
-<div id="gift-modal" class="galaxy-modal">
-  <div class="modal-cosmic">
-    <h2><i class="fas fa-gift"></i> TROP FORT ! 🚀✨</h2>
-    <p>30 victoires accomplies ! Choisis ta récompense cosmique :</p>
-    <div class="gift-options">
-      <button class="gift-btn" onclick="choisirCadeau('🌟 Un coffre à paillettes cosmiques 🌟')"><i class="fas fa-sparkles"></i> Beauté</button>
-      <button class="gift-btn" onclick="choisirCadeau('🎢 Une sortie dans l\'espace 🚀')"><i class="fas fa-space-shuttle"></i> Sortie</button>
-      <button class="gift-btn" onclick="choisirCadeau('✨ Un médaillon d\'étoile magique ✨')"><i class="fas fa-meteor"></i> Surprise</button>
+    <textarea id="input-text" placeholder="Écris ta phrase spatiale ici..." oninput="decouperSyllabes()"></textarea>
+    
+    <div id="output-display">L'aperçu de ton texte s'affichera ici...</div>
+    
+    <button class="btn-validate" onclick="validerExercice()">🚀 Envoyer dans l'espace</button>
+  </div>
+
+  <div id="gift-modal" class="modal">
+    <div class="modal-content">
+      <h2>🎁 CONSTELLATION COMPLÈTE ! 🎁</h2>
+      <p>Bravo Méline, tu as décroché tes 30 étoiles ! Choisis vite ton cadeau :</p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+        <button onclick="choisirCadeau('un Produit de Beauté')" style="background:#fd79a8; color:white;">💄 Beauté</button>
+        <button onclick="choisirCadeau('une Sortie')" style="background:#f1c40f; color:black;">🎢 Sortie</button>
+        <button onclick="choisirCadeau('une Surprise')" style="background:#0984e3; color:white;">✨ Surprise</button>
+      </div>
+      <p id="choix-final" style="margin-top: 25px; color: #fdcb6e; font-weight: bold; font-size: 24px;"></p>
+      <button onclick="fermerModal()" style="margin-top: 20px; background: #2d3436; width: 100%;">Fermer la mission</button>
     </div>
-    <p id="choix-final" style="font-size: 1.4rem; font-weight: bold; margin: 15px 0;"></p>
-    <button class="galaxy-btn" onclick="fermerModal()" style="background:#2c3e66;">Fermer le portail</button>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-<script>
-  // ======================= BANQUE DE 100 PHRASES (issue du 2e code) =======================
-  const prompts = [
-    "Le chat dort.", "Le ciel est bleu.", "Il fait beau.", "Je mange une pomme.", "Le chien court vite.",
-    "La fleur est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
-    "Le vélo est rouge.", "Il y a du soleil.", "La mer est calme.", "Le poisson nage bien.", "Je joue au ballon.",
-    "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite.",
-    "La pluie tombe doucement.", "Le bébé sourit.", "J'aime ma famille.", "Le cartable est lourd.", "La soupe est chaude.",
-    "Je respire et je réussis.", "Mon cerveau est magique.", "Chaque erreur m'aide à apprendre.", "Je fais de mon mieux.",
-    "Je suis une vraie championne.", "J'apprends à mon rythme.", "Écrire est un super pouvoir.", "Je suis fière de mes progrès.",
-    "Je peux essayer encore une fois.", "Rien ne m'arrête aujourd'hui.", "Je prends mon temps pour lire.", "Mon imagination est immense.",
-    "Je progresse chaque jour un peu plus.", "Une lettre après l'autre, c'est facile.", "Je suis capable de tout écrire.",
-    "Les mots sont mes amis.", "Je peux relire si j'ai un doute.", "C'est en s'entraînant qu'on grandit.", "Mon courage est ma plus grande force.",
-    "Je réussis cet exercice avec succès.", "Je prépare mes affaires pour demain.", "Nous allons manger une bonne glace.",
-    "La maîtresse explique la leçon de français.", "Je dessine un grand château fort.", "Les enfants jouent dans la cour d'école.",
-    "Il faut bien se laver les mains.", "Le soir, je regarde les étoiles filantes.", "Nous ramassons des coquillages sur la plage.",
-    "Je mets mes chaussures pour aller courir.", "Le matin, je prends un bon chocolat chaud.", "La trousse contient des crayons de couleur.",
-    "Nous écoutons une belle histoire avant de dormir.", "Je regarde les feuilles tomber des arbres.", "Le jardinier plante de jolies tomates rouges.",
-    "Les vacances approchent à grands pas.", "Je range mes jouets dans ma chambre.", "Nous faisons une grande promenade en forêt.",
-    "Le pain chaud croustille sous la dent.", "J'aide à dresser la table pour le dîner.", "Les oiseaux fabriquent un nid dans l'arbre.",
-    "Le petit lapin blanc se cache derrière un grand buisson vert.", "Un navire de pirates navigue sur les vagues de l'océan Indien.",
-    "Le dragon crache des petites bulles de savon au lieu du feu.", "La fée magique transforme une simple citrouille en carrosse doré.",
-    "Un astronaute voyage dans l'espace pour visiter la planète Mars.", "Le vieux magicien prépare une potion mystérieuse dans son chaudron.",
-    "Une baleine bleue danse joyeusement au milieu des poissons tropicaux.", "L'écureuil agile rassemble des noisettes pour passer un hiver tranquille.",
-    "Le chaton noir adore jouer avec une grosse pelote de laine rouge.", "Un ours brun cherche du miel sucré dans la forêt profonde.",
-    "La princesse porte une magnifique couronne qui brille de mille feux.", "Un petit robot rigolo nettoie toute la maison en chantant.",
-    "Le dauphin joueur saute hors de l'eau pour saluer les marins.", "Une étoile magique réalise les vœux des enfants sages ce soir.",
-    "Le chien de mon voisin adore courir après les papillons jaunes.", "Les lettres s'organisent sagement pour former des mots fantastiques.",
-    "Prendre le temps de bien lire permet de comprendre toute l'histoire.", "Le soleil se couche lentement derrière la montagne en colorant le ciel.",
-    "Nous préparons une excellente tarte aux pommes avec une pincée de cannelle.", "Un grand singe malicieux s'amuse à imiter les grimaces des visiteurs.",
-    "La musique douce m'aide à me concentrer pour écrire mes phrases.", "Les vagues de la mer effacent les châteaux de sable sur la plage.",
-    "Un magnifique arc-en-ciel apparaît dans le ciel juste après la tempête.", "Les petits poussins jaunes suivent leur maman partout dans la ferme.",
-    "J'adore écouter le bruit de la pluie quand je suis au chaud.", "Les papillons volent délicatement de fleur en fleur dans le grand parc.",
-    "Le grand navire active ses lumières pour guider les autres bateaux.", "Les secrets les plus précieux sont souvent cachés au fond des livres.",
-    "Un grand tapis roulant transporte les bagages des voyageurs à l'aéroport.", "La petite tortue marche lentement mais elle arrive toujours à destination.",
-    "Le détective utilise une loupe pour chercher des indices importants.", "Les crayons magiques écrivent des histoires extraordinaires de manière fluide.",
-    "Un groupe de joyeux dauphins accompagne notre voilier pendant le voyage.", "Les feuilles d'automne rousses dansent au milieu du vent frais du matin.",
-    "Je termine ce grand défi d'écriture avec une immense fierté."
-  ];
+  <script>
+    let score = localStorage.getItem('dys_story_score') ? parseInt(localStorage.getItem('dys_story_score')) : 0;
+    let histoireComplete = localStorage.getItem('dys_story_text') ? localStorage.getItem('dys_story_text') : "";
 
-  // ======================= GESTION SCORE & PROGRESSION =======================
-  let score = localStorage.getItem('dys_score_fusion') ? parseInt(localStorage.getItem('dys_score_fusion')) : 0;
-  
-  function actualiserScore() {
-    document.getElementById('score-value').textContent = score;
-    const pourcentage = (Math.min(score, 30) / 30) * 100;
-    document.getElementById('progress-fill').style.width = pourcentage + "%";
-    localStorage.setItem('dys_score_fusion', score);
-  }
+    // Moteur d'idées spatiales pour créer une grande histoire sans fin
+    const heros = ["Un petit lapin astronaute", "Une princesse de la Lune", "Un chaton avec un casque spatial", "Un robot rigolo", "Une étoile filante"];
+    const actions = ["découvre une nouvelle planète", "répare sa fusée de l'espace", "trouve une comète magique", "rencontre un extraterrestre sympathique", "explore les magnifiques anneaux de Saturne"];
+    const lieux = ["dans la Voie Lactée.", "sur une planète en sucre.", "dans une station secrète.", "derrière une nébuleuse.", "tout près du grand Soleil."];
+    
+    const suitesHistoires = [
+      "Soudain, une magnifique comète dorée traverse le ciel.",
+      "Heureusement, les moteurs de la fusée s'allument à toute vitesse.",
+      "Une petite lueur magique commence alors à clignoter sur le tableau de bord.",
+      "C'est le début d'un grand et merveilleux voyage dans l'univers.",
+      "Notre héros regarde par la fenêtre et sourit aux étoiles."
+    ];
 
-  function genererPrompt() {
-    const randomIndex = Math.floor(Math.random() * prompts.length);
-    const phrase = prompts[randomIndex];
-    document.getElementById('prompt-box').innerHTML = `<i class="fas fa-copy"></i> Modèle à copier : « ${phrase} »`;
-  }
+    window.onload = () => {
+      actualiserInterface();
+      genererNouvelleEtape();
+    };
 
-  // ======================= DÉCOUPAGE SYLLABIQUE (temps réel) =======================
-  function decouperSyllabes() {
-    const text = document.getElementById('input-text').value;
-    if (!text.trim()) {
-      document.getElementById('output-display').innerHTML = "✨ Les syllabes colorées apparaîtront ici ✨";
-      return;
+    function actualiserInterface() {
+      document.getElementById('score-value').textContent = score;
+      const pourcentage = (Math.min(score, 30) / 30) * 100;
+      document.getElementById('progress-fill').style.width = pourcentage + "%";
+      localStorage.setItem('dys_story_score', score);
     }
-    const words = text.split(/(\s+)/);
-    const colored = words.map(word => {
-      if (word.trim() === "") return word;
-      let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
-      return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
-    }).join('');
-    document.getElementById('output-display').innerHTML = colored;
-  }
 
-  // ======================= DICTÉE VOCALE SIMPLE (ajoute dans le textarea) =======================
-  function demarrerDictee() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      document.getElementById('ia-feedback').innerHTML = "⚠️ Dictée non supportée par ce navigateur. Utilise Chrome ou Edge.";
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR';
-    recognition.interimResults = false;
-    recognition.onstart = () => {
-      document.getElementById('ia-feedback').innerHTML = "🎙️ Je t'écoute, parle maintenant...";
-    };
-    recognition.onend = () => {
-      document.getElementById('ia-feedback').innerHTML = "✅ Dictée terminée. Tu peux réécouter ou corriger.";
-    };
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      const input = document.getElementById('input-text');
-      input.value += (input.value ? " " : "") + transcript;
-      decouperSyllabes();
-    };
-    recognition.start();
-  }
-
-  // ======================= IA COMPARATRICE (vérifie la voix par rapport au texte saisi) =======================
-  function verifierLectureIA() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      document.getElementById('ia-feedback').innerHTML = "⚠️ La reconnaissance vocale n'est pas disponible. Utilise Chrome ou Edge.";
-      return;
-    }
-    const texteAttendu = document.getElementById('input-text').value.trim();
-    if (!texteAttendu) {
-      document.getElementById('ia-feedback').innerHTML = "❌ Écris d'abord ton texte dans la zone avant de le lire à l'IA.";
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR';
-    recognition.interimResults = false;
-    recognition.onstart = () => {
-      document.getElementById('ia-feedback').innerHTML = "🛸 IA à l'écoute, lis ton texte à voix haute...";
-    };
-    recognition.onend = () => {
-      document.getElementById('ia-feedback').innerHTML += " (fin de l'écoute)";
-    };
-    recognition.onresult = (event) => {
-      const vocal = event.results[0][0].transcript.toLowerCase();
-      const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
-      const motsOriginaux = epurer(texteAttendu);
-      const motsVocals = epurer(vocal);
-      let resultatHTML = "";
-      let fautes = 0;
-      motsOriginaux.forEach(mot => {
-        if (motsVocals.includes(mot)) {
-          resultatHTML += `<span class="word-correct">${mot}</span> `;
-        } else {
-          resultatHTML += `<span class="word-wrong">${mot}</span> `;
-          fautes++;
-        }
-      });
-      document.getElementById('ia-feedback').innerHTML = `<strong>📊 Résultat de la comparaison :</strong><br>${resultatHTML}<br>${fautes === 0 ? "🎉 Parfait ! Tous les mots reconnus." : "⚠️ Attention, certains mots n'ont pas été compris. Relis-les bien."}`;
-      if (fautes === 0) {
-        canvasConfetti({ particleCount: 80, spread: 55, colors: ['#ffd966', '#ffb347'] });
+    function genererNouvelleEtape() {
+      // Si c'est le début absolu, on assemble une phrase de départ complète
+      if (!histoireComplete) {
+        const h = heros[Math.floor(Math.random() * heros.length)];
+        const a = actions[Math.floor(Math.random() * actions.length)];
+        const l = lieux[Math.floor(Math.random() * lieux.length)];
+        document.getElementById('prompt-box').innerHTML = `<b>Modèle à écrire :</b> "${h} ${a} ${l}"`;
+      } else {
+        // Si elle continue son histoire, l'IA lui donne la suite logique
+        const s = suitesHistoires[Math.floor(Math.random() * suitesHistoires.length)];
+        document.getElementById('prompt-box').innerHTML = `<b>Mission pour la suite :</b> "${s}"`;
       }
-    };
-    recognition.start();
-  }
-
-  // ======================= VALIDATION EXERCICE =======================
-  function validerExercice() {
-    const input = document.getElementById('input-text').value.trim();
-    if (input.length < 5) {
-      alert("📝 Écris au moins une petite phrase avant de valider !");
-      return;
     }
-    score++;
-    actualiserScore();
-    canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    if (score >= 30) {
-      setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
+
+    // Découpage automatique en syllabes couleurs d'origine
+    function decouperSyllabes() {
+      const text = document.getElementById('input-text').value;
+      if (!text.trim()) {
+        document.getElementById('output-display').innerHTML = "L'aperçu de ton texte s'affichera ici...";
+        return;
+      }
+      const words = text.split(/(\s+)/);
+      const colored = words.map(word => {
+        if (word.trim() === "") return word;
+        let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
+        return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
+      }).join('');
+      
+      document.getElementById('output-display').innerHTML = colored;
     }
-    effacerTout();
-    genererPrompt();
-  }
 
-  // ======================= UTILITAIRES =======================
-  function lireTexte() {
-    const text = document.getElementById('input-text').value;
-    if (!text) return;
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = 'fr-FR';
-    msg.rate = 0.85;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(msg);
-  }
+    // INTELLIGENCE ARTIFICIELLE : ÉCOUTE ET CORRIGE SANS ENCOMBRER L'ÉCRAN
+    function verifierLectureIA() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("L'analyse vocale n'est pas activée sur ce navigateur. Utilise Google Chrome ou Safari.");
+        return;
+      }
 
-  function effacerTout() {
-    document.getElementById('input-text').value = "";
-    decouperSyllabes();
-    document.getElementById('ia-feedback').innerHTML = "🤖 L'IA t'attend pour comparer ta voix au texte saisi.";
-  }
+      const texteAttendu = document.getElementById('input-text').value.trim();
+      if (!texteAttendu) {
+        alert("Écris d'abord ton texte dans la boîte blanche avant de cliquer !");
+        return;
+      }
 
-  function resetScoreManuel() {
-    if (confirm("⚠️ Remettre le score à zéro ? Toutes tes victoires seront perdues.")) {
-      score = 0;
-      actualiserScore();
-      genererPrompt();
-      effacerTout();
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'fr-FR';
+
+      const btn = document.querySelector('.btn-listen-ia');
+      btn.textContent = "👂 L'IA t'écoute...";
+
+      recognition.onresult = (event) => {
+        const vocal = event.results[0][0].transcript.toLowerCase();
+        
+        const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
+        const motsOriginaux = epurer(texteAttendu);
+        const motsVocals = epurer(vocal);
+        
+        let resultatHTML = "";
+        let fautes = 0;
+
+        motsOriginaux.forEach(mot => {
+          if (motsVocals.includes(mot)) {
+            resultatHTML += `<span class="word-correct">${mot}</span> `;
+          } else {
+            // Le mot mal dit ou sauté s'affiche en rouge souligné
+            resultatHTML += `<span class="word-wrong">${mot}</span> `;
+            fautes++;
+          }
+        });
+
+        // On affiche directement la correction de l'IA à la place des syllabes dans la même zone blanche
+        document.getElementById('output-display').innerHTML = resultatHTML;
+        
+        if (fautes === 0) {
+          confetti({ particleCount: 30, spread: 40 });
+        }
+      };
+
+      recognition.onend = () => { btn.textContent = "🤖 L'IA m'écoute"; };
+      recognition.start();
     }
-  }
 
-  function changerTaille(n) {
-    const textarea = document.getElementById('input-text');
-    const preview = document.getElementById('output-display');
-    let current = parseInt(window.getComputedStyle(textarea).fontSize);
-    let next = current + n;
-    if (next >= 16 && next <= 52) {
-      textarea.style.fontSize = next + "px";
-      preview.style.fontSize = next + "px";
+    // Validation de l'étape et sauvegarde de l'histoire infinie
+    function validerExercice() {
+      const inputZone = document.getElementById('input-text');
+      const texteSaisi = inputZone.value.trim();
+
+      if (texteSaisi.length < 3) {
+        alert("Écris d'abord ta phrase avant de l'envoyer dans l'espace !");
+        return;
+      }
+
+      // L'histoire se cumule en mémoire
+      histoireComplete += " " + texteSaisi;
+      score++;
+      localStorage.setItem('dys_story_text', histoireComplete);
+      
+      actualiserInterface();
+      
+      // Pluie de confettis
+      confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
+
+      // Si elle atteint 30 étoiles, on ouvre la boîte magique
+      if (score >= 30) {
+        setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
+      }
+
+      // On vide proprement la zone pour la phrase suivante
+      inputZone.value = "";
+      document.getElementById('output-display').innerHTML = "L'aperçu de ton texte s'affichera ici...";
+      genererNouvelleEtape();
     }
-  }
 
-  // Gestion du cadeau
-  function choisirCadeau(cadeau) {
-    document.getElementById('choix-final').innerHTML = `🎉 Tu as gagné : <span style="color:#ffdb7e">${cadeau}</span> ! 🎉<br><i class='fas fa-jedi'></i> Championne de l'espace !`;
-    canvasConfetti({ particleCount: 300, spread: 120, origin: { y: 0.5 } });
-  }
+    function lireTexte() {
+      const text = document.getElementById('input-text').value;
+      if (!text) return;
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'fr-FR';
+      msg.rate = 0.8; 
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
 
-  function fermerModal() {
-    document.getElementById('gift-modal').style.display = 'none';
-    // Optionnel : on peut aussi remettre le score à 0 après le cadeau ? Non, on laisse le score tel quel.
-    // Mais l'utilisateur peut continuer ou reset manuellement.
-  }
+    function choisirCadeau(cadeau) {
+      document.getElementById('choix-final').innerHTML = `Gagné ! Tu as choisi : <br><b>${cadeau}</b> ! 🏆`;
+      confetti({ particleCount: 200, spread: 100 });
+    }
 
-  // Initialisation
-  window.onload = () => {
-    actualiserScore();
-    genererPrompt();
-  };
-</script>
+    function fermerModal() {
+      document.getElementById('gift-modal').style.display = 'none';
+    }
+
+    function resetScore() {
+      if (confirm("Veux-tu effacer ton histoire et remettre tes étoiles à zéro ?")) {
+        score = 0;
+        histoireComplete = "";
+        localStorage.removeItem('dys_story_text');
+        document.getElementById('input-text').value = "";
+        document.getElementById('choix-final').textContent = "";
+        actualiserInterface();
+        genererNouvelleEtape();
+      }
+    }
+
+    function changerTaille(n) {
+      const elements = [document.getElementById('input-text'), document.getElementById('output-display')];
+      elements.forEach(el => {
+        let current = parseInt(window.getComputedStyle(el).fontSize);
+        let next = current + n;
+        if(next >= 16 && next <= 46) el.style.fontSize = next + "px";
+      });
+    }
+  </script>
 </body>
 </html>
