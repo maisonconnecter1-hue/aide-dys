@@ -3,17 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Espace Écriture - Méline</title>
-    <!-- Polices alternatives -->
+    <title>Espace Écriture - Méline (univers animé)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500&family=Comic+Neue&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: text; /* pour que la sélection soit possible */
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'OpenDyslexic', sans-serif;
             background: radial-gradient(ellipse at top, #0a0f2c 0%, #030617 100%);
@@ -21,50 +14,24 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            transition: background 0.3s;
         }
-        /* Étoiles animées */
-        .stars, .twinkling {
+        /* Couche de fond avec canvas pour animations complexes */
+        #universe-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .stars { background: #000 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 800"><circle cx="120" cy="80" r="1.5" fill="white"/><circle cx="400" cy="150" r="2" fill="white"/><circle cx="700" cy="50" r="1.2" fill="white"/><circle cx="950" cy="300" r="2.5" fill="white"/><circle cx="1300" cy="120" r="1.8" fill="white"/><circle cx="1600" cy="400" r="2" fill="white"/><circle cx="1800" cy="200" r="1.5" fill="white"/><circle cx="100" cy="500" r="2" fill="white"/><circle cx="500" cy="700" r="1.2" fill="white"/><circle cx="1200" cy="650" r="2.2" fill="white"/><circle cx="1700" cy="720" r="1.7" fill="white"/><circle cx="300" cy="350" r="1" fill="white"/><circle cx="800" cy="450" r="1.9" fill="white"/><circle cx="1450" cy="550" r="1.3" fill="white"/></svg>') repeat;
-            background-size: 400px 200px;
-            animation: starsMove 80s linear infinite;
-            opacity: 0.6;
-        }
-        @keyframes starsMove { from { background-position: 0 0; } to { background-position: -800px -400px; } }
-        .twinkling {
-            background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1000"><circle cx="50" cy="90" r="1" fill="white" opacity="0.3"/><circle cx="620" cy="210" r="1.5" fill="white" opacity="0.5"/><circle cx="990" cy="470" r="2" fill="white" opacity="0.4"/><circle cx="1450" cy="130" r="1.2" fill="white" opacity="0.6"/><circle cx="110" cy="780" r="1.8" fill="white" opacity="0.3"/></svg>') repeat;
-            background-size: 300px 200px;
-            animation: twinkle 6s infinite alternate;
-        }
-        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
-        .rocket {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 70px;
-            height: 70px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 70,40 60,40 60,70 40,70 40,40 30,40" fill="%23e67e22" stroke="%23f1c40f" stroke-width="1.5"/><polygon points="45,70 55,70 55,85 45,85" fill="%23c0392b"/><circle cx="50" cy="35" r="6" fill="%234ecdc4"/><rect x="47" y="72" width="6" height="12" fill="%23e67e22"/><polygon points="35,40 30,45 40,45" fill="%239b59b6"/><polygon points="65,40 70,45 60,45" fill="%239b59b6"/></svg>') no-repeat center/contain;
-            filter: drop-shadow(0 0 6px cyan);
-            animation: fly 12s ease-in-out infinite;
-            z-index: 15;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
             pointer-events: none;
         }
-        @keyframes fly {
-            0% { transform: translate(0,0) rotate(0deg); }
-            25% { transform: translate(-20px,-30px) rotate(-5deg); }
-            50% { transform: translate(30px,-15px) rotate(5deg); }
-            75% { transform: translate(-10px,10px) rotate(-3deg); }
-            100% { transform: translate(0,0) rotate(0deg); }
+        .app-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
-        .app-container { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100vh; }
         /* Onglets */
         .tabs {
             display: flex;
@@ -118,25 +85,7 @@
             background: rgba(15,25,55,0.85);
             color: #f5f9ff;
             resize: vertical;
-            box-shadow: 0 0 12px rgba(78,205,196,0.3);
         }
-        textarea:focus, .dict-input:focus { border-color: #f1c40f; outline: none; }
-        .colored-dict-output {
-            width: 100%;
-            min-height: 120px;
-            padding: 20px;
-            background: rgba(10,20,45,0.9);
-            backdrop-filter: blur(4px);
-            border-radius: 30px;
-            font-size: 28px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            word-break: break-word;
-            border: 1px solid #4ecdc4;
-        }
-        .correct-char { color: #2ecc71; background-color: rgba(46,204,113,0.2); }
-        .incorrect-char { color: #e74c3c; background-color: rgba(231,76,60,0.2); text-decoration: underline wavy #e74c3c; }
-        .accent-error { color: #f39c12; background-color: rgba(243,156,18,0.2); text-decoration: underline wavy #f39c12; }
         button {
             padding: 10px 24px;
             font-size: 18px;
@@ -148,29 +97,17 @@
             font-family: inherit;
             font-weight: bold;
             transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,215,0,0.4);
         }
         button:hover { transform: scale(1.02); background: linear-gradient(135deg, #3e5a8f, #2a3b60); box-shadow: 0 0 12px gold; }
-        .settings-btn { background: linear-gradient(135deg, #16a085, #1abc9c); }
-        .progress-bar-wrapper { background: #2c3e66; border-radius: 30px; height: 24px; width: 100%; margin: 10px 0; overflow: hidden; }
-        .progress-bar-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); width: 0%; height: 100%; transition: width 0.4s ease; }
-        .badge { display: inline-block; margin: 5px; font-size: 1.5rem; }
-        .robot-speech { font-style: italic; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 10px; margin: 10px 0; }
-        .keyword-group { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
-        #keywords, #story-choices select { flex: 1; padding: 12px; border-radius: 40px; border: 2px solid #4ecdc4; background: #0a132b; color: white; }
-        footer { text-align: center; font-size: 14px; padding: 8px; background: rgba(0,0,0,0.5); border-top: 1px solid #2c3e66; }
-        @media (max-width: 700px) {
-            .zone { width: 95%; }
-            textarea, .colored-dict-output { font-size: 20px; }
-            button { padding: 6px 16px; font-size: 14px; }
-        }
+        .correct-char { color: #2ecc71; background-color: rgba(46,204,113,0.2); }
+        .incorrect-char { color: #e74c3c; background-color: rgba(231,76,60,0.2); }
+        .colored-dict-output { background: rgba(10,20,45,0.9); border-radius: 30px; padding: 20px; font-size: 28px; line-height: 1.8; white-space: pre-wrap; border: 1px solid #4ecdc4; margin-top: 10px; }
+        footer { text-align: center; font-size: 14px; padding: 8px; background: rgba(0,0,0,0.5); border-top: 1px solid #2c3e66; position: relative; z-index: 10; }
     </style>
 </head>
 <body>
-<div class="stars"></div>
-<div class="twinkling"></div>
-<div class="rocket"></div>
+<canvas id="universe-canvas"></canvas>
 <div class="app-container">
     <div class="tabs">
         <button class="tab-button active" data-tab="ecriture">🚀 Écriture libre</button>
@@ -180,7 +117,7 @@
         <button class="tab-button" data-tab="settings">⚙️ Réglages</button>
     </div>
 
-    <!-- Écriture libre -->
+    <!-- Onglet Écriture libre -->
     <div id="ecriture" class="tab-content active">
         <div class="editor-container">
             <div class="zone"><textarea id="input-text" placeholder="Écris ton histoire, Méline..."></textarea></div>
@@ -196,303 +133,398 @@
         </div>
     </div>
 
-    <!-- Histoire interactive -->
+    <!-- Onglet Histoire -->
     <div id="histoire" class="tab-content">
         <div class="editor-container">
             <div class="zone">
-                <div class="keyword-group">
-                    <select id="story-char"><option value="astronaute">Astronaute</option><option value="robot">Robot</option><option value="princesse">Princesse</option></select>
-                    <select id="story-place"><option value="galaxie">Galaxie</option><option value="planète inconnue">Planète inconnue</option><option value="station spatiale">Station spatiale</option></select>
-                    <select id="story-object"><option value="cristal magique">Cristal magique</option><option value="fusée dorée">Fusée dorée</option><option value="casque à musique">Casque à musique</option></select>
-                    <button id="gen-story-custom" class="story-btn">🌠 Générer 3 phrases</button>
-                    <button id="reset-story" class="story-btn" style="background:#b86f2c;">💫 Réinitialiser</button>
-                </div>
-                <div id="story-output" style="min-height:200px; background:rgba(10,20,45,0.9); border-radius:30px; padding:20px;"></div>
-                <div class="story-history"><h3>📜 Historique</h3><div id="story-history-log"></div></div>
-                <button id="export-story-pdf" style="margin-top:10px;">📄 Exporter l'histoire en PDF</button>
+                <button id="genStoryBtn">🌠 Générer une histoire (3 phrases)</button>
+                <button id="resetStoryBtn">💫 Réinitialiser</button>
+                <div id="storyOutput" style="background:rgba(10,20,45,0.9); border-radius:30px; padding:20px; margin-top:15px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Dictée vocale améliorée -->
+    <!-- Onglet Dictée -->
     <div id="dictee" class="tab-content">
         <div class="editor-container">
             <div class="zone">
                 <div style="background:#0a1430; border-radius:30px; padding:15px; text-align:center;">
                     <h3>🎧 Dictée pour Méline</h3>
-                    <p>Niveau : <select id="difficulty"><option value="court">Court (3-6 mots)</option><option value="moyen">Moyen (7-10 mots)</option><option value="long">Long (11+ mots)</option></select></p>
                     <div style="display:flex; gap:15px; justify-content:center; margin-top:15px;">
-                        <button id="new-dict-phrase">🆕 Nouvelle phrase (lue)</button>
-                        <button id="relisten-phrase">🔊 Réécouter</button>
-                        <button id="check-dict-audio">✅ Vérifier + retour audio</button>
+                        <button id="newDictPhrase">🆕 Nouvelle phrase (lue)</button>
+                        <button id="relistenDictPhrase">🔊 Réécouter</button>
+                        <button id="checkDictAudio">✅ Vérifier + retour audio</button>
                     </div>
                 </div>
                 <label>✏️ Écris ce que tu as entendu :</label>
-                <textarea id="dict-input" rows="4" placeholder="Tape ici..."></textarea>
-                <div id="colored-dict-display" class="colored-dict-output"></div>
-                <div id="dict-feedback" style="margin-top:10px;"></div>
-                <!-- Barre de progression défi -->
-                <div class="progress-bar-wrapper"><div id="challenge-fill" class="progress-bar-fill"></div></div>
-                <div id="badge-area" style="margin:10px 0;"></div>
+                <textarea id="dictInput" rows="4" placeholder="Tape ici..."></textarea>
+                <div id="coloredDictDisplay" class="colored-dict-output"></div>
+                <div id="dictFeedback" style="margin-top:10px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Progrès -->
+    <!-- Onglet Progrès -->
     <div id="progres" class="tab-content">
-        <div class="editor-container"><div class="zone"><h2>📈 Suivi de Méline</h2><canvas id="progressChart" width="400" height="200"></canvas><div id="stats"></div><button id="reset-progress">Réinitialiser les progrès</button></div></div>
+        <div class="editor-container"><div class="zone"><h2>📈 Suivi de Méline</h2><div id="stats"></div><button id="resetProgress">Réinitialiser les progrès</button></div></div>
     </div>
 
-    <!-- Réglages -->
+    <!-- Onglet Réglages -->
     <div id="settings" class="tab-content">
         <div class="editor-container"><div class="zone"><h2>⚙️ Personnalisation</h2>
-            <label>Police : </label><select id="font-select"><option value="OpenDyslexic">OpenDyslexic</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select><br>
-            <label>Couleur syllabe 1 : </label><input type="color" id="syl1-color" value="#7df9ff"><br>
-            <label>Couleur syllabe 2 : </label><input type="color" id="syl2-color" value="#ffb347"><br>
-            <label>Mode comparaison dictée : </label><select id="compare-mode"><option value="strict">Strict (accents/majuscules)</option><option value="tolérant">Tolérant (ignore accents/casse)</option></select><br>
-            <button id="save-settings">💾 Sauvegarder</button>
+            <label>Police : </label><select id="fontSelect"><option value="OpenDyslexic">OpenDyslexic</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select><br>
+            <label>Mode comparaison dictée : </label><select id="compareMode"><option value="strict">Strict (accents/majuscules)</option><option value="tolérant">Tolérant (ignore accents/casse)</option></select><br>
+            <button id="saveSettings">💾 Sauvegarder</button>
         </div></div>
     </div>
-    <footer>🌙 Pour Méline - Tous les outils pour écrire comme une championne de l'espace</footer>
+    <footer>🌙 Univers animé : étoiles filantes, planètes, constellations, navettes, nébuleuses ✨</footer>
 </div>
 
 <script>
-    // ========== BIBLIOTHÈQUE PHRASES ==========
+    // ========== FONCTIONS DE BASE ==========
     const allPhrases = [
         "Le chat dort.", "Le ciel est étoilé.", "Il fait beau sur Mars.", "Je mange une pomme.", "La fusée décolle.",
         "La nébuleuse est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
         "Le vaisseau est rouge.", "Il y a du soleil.", "La mer est calme.", "Le poisson nage bien.", "Je joue au ballon.",
-        "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite.",
-        "La pluie tombe doucement.", "Le bébé sourit.", "J'aime ma famille.", "Le cartable est lourd.", "La soupe est chaude.",
-        "Je respire et je réussis.", "Mon cerveau est magique.", "Chaque erreur m'aide à apprendre.", "Je fais de mon mieux.",
-        "Je suis une vraie championne.", "J'apprends à mon rythme.", "Écrire est un super pouvoir.", "Je suis fière de mes progrès.",
-        "Je peux essayer encore une fois.", "Rien ne m'arrête aujourd'hui.", "Je prends mon temps pour lire.", "Mon imagination est immense.",
-        "Je progresse chaque jour un peu plus.", "Une lettre après l'autre, c'est facile.", "Je suis capable de tout écrire.",
-        "Les mots sont mes amis.", "Je peux relire si j'ai un doute.", "C'est en s'entraînant qu'on grandit.", "Mon courage est ma plus grande force.",
-        "Je réussis cet exercice avec succès.", "Je prépare mes affaires pour demain.", "Nous allons manger une bonne glace.",
-        "La maîtresse explique la leçon de français.", "Je dessine un grand château fort.", "Les enfants jouent dans la cour d'école.",
-        "Il faut bien se laver les mains.", "Le soir, je regarde les étoiles filantes.", "Nous ramassons des coquillages sur la plage.",
-        "Je mets mes chaussures pour aller courir.", "Le matin, je prends un bon chocolat chaud.", "La trousse contient des crayons de couleur.",
-        "Nous écoutons une belle histoire avant de dormir.", "Je regarde les feuilles tomber des arbres.", "Le jardinier plante de jolies tomates rouges.",
-        "Les vacances approchent à grands pas.", "Je range mes jouets dans ma chambre.", "Nous faisons une grande promenade en forêt.",
-        "Le pain chaud croustille sous la dent.", "J'aide à dresser la table pour le dîner.", "Les oiseaux fabriquent un nid dans l'arbre.",
-        "Le petit lapin blanc se cache derrière un grand buisson vert.", "Un navire de pirates navigue sur les vagues de l'océan Indien.",
-        "Le dragon crache des petites bulles de savon au lieu du feu.", "La fée magique transforme une simple citrouille en carrosse doré.",
-        "Un astronaute voyage dans l'espace pour visiter la planète Mars.", "Le vieux magicien prépare une potion mystérieuse dans son chaudron.",
-        "Une baleine bleue danse joyeusement au milieu des poissons tropicaux.", "L'écureuil agile rassemble des noisettes pour passer un hiver tranquille.",
-        "Le chaton noir adore jouer avec une grosse pelote de laine rouge.", "Un ours brun cherche du miel sucré dans la forêt profonde.",
-        "La princesse porte une magnifique couronne qui brille de mille feux.", "Un petit robot rigolo nettoie toute la maison en chantant.",
-        "Le dauphin joueur saute hors de l'eau pour saluer les marins.", "Une étoile magique réalise les vœux des enfants sages ce soir.",
-        "Le chien de mon voisin adore courir après les papillons jaunes.", "Les lettres s'organisent sagement pour former des mots fantastiques.",
-        "Prendre le temps de bien lire permet de comprendre toute l'histoire.", "Le soleil se couche lentement derrière la montagne en colorant le ciel.",
-        "Nous préparons une excellente tarte aux pommes avec une pincée de cannelle.", "Un grand singe malicieux s'amuse à imiter les grimaces des visiteurs.",
-        "La musique douce m'aide à me concentrer pour écrire mes phrases.", "Les vagues de la mer effacent les châteaux de sable sur la plage.",
-        "Un magnifique arc-en-ciel apparaît dans le ciel juste après la tempête.", "Les petits poussins jaunes suivent leur maman partout dans la ferme.",
-        "J'adore écouter le bruit de la pluie quand je suis au chaud.", "Les papillons volent délicatement de fleur en fleur dans le grand parc.",
-        "Le grand navire active ses lumières pour guider les autres bateaux.", "Les secrets les plus précieux sont souvent cachés au fond des livres.",
-        "Un grand tapis roulant transporte les bagages des voyageurs à l'aéroport.", "La petite tortue marche lentement mais elle arrive toujours à destination.",
-        "Le détective utilise une loupe pour chercher des indices importants.", "Les crayons magiques écrivent des histoires extraordinaires de manière fluide.",
-        "Un groupe de joyeux dauphins accompagne notre voilier pendant le voyage.", "Les feuilles d'automne rousses dansent au milieu du vent frais du matin.",
-        "Je termine ce grand défi d'écriture avec une immense fierté."
+        "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite."
     ];
 
-    function getPhrasesByDifficulty(level) {
-        if (level === 'court') return allPhrases.filter(p => p.split(' ').length <= 6);
-        if (level === 'moyen') return allPhrases.filter(p => p.split(' ').length >= 7 && p.split(' ').length <= 10);
-        return allPhrases.filter(p => p.split(' ').length >= 11);
-    }
-
-    // ========== SYLLABATION (version simplifiée) ==========
     function syllaberMot(mot) {
-        const ponctuationMatch = mot.match(/[.,!?;:…]+$/);
-        let motPropre = mot, ponctuation = '';
-        if (ponctuationMatch) { ponctuation = ponctuationMatch[0]; motPropre = mot.slice(0, -ponctuation.length); }
-        if (!motPropre) return ponctuation ? [ponctuation] : [];
-        const voyelles = 'aeiouyâàäéèêëôîïûùüÿAEIOUYÂÀÄÉÈÊËÔÎÏÛÙÜŸ';
-        const setV = new Set(voyelles.split(''));
-        const estVoyelle = c => setV.has(c);
-        const lettres = motPropre.split('');
-        const syllabes = []; let courant = '';
-        const groupes = ['pr','tr','br','cr','gr','fr','vr','dr','pl','bl','cl','gl','fl','vl','ph','th','ch','qu','gu'];
-        for (let i=0; i<lettres.length; i++) {
-            courant += lettres[i];
-            if (i+1 < lettres.length && estVoyelle(lettres[i])) {
-                if (i+2 < lettres.length && groupes.includes(lettres[i+1]+lettres[i+2])) continue;
-                if (!estVoyelle(lettres[i+1]) && (i+2 < lettres.length || (i+1 === lettres.length-1 && !estVoyelle(lettres[i+1])))) {
-                    syllabes.push(courant); courant = '';
-                }
+        let ponctuation = mot.match(/[.,!?;:…]+$/);
+        let propre = ponctuation ? mot.slice(0, -ponctuation[0].length) : mot;
+        if (!propre) return [mot];
+        let voyelles = "aeiouyâàäéèêëôîïûùüÿ";
+        let syllabes = [];
+        let courant = "";
+        for (let i=0; i<propre.length; i++) {
+            courant += propre[i];
+            if (voyelles.includes(propre[i]) && i+1 < propre.length && !voyelles.includes(propre[i+1])) {
+                syllabes.push(courant);
+                courant = "";
             }
         }
         if (courant) syllabes.push(courant);
-        if (syllabes.length>=2 && syllabes[syllabes.length-1]==='e') { let e = syllabes.pop(); syllabes[syllabes.length-1] += e; }
-        if (!syllabes.length) syllabes.push(motPropre);
-        if (ponctuation) syllabes[syllabes.length-1] += ponctuation;
+        if (ponctuation) syllabes[syllabes.length-1] += ponctuation[0];
         return syllabes;
     }
-    function colorerTexte(texte, syl1Color='#7df9ff', syl2Color='#ffb347') {
+    function colorerTexte(texte) {
         return texte.split(/\r?\n/).map(ligne => ligne.split(/(\s+)/).map(elem => {
-            if (elem.trim()==='') return elem;
-            const syll = syllaberMot(elem);
-            return syll.map((s,i) => `<span style="color:${i%2===0?syl1Color:syl2Color}; text-decoration:underline dotted;">${s}</span>`).join('');
+            if (elem.trim() === "") return elem;
+            let syll = syllaberMot(elem);
+            return syll.map((s,i) => `<span style="color:${i%2===0?'#7df9ff':'#ffb347'}">${s}</span>`).join('');
         }).join('')).join('\n');
     }
 
-    // ========== Écriture libre ==========
-    let currentSyl1='#7df9ff', currentSyl2='#ffb347';
-    function updateFreeDisplay() {
-        const txt = document.getElementById('input-text').value;
-        if (modeColorie) document.getElementById('output-display').innerHTML = colorerTexte(txt, currentSyl1, currentSyl2);
-        else document.getElementById('output-display').innerHTML = txt.replace(/\n/g,'<br>');
-    }
+    // Écriture libre
     let modeColorie = false;
-    window.colorerSyllabes = function() { modeColorie=true; updateFreeDisplay(); };
-    window.reinitialiserAffichage = function() { modeColorie=false; updateFreeDisplay(); };
-    document.getElementById('input-text').addEventListener('input', updateFreeDisplay);
-    let currentSize=24;
-    window.changerTaille = function(delta) { currentSize+=delta; if(currentSize<12)currentSize=12; if(currentSize>48)currentSize=48; document.getElementById('input-text').style.fontSize=currentSize+'px'; document.getElementById('output-display').style.fontSize=currentSize+'px'; localStorage.setItem('fontSize',currentSize); };
-    window.insererPhraseAleatoire = function() { document.getElementById('input-text').value = allPhrases[Math.floor(Math.random()*allPhrases.length)]; updateFreeDisplay(); };
-    // Lecture mot sélectionné
-    window.lireMotSelectionne = function() {
-        let selection = window.getSelection().toString().trim();
-        if(!selection) { alert("Sélectionne un mot ou une phrase avec la souris."); return; }
-        let utterance = new SpeechSynthesisUtterance(selection); utterance.lang='fr-FR'; utterance.rate=0.9; window.speechSynthesis.speak(utterance);
-    };
+    let currentSize = 24;
+    const inputText = document.getElementById('input-text');
+    const outputDiv = document.getElementById('output-display');
+    function updateDisplay() {
+        let txt = inputText.value;
+        if (modeColorie) outputDiv.innerHTML = colorerTexte(txt);
+        else outputDiv.innerHTML = txt.replace(/\n/g,'<br>');
+    }
+    inputText.addEventListener('input', updateDisplay);
+    window.colorerSyllabes = function() { modeColorie = true; updateDisplay(); };
+    window.reinitialiserAffichage = function() { modeColorie = false; updateDisplay(); };
+    window.changerTaille = function(delta) { currentSize += delta; if(currentSize<12) currentSize=12; if(currentSize>48) currentSize=48; inputText.style.fontSize = currentSize+'px'; outputDiv.style.fontSize = currentSize+'px'; };
+    window.insererPhraseAleatoire = function() { inputText.value = allPhrases[Math.floor(Math.random()*allPhrases.length)]; updateDisplay(); };
+    window.lireMotSelectionne = function() { let sel = window.getSelection().toString().trim(); if(sel) { let u = new SpeechSynthesisUtterance(sel); u.lang='fr-FR'; speechSynthesis.speak(u); } else alert("Sélectionne un mot ou une phrase"); };
+    updateDisplay();
 
-    // ========== Histoire interactive ==========
-    let histoireComplet = "";
-    function genererHistoireAvecChoix() {
-        let perso = document.getElementById('story-char').value;
-        let lieu = document.getElementById('story-place').value;
-        let objet = document.getElementById('story-object').value;
+    // Histoire
+    let storyHtml = "";
+    document.getElementById('genStoryBtn').addEventListener('click', () => {
         let phrases = [
-            `${perso.charAt(0).toUpperCase()+perso.slice(1)} s'aventura dans ${lieu} à la recherche de ${objet}.`,
-            `Soudain, ${perso} rencontra un étrange signal venu de ${objet}.`,
-            `Grâce à ${perso}, ${lieu} fut sauvé et ${objet} révéla ses pouvoirs magiques.`
+            "Un jour, Méline partit explorer la galaxie.",
+            "Elle rencontra un petit robot qui avait perdu sa mémoire.",
+            "Ensemble, ils réparèrent la fusée et devinrent amis."
         ];
-        histoireComplet += phrases.join(" ") + " ";
-        document.getElementById('story-output').innerHTML = histoireComplet.replace(/\n/g,'<br>');
-        let log = document.getElementById('story-history-log');
-        log.innerHTML += `<hr>${phrases.map(p=>"🌠 "+p).join('<br>')}`;
-    }
-    document.getElementById('gen-story-custom').addEventListener('click', genererHistoireAvecChoix);
-    document.getElementById('reset-story').addEventListener('click',()=>{ histoireComplet=""; document.getElementById('story-output').innerHTML="<em>Histoire réinitialisée</em>"; document.getElementById('story-history-log').innerHTML=""; });
-    document.getElementById('export-story-pdf').addEventListener('click', ()=>{
-        let content = document.getElementById('story-output').innerText;
-        let win = window.open(); win.document.write(`<html><head><title>Histoire de Méline</title></head><body><pre>${content}</pre></body></html>`); win.print();
+        storyHtml += phrases.join(" ") + " ";
+        document.getElementById('storyOutput').innerHTML = storyHtml.replace(/\n/g,'<br>');
     });
+    document.getElementById('resetStoryBtn').addEventListener('click', () => { storyHtml = ""; document.getElementById('storyOutput').innerHTML = ""; });
 
-    // ========== DICTÉE AVEC GESTION ACCENTS, RETOUR AUDIO, DÉFI ==========
-    let currentDictPhrase = "";
-    let dictScore = 0; const DICT_GOAL = 5;
-    function normalize(str, mode) {
-        if(mode==='tolérant') return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        return str;
-    }
-    function updateDictColoration() {
-        let saisie = document.getElementById('dict-input').value;
-        let mode = document.getElementById('compare-mode').value;
-        let model = currentDictPhrase;
-        if(!model) { document.getElementById('colored-dict-display').innerHTML = ""; return; }
-        let normS = normalize(saisie, mode);
-        let normM = normalize(model, mode);
-        let html = '';
+    // Dictée
+    let currentPhrase = "";
+    let synth = window.speechSynthesis;
+    function lire(texte) { synth.cancel(); let u = new SpeechSynthesisUtterance(texte); u.lang='fr-FR'; u.rate=0.85; synth.speak(u); }
+    function normalize(str, mode) { if(mode==='tolérant') return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); return str; }
+    function updateColoration() {
+        let saisie = document.getElementById('dictInput').value;
+        let mode = document.getElementById('compareMode').value;
+        if (!currentPhrase) return;
+        let html = "";
         for(let i=0; i<saisie.length; i++) {
-            let char = saisie[i];
-            if(i < model.length) {
-                let isStrictEqual = char === model[i];
-                let isNormalizedEqual = normalize(char, mode) === normalize(model[i], mode);
-                if(isStrictEqual) html += `<span class="correct-char">${escapeHtml(char)}</span>`;
-                else if(isNormalizedEqual) html += `<span class="accent-error">${escapeHtml(char)}</span>`;
-                else html += `<span class="incorrect-char">${escapeHtml(char)}</span>`;
-            } else html += `<span class="incorrect-char">${escapeHtml(char)}</span>`;
+            let c = saisie[i];
+            if(i < currentPhrase.length) {
+                let ok = normalize(c, mode) === normalize(currentPhrase[i], mode);
+                html += `<span class="${ok ? 'correct-char' : 'incorrect-char'}">${c}</span>`;
+            } else html += `<span class="incorrect-char">${c}</span>`;
         }
-        if(saisie.length < model.length) html += `<span style="opacity:0.5;">… (${model.length - saisie.length} lettres manquantes)</span>`;
-        document.getElementById('colored-dict-display').innerHTML = html;
+        if(saisie.length < currentPhrase.length) html += ` <span style="opacity:0.5;">(il manque ${currentPhrase.length - saisie.length} lettres)</span>`;
+        document.getElementById('coloredDictDisplay').innerHTML = html;
     }
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ return m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'; }); }
-    function lirePhrase(texte) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(texte); u.lang='fr-FR'; u.rate=0.85; window.speechSynthesis.speak(u); }
-    function nouvellePhraseDictee() {
-        let level = document.getElementById('difficulty').value;
-        let pool = getPhrasesByDifficulty(level);
-        if(pool.length===0) pool = allPhrases;
-        currentDictPhrase = pool[Math.floor(Math.random()*pool.length)];
-        lirePhrase(currentDictPhrase);
-        document.getElementById('dict-input').value = "";
-        updateDictColoration();
-        document.getElementById('dict-feedback').innerHTML = "";
+    function nouvellePhrase() {
+        currentPhrase = allPhrases[Math.floor(Math.random()*allPhrases.length)];
+        lire(currentPhrase);
+        document.getElementById('dictInput').value = "";
+        document.getElementById('coloredDictDisplay').innerHTML = "";
+        document.getElementById('dictFeedback').innerHTML = "";
     }
-    function verifierDicteeAvecAudio() {
-        let saisie = document.getElementById('dict-input').value;
-        let mode = document.getElementById('compare-mode').value;
-        let ok = normalize(saisie, mode) === normalize(currentDictPhrase, mode);
-        if(ok) {
-            document.getElementById('dict-feedback').innerHTML = "🎉 BRAVO ! +1 point pour le défi ! 🎉";
-            dictScore = Math.min(dictScore+1, DICT_GOAL);
-            updateChallengeBar();
-            if(dictScore === DICT_GOAL) {
-                document.getElementById('badge-area').innerHTML += `<span class="badge">🏅 Fusée d'or !</span>`;
-                setTimeout(()=>{ dictScore=0; updateChallengeBar(); }, 3000);
-            }
-            // Retour audio : relire la phrase écrite et la phrase modèle
-            lirePhrase(`Tu as écrit : ${saisie}. La phrase correcte était : ${currentDictPhrase}.`);
+    function verifierAvecAudio() {
+        let saisie = document.getElementById('dictInput').value;
+        let mode = document.getElementById('compareMode').value;
+        if(normalize(saisie, mode) === normalize(currentPhrase, mode)) {
+            document.getElementById('dictFeedback').innerHTML = "🎉 Parfait ! 🎉";
+            lire(`Bravo ! Tu as écrit : ${saisie}. La phrase était : ${currentPhrase}.`);
         } else {
-            document.getElementById('dict-feedback').innerHTML = "❌ Ce n'est pas encore exact. Réécoute et réessaye !";
-            lirePhrase(`La phrase à écrire était : ${currentDictPhrase}. Réessaie.`);
+            document.getElementById('dictFeedback').innerHTML = "❌ Ce n'est pas encore exact. Réécoute et réessaie.";
+            lire(`La phrase à écrire était : ${currentPhrase}. Réessaie.`);
         }
     }
-    function updateChallengeBar() { let percent = (dictScore/DICT_GOAL)*100; document.getElementById('challenge-fill').style.width = percent+'%'; }
-    document.getElementById('new-dict-phrase').addEventListener('click', nouvellePhraseDictee);
-    document.getElementById('relisten-phrase').addEventListener('click', ()=>{ if(currentDictPhrase) lirePhrase(currentDictPhrase); });
-    document.getElementById('check-dict-audio').addEventListener('click', verifierDicteeAvecAudio);
-    document.getElementById('dict-input').addEventListener('input', updateDictColoration);
+    document.getElementById('newDictPhrase').addEventListener('click', nouvellePhrase);
+    document.getElementById('relistenDictPhrase').addEventListener('click', () => { if(currentPhrase) lire(currentPhrase); });
+    document.getElementById('checkDictAudio').addEventListener('click', verifierAvecAudio);
+    document.getElementById('dictInput').addEventListener('input', updateColoration);
+    nouvellePhrase();
 
-    // ========== PROGRÈS (stockage local) ==========
-    let progression = { dicteesReussies:0, histoiresCrees:0 };
-    function loadProgress() { let p = localStorage.getItem('melinaProgress'); if(p) progression = JSON.parse(p); updateStats(); }
-    function saveProgress() { localStorage.setItem('melinaProgress', JSON.stringify(progression)); updateStats(); }
-    function updateStats() {
-        document.getElementById('stats').innerHTML = `📝 Dictées réussies : ${progression.dicteesReussies}<br>📖 Histoires créées : ${progression.histoiresCrees}`;
-        let ctx = document.getElementById('progressChart').getContext('2d');
-        ctx.clearRect(0,0,400,200);
-        ctx.fillStyle = '#4ecdc4'; ctx.fillRect(0,0, progression.dicteesReussies*20, 50);
-        ctx.fillStyle = '#f1c40f'; ctx.fillRect(0,70, progression.histoiresCrees*20, 50);
-    }
-    document.getElementById('reset-progress').addEventListener('click',()=>{ progression={dicteesReussies:0, histoiresCrees:0}; saveProgress(); });
-    loadProgress();
+    // Progrès
+    let stats = { dictées: 0 };
+    function updateStats() { document.getElementById('stats').innerHTML = `🎤 Dictées réussies : ${stats.dictées}`; }
+    document.getElementById('resetProgress').addEventListener('click', () => { stats.dictées = 0; updateStats(); });
+    updateStats();
 
-    // ========== RÉGLAGES ==========
+    // Réglages
     function applySettings() {
-        let font = document.getElementById('font-select').value;
+        let font = document.getElementById('fontSelect').value;
         document.body.style.fontFamily = font === 'OpenDyslexic' ? "'OpenDyslexic', sans-serif" : font === 'Lexend' ? "'Lexend', sans-serif" : "'Comic Neue', cursive";
-        currentSyl1 = document.getElementById('syl1-color').value;
-        currentSyl2 = document.getElementById('syl2-color').value;
-        if(modeColorie) updateFreeDisplay();
-        localStorage.setItem('fontSetting', font);
-        localStorage.setItem('syl1', currentSyl1);
-        localStorage.setItem('syl2', currentSyl2);
+        localStorage.setItem('melinaFont', font);
     }
-    document.getElementById('save-settings').addEventListener('click', applySettings);
-    // Charger réglages sauvegardés
-    let savedFont = localStorage.getItem('fontSetting'); if(savedFont) document.getElementById('font-select').value = savedFont;
-    let s1 = localStorage.getItem('syl1'); if(s1) currentSyl1 = s1;
-    let s2 = localStorage.getItem('syl2'); if(s2) currentSyl2 = s2;
-    applySettings();
+    document.getElementById('saveSettings').addEventListener('click', applySettings);
+    let savedFont = localStorage.getItem('melinaFont');
+    if(savedFont) { document.getElementById('fontSelect').value = savedFont; applySettings(); }
 
-    // Raccourcis clavier
-    window.addEventListener('keydown', (e) => {
-        if(e.ctrlKey && e.key === 'g') { e.preventDefault(); changerTaille(2); }
-        if(e.ctrlKey && e.key === 'p') { e.preventDefault(); changerTaille(-2); }
-        if(e.ctrlKey && e.key === 'd') { e.preventDefault(); nouvellePhraseDictee(); }
+    // Onglets
+    const tabs = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            contents.forEach(c => c.classList.remove('active'));
+            tabs.forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        });
     });
 
-    // PWA simple (ajout d'un manifeste et service worker basique)
-    if('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(console.log); }
-    // On génère un manifeste à la volée (pour démo)
-    let manifest = { name:"Espace Méline", short_name:"Méline", start_url:".", display:"standalone", theme_color:"#0a0f2c" };
-    console.log("PWA prête (service worker non implémenté sur serveur local simple, mais le code est là)");
-    updateFreeDisplay();
-    nouvellePhraseDictee(); // initialise dictée
-    updateChallengeBar();
+    // ========== ANIMATIONS SPATIALES AVANCÉES (Canvas) ==========
+    const canvas = document.getElementById('universe-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let stars = [];
+    let shootingStars = [];
+    let planets = [];
+    let shuttles = [];
+    let nebulae = [];
+    let constellations = [];
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Étoiles fixes
+    for (let i = 0; i < 300; i++) {
+        stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 2 + 1,
+            alpha: Math.random() * 0.5 + 0.2,
+            twinkle: Math.random() * Math.PI * 2
+        });
+    }
+
+    // Planètes (grandes, lentes)
+    for (let i = 0; i < 5; i++) {
+        planets.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 30 + 10,
+            color: `hsl(${Math.random() * 60 + 20}, 70%, 50%)`,
+            speedX: (Math.random() - 0.5) * 0.2,
+            speedY: (Math.random() - 0.5) * 0.1,
+            angle: Math.random() * Math.PI * 2
+        });
+    }
+
+    // Constellations (points reliés)
+    const starGroups = [
+        [{x:0.2, y:0.1}, {x:0.3, y:0.15}, {x:0.25, y:0.25}, {x:0.15, y:0.2}],
+        [{x:0.7, y:0.6}, {x:0.8, y:0.55}, {x:0.85, y:0.65}, {x:0.75, y:0.7}],
+        [{x:0.4, y:0.8}, {x:0.5, y:0.75}, {x:0.55, y:0.85}]
+    ];
+    starGroups.forEach(group => {
+        let points = group.map(p => ({ x: p.x * width, y: p.y * height }));
+        constellations.push(points);
+    });
+
+    // Nébuleuses (cercles flous)
+    for (let i = 0; i < 3; i++) {
+        nebulae.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 200 + 100,
+            hue: Math.random() * 360,
+            alpha: 0.1
+        });
+    }
+
+    // Étoiles filantes
+    function addShootingStar() {
+        shootingStars.push({
+            x: Math.random() * width,
+            y: Math.random() * height * 0.3,
+            length: Math.random() * 80 + 40,
+            speedX: (Math.random() - 0.5) * 8 + 4,
+            speedY: (Math.random() - 0.5) * 6 + 3,
+            alpha: 1,
+            tail: []
+        });
+    }
+    setInterval(() => { if (Math.random() < 0.3) addShootingStar(); }, 3000);
+
+    // Navettes spatiales
+    for (let i = 0; i < 2; i++) {
+        shuttles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            speedX: (Math.random() - 0.5) * 1.5,
+            speedY: (Math.random() - 0.5) * 1,
+            angle: 0,
+            size: 20
+        });
+    }
+
+    function drawNebula(n) {
+        let grad = ctx.createRadialGradient(n.x, n.y, 10, n.x, n.y, n.radius);
+        grad.addColorStop(0, `hsla(${n.hue}, 80%, 60%, ${n.alpha})`);
+        grad.addColorStop(1, `hsla(${n.hue}, 80%, 30%, 0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawConstellation(points) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255,215,0,0.3)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < points.length - 1; i++) {
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[i+1].x, points[i+1].y);
+            ctx.stroke();
+        }
+        points.forEach(p => {
+            ctx.fillStyle = 'rgba(255,215,0,0.6)';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+            ctx.fill();
+        });
+    }
+
+    function drawShuttle(s) {
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(Math.atan2(s.speedY, s.speedX));
+        ctx.fillStyle = '#e67e22';
+        ctx.beginPath();
+        ctx.moveTo(0, -s.size/2);
+        ctx.lineTo(s.size, 0);
+        ctx.lineTo(0, s.size/2);
+        ctx.fill();
+        ctx.fillStyle = '#f1c40f';
+        ctx.beginPath();
+        ctx.rect(-s.size/3, -s.size/4, s.size/2, s.size/2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        // Nébuleuses
+        nebulae.forEach(drawNebula);
+        // Étoiles fixes
+        stars.forEach(s => {
+            ctx.fillStyle = `rgba(255,255,255,${s.alpha + Math.sin(Date.now() * 0.002 + s.twinkle) * 0.1})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2);
+            ctx.fill();
+        });
+        // Constellations
+        constellations.forEach(drawConstellation);
+        // Planètes
+        planets.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+            if (p.x < -100) p.x = width + 100;
+            if (p.x > width + 100) p.x = -100;
+            if (p.y < -100) p.y = height + 100;
+            if (p.y > height + 100) p.y = -100;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+            ctx.fill();
+            // Anneau pour certaines
+            if (p.radius > 20) {
+                ctx.strokeStyle = 'rgba(255,255,200,0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(p.x, p.y, p.radius*1.3, p.radius*0.8, 0, 0, Math.PI*2);
+                ctx.stroke();
+            }
+        });
+        // Étoiles filantes
+        for (let i=shootingStars.length-1; i>=0; i--) {
+            let s = shootingStars[i];
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x - s.length, s.y - s.length * 0.6);
+            ctx.strokeStyle = `rgba(255,255,200,${s.alpha})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            s.x += s.speedX;
+            s.y += s.speedY;
+            s.alpha -= 0.02;
+            if (s.alpha <= 0 || s.x > width + 200 || s.y > height + 200) shootingStars.splice(i,1);
+        }
+        // Navettes
+        shuttles.forEach(s => {
+            s.x += s.speedX;
+            s.y += s.speedY;
+            if (s.x < -50) s.x = width + 50;
+            if (s.x > width + 50) s.x = -50;
+            if (s.y < -50) s.y = height + 50;
+            if (s.y > height + 50) s.y = -50;
+            drawShuttle(s);
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+    // Ajuster les positions des constellations au redimensionnement
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        constellations = starGroups.map(group => group.map(p => ({ x: p.x * width, y: p.y * height })));
+        // Replacer étoiles, planètes proportionnellement
+        stars.forEach(s => { s.x = Math.random() * width; s.y = Math.random() * height; });
+        planets.forEach(p => { p.x = Math.random() * width; p.y = Math.random() * height; });
+        nebulae.forEach(n => { n.x = Math.random() * width; n.y = Math.random() * height; });
+    });
 </script>
 </body>
 </html>
