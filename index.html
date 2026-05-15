@@ -16,7 +16,6 @@
             position: relative;
             overflow-x: hidden;
         }
-        /* Vidéo de fond réaliste (NASA / Hubble style) */
         #bg-video {
             position: fixed;
             top: 0;
@@ -28,7 +27,6 @@
             pointer-events: none;
             filter: brightness(0.9) contrast(1.1);
         }
-        /* Couche d'overlay pour les étoiles filantes et planètes supplémentaires */
         #overlay-canvas {
             position: fixed;
             top: 0;
@@ -124,7 +122,6 @@
         @keyframes speak { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
         .speaking .mouth-animation { animation: speak 0.3s infinite; }
         footer { text-align: center; font-size: 14px; padding: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-top: 1px solid #2c3e66; }
-        @media (max-width: 700px) { .zone { width: 95%; } textarea, .colored-dict-output { font-size: 20px; } button { padding: 6px 12px; font-size: 12px; } }
     </style>
 </head>
 <body>
@@ -164,20 +161,22 @@
     <div id="histoire" class="tab-content">
         <div class="editor-container">
             <div class="zone">
-                <label>📝 Entre tes mots-clés :</label>
+                <label>📝 Entre tes mots-clés pour la suite de l'aventure :</label>
                 <input type="text" id="storyKeywords" class="story-keywords" placeholder="ex: supernova, galaxie" value="aventure">
-                <button id="generateStoryBtn">✨ Générer 3 phrases</button>
+                <button id="generateStoryBtn">✨ Générer l'étape suivante (3 phrases)</button>
+                
                 <div id="generatedPhrasesArea" style="display:none; background:rgba(10,20,45,0.8); border-radius:30px; padding:20px; margin:15px 0;">
                     <div id="generatedPhrasesList"></div>
-                    <button id="startRecordingBtn">🎙️ Lire dernière phrase</button>
+                    <button id="startRecordingBtn">🎙️ Lire la phrase 3 pour valider la suite</button>
                     <div id="voiceResult" style="margin-top: 10px; font-weight: bold;"></div>
                 </div>
+                
                 <div id="storyHistoryArea" style="margin-top:20px;">
-                    <h3>📜 Ton histoire :</h3>
-                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:15px; min-height: 50px; margin-bottom:10px;"></div>
-                    <button id="animateStoryBtn">🚀 Animer l'histoire</button>
+                    <h3>📜 Le livre de l'histoire de Méline :</h3>
+                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:15px; min-height: 80px; margin-bottom:10px; font-size:22px; line-height:1.6;"></div>
+                    <button id="animateStoryBtn">🚀 Écouter toute l'histoire</button>
+                    <button id="resetStoryBtn" style="background:linear-gradient(135deg, #7a1a1a, #4a0f0f); margin-left: 10px;">💫 Recommencer une nouvelle histoire</button>
                 </div>
-                <button id="resetStoryBtn" style="margin-top:15px;">💫 Réinitialiser</button>
             </div>
         </div>
     </div>
@@ -270,12 +269,10 @@
         "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite."
     ];
 
-    // ----- NETTOYAGE PONCTUATION POUR IA ET RECONNAISSANCE VOCALE -----
     function cleanPunctuation(str) {
         return str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~() France?¿¡]/g, "").replace(/\s+/g, " ").trim();
     }
 
-    // ----- SYLLABATION AMÉLIORÉE (Anti-lettre seule à la fin) -----
     function syllaberMot(mot) {
         let ponctuation = mot.match(/[.,!?;:…]+$/);
         let propre = ponctuation ? mot.slice(0, -ponctuation[0].length) : mot;
@@ -287,7 +284,6 @@
         for (let i = 0; i < propre.length; i++) {
             courant += propre[i];
             if (voyelles.includes(propre[i]) && i+1 < propre.length && !voyelles.includes(propre[i+1])) {
-                // Évite de couper si c'est la toute dernière lettre (ex: "chat" ne fera pas cha-t)
                 if (i + 2 < propre.length) {
                     syllabes.push(courant);
                     courant = "";
@@ -332,10 +328,11 @@
         } else alert("Sélectionne d'abord un mot avec ta souris !");
     };
 
-    // ----- HISTOIRE INTERACTIVE -----
-    let fullStory = "";
+    // ----- HISTOIRE INTERACTIVE EN CONTINU (CORRIGÉ) -----
+    let fullStory = localStorage.getItem('melinaFullStory') || "";
     let currentGeneratedPhrases = [];
     let recognition = null;
+    
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SR();
@@ -345,22 +342,40 @@
     
     function genererPhrases(mots) {
         let motsList = mots.split(/[ ,]+/).filter(m=>m.trim());
-        // Sécurité si Méline ne tape rien ou met des espaces vides
         if (!motsList.length) motsList = ["une comète", "un extraterrestre", "un robot"];
         if (!motsList[1]) motsList.push("un martien");
         if (!motsList[2]) motsList.push("une étoile magique");
         
-        return [
-            `Un jour, ${motsList[0]} apparut dans le ciel.`,
-            `Méline rencontra un ${motsList[1]} mystérieux.`,
-            `Ensemble, ils trouvèrent ${motsList[2]} cosmique.`
+        // Structures de phrases variées pour que la suite s'enchaîne de manière fluide
+        const structures = [
+            [
+                `Soudain, ${motsList[0]} traversa l'espace profond.`,
+                `Méline utilisa son radar pour observer ${motsList[1]}.`,
+                `C'est alors qu'un grand mystère entoura ${motsList[2]}.`
+            ],
+            [
+                `Plus loin dans la galaxie, on pouvait voir ${motsList[0]}.`,
+                `Méline et son équipage décidèrent d'apprivoiser ${motsList[1]}.`,
+                `Ils ouvrirent un coffre secret contenant ${motsList[2]}.`
+            ]
         ];
+        
+        // Si l'histoire est vide, on prend une structure de début, sinon une structure de suite
+        if (fullStory.trim() === "") {
+            return [
+                `Un jour, ${motsList[0]} apparut mystérieusement dans le ciel.`,
+                `Méline rencontra un ${motsList[1]} amical.`,
+                `Ensemble, ils partirent à la recherche de ${motsList[2]}.`
+            ];
+        } else {
+            return structures[Math.floor(Math.random() * structures.length)];
+        }
     }
     
     document.getElementById('generateStoryBtn')?.addEventListener('click', () => {
         let kw = document.getElementById('storyKeywords').value;
         currentGeneratedPhrases = genererPhrases(kw);
-        document.getElementById('generatedPhrasesList').innerHTML = currentGeneratedPhrases.map((p,i)=>`<p style="margin: 5px 0;">${i+1}. ${p}</p>`).join('');
+        document.getElementById('generatedPhrasesList').innerHTML = currentGeneratedPhrases.map((p,i)=>`<p style="margin: 5px 0; color: #ffb347;">✨ Phrase ${i+1} : ${p}</p>`).join('');
         document.getElementById('generatedPhrasesArea').style.display = "block";
         document.getElementById('voiceResult').innerHTML = "";
     });
@@ -368,36 +383,44 @@
     document.getElementById('startRecordingBtn')?.addEventListener('click', () => {
         if (!recognition) { alert("Désolé, la reconnaissance vocale n'est pas supportée sur ce navigateur."); return; }
         let last = currentGeneratedPhrases[currentGeneratedPhrases.length-1];
-        document.getElementById('voiceResult').innerHTML = "🎧 Écoute en cours... Parle maintenant.";
+        document.getElementById('voiceResult').innerHTML = "🎧 Écoute en cours... Méline, lis la troisième phrase à haute voix.";
         recognition.start();
         
         recognition.onresult = e => {
             let parole = e.results[0][0].transcript;
-            // Nettoyage de sécurité complet (accents + ponctuation) pour éviter les faux rejets
             let parolePropre = cleanPunctuation(parole.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
             let ciblePropre = cleanPunctuation(last.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
             
             if (parolePropre === ciblePropre) {
-                fullStory += currentGeneratedPhrases.join(" ") + "\n";
-                document.getElementById('storyFullHistory').innerHTML = fullStory.replace(/\n/g,'<br>');
+                // AJOUT EN CONTINU : On ajoute les nouvelles phrases au lieu de tout écraser
+                fullStory += " " + currentGeneratedPhrases.join(" ");
+                localStorage.setItem('melinaFullStory', fullStory);
+                
+                document.getElementById('storyFullHistory').innerHTML = fullStory;
                 document.getElementById('generatedPhrasesArea').style.display = "none";
-                document.getElementById('voiceResult').innerHTML = "✅ Super ! Histoire ajoutée !";
+                document.getElementById('voiceResult').innerHTML = "✅ Super ! Cette étape a été ajoutée à ton livre ! Tu peux changer les mots-clés pour écrire la suite.";
+                document.getElementById('storyKeywords').value = ""; // Vide la zone pour l'étape suivante
+                
                 let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
                 prog.histoiresCrees++;
                 localStorage.setItem('melinaProgress', JSON.stringify(prog));
                 updateStats();
             } else {
-                document.getElementById('voiceResult').innerHTML = `❌ Tu as dit : "${parole}". Réessaie bien la phrase 3 !`;
+                document.getElementById('voiceResult').innerHTML = `❌ Le micro a entendu : "${parole}". Réessaie de lire la phrase 3 en articulant bien !`;
             }
         };
-        recognition.onerror = () => { document.getElementById('voiceResult').innerHTML = "❌ Erreur de micro. Réessaie."; };
+        recognition.onerror = () => { document.getElementById('voiceResult').innerHTML = "❌ Erreur de micro. Réessaie bien."; };
     });
     
     document.getElementById('resetStoryBtn')?.addEventListener('click', () => {
-        fullStory = "";
-        document.getElementById('storyFullHistory').innerHTML = "";
-        document.getElementById('generatedPhrasesArea').style.display = "none";
-        document.getElementById('voiceResult').innerHTML = "";
+        if(confirm("Veux-tu vraiment effacer tout ton livre pour en recommencer un nouveau ?")) {
+            fullStory = "";
+            localStorage.removeItem('melinaFullStory');
+            document.getElementById('storyFullHistory').innerHTML = "";
+            document.getElementById('generatedPhrasesArea').style.display = "none";
+            document.getElementById('voiceResult').innerHTML = "";
+            document.getElementById('storyKeywords').value = "aventure";
+        }
     });
     
     document.getElementById('animateStoryBtn')?.addEventListener('click', () => {
@@ -406,9 +429,10 @@
         let idx = 0;
         function next() {
             if (idx >= phrases.length) return;
-            let u = new SpeechSynthesisUtterance(phrases[idx]);
+            let u = new SpeechSynthesisUtterance(phrases[idx].trim());
             u.lang = 'fr-FR';
-            u.onend = () => { idx++; setTimeout(next, 800); };
+            u.rate = 0.85;
+            u.onend = () => { idx++; setTimeout(next, 500); };
             synth.speak(u);
         }
         synth.cancel();
@@ -512,7 +536,6 @@
             updateStats();
             document.getElementById('hintBox').style.display = "none";
             
-            // Gain automatique de badge
             let badges = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
             if (prog.dictées >= 1 && !badges.includes("🚀 Fusée d'or")) badges.push("🚀 Fusée d'or");
             if (prog.dictées >= 5 && !badges.includes("🏆 Étoile filante")) badges.push("🏆 Étoile filante");
@@ -542,15 +565,12 @@
 
     function stepByStepMode() {
         if (!currentPhrase) return;
-        
-        // Fix : Nettoyer proprement le panneau s'il était déjà actif
         let panel = document.getElementById('stepByStepPanel');
         if (stepByStepActive) {
             panel.style.display = "none";
             stepByStepActive = false;
             return;
         }
-        
         stepByStepActive = true;
         wordsArray = currentPhrase.split(' ').filter(w=>w.trim());
         currentWordIndex = 0;
@@ -564,8 +584,6 @@
                     <button id="nextWordBtn" style="margin-right:10px;">➡️ Mot suivant</button>
                     <button id="cancelStepBtn">❌ Quitter</button>
                 `;
-                
-                // Fix boutons
                 document.getElementById('playWordBtn').onclick = () => { lire(wordsArray[currentWordIndex], 0.7); };
                 document.getElementById('nextWordBtn').onclick = () => {
                     currentWordIndex++;
@@ -581,7 +599,7 @@
         updatePanel();
     }
 
-    // ----- EXÉCUTION APRÈS CHARGEMENT COMPLET (Fix critique) -----
+    // ----- INITIALISATION -----
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('newDictPhrase')?.addEventListener('click', nouvellePhrase);
         document.getElementById('relistenDictPhrase')?.addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, parseFloat(document.getElementById('speedSlider').value)); });
@@ -591,7 +609,11 @@
         document.getElementById('hintButton')?.addEventListener('click', afficherIndice);
         document.getElementById('dictInput')?.addEventListener('input', updateColoration);
         
-        // Lancer la première phrase maintenant que tout est prêt
+        // Charger l'histoire sauvegardée s'il y en a une
+        if(fullStory) {
+            document.getElementById('storyFullHistory').innerHTML = fullStory;
+        }
+
         nouvellePhrase();
         updateDisplay();
         afficherMotsDifficiles();
@@ -600,7 +622,6 @@
         applySettings();
     });
 
-    // ----- SUGGESTIONS ORTHOGRAPHIQUES -----
     window.suggererCorrections = function() {
         let texte = inputText.value;
         let mots = texte.split(/\s+/);
@@ -636,7 +657,6 @@
         lirePhrase();
     };
 
-    // ----- MOTS DIFFICILES -----
     function afficherMotsDifficiles() {
         let div = document.getElementById('hardWordsList');
         if (!div) return;
@@ -649,7 +669,6 @@
         afficherMotsDifficiles();
     });
 
-    // ----- BADGES -----
     function afficherBadges() {
         let owned = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
         let container = document.getElementById('badgeCollection');
@@ -665,130 +684,14 @@
         afficherBadges();
     };
 
-    // ----- PROGRÈS -----
     function updateStats() {
         let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
         let statsDiv = document.getElementById('stats');
-        if (statsDiv) statsDiv.innerHTML = `🚀 Dictées réussies : <strong>${prog.dictées}</strong><br>📖 Histoires créées : <strong>${prog.histoiresCrees}</strong>`;
+        if (statsDiv) statsDiv.innerHTML = `🚀 Dictées réussies : <strong>${prog.dictées}</strong><br>📖 Étapes d'histoires créées : <strong>${prog.histoiresCrees}</strong>`;
     }
     document.getElementById('resetProgress')?.addEventListener('click', () => {
         localStorage.setItem('melinaProgress', JSON.stringify({dictées: 0, histoiresCrees: 0}));
         updateStats();
     });
     document.getElementById('exportPDF')?.addEventListener('click', () => {
-        let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees":0}');
-        let hard = hardWords.length > 0 ? hardWords.join(', ') : "Aucun mot difficile";
-        let content = `Rapport d'activité de Méline\n\nDictées réussies : ${prog.dictées}\nHistoires créées : ${prog.histoiresCrees}\nMots clés à retravailler : ${hard}\nDate du suivi : ${new Date().toLocaleDateString()}`;
-        let win = window.open();
-        win.document.write(`<html><head><title>Progrès de Méline</title></head><body style="font-family:sans-serif; padding:40px;"><pre style="font-size:16px; line-height:1.6;">${content}</pre></body></html>`);
-        win.print();
-    });
-
-    // ----- RÉGLAGES -----
-    function applySettings() {
-        let font = document.getElementById('fontSelect').value;
-        let fontFamily = font === 'OpenDyslexic' ? "'OpenDyslexic', sans-serif" : font === 'Andika' ? "'Andika', sans-serif" : font === 'Lexend' ? "'Lexend', sans-serif" : "'Comic Neue', cursive";
-        document.body.style.fontFamily = fontFamily;
-        let spacing = document.getElementById('letterSpacing').value;
-        document.body.style.letterSpacing = spacing + 'px';
-        localStorage.setItem('melinaFont', font);
-        localStorage.setItem('melinaSpacing', spacing);
-    }
-    document.getElementById('saveSettings')?.addEventListener('click', applySettings);
-    let savedFont = localStorage.getItem('melinaFont');
-    if (savedFont && document.getElementById('fontSelect')) document.getElementById('fontSelect').value = savedFont;
-    let savedSpacing = localStorage.getItem('melinaSpacing');
-    if (savedSpacing && document.getElementById('letterSpacing')) document.getElementById('letterSpacing').value = savedSpacing;
-
-    // ----- INTERACTIONS DE CLICS -----
-    outputDiv?.addEventListener('click', () => {
-        let selection = window.getSelection().toString().trim();
-        if (selection) lire(selection, 0.7);
-    });
-    document.getElementById('coloredDictDisplay')?.addEventListener('click', () => {
-        let selection = window.getSelection().toString().trim();
-        if (selection) lire(selection, 0.7);
-    });
-
-    // ----- NAVIGATION ONGLETS -----
-    const tabs = document.querySelectorAll('.tab-button');
-    const contents = document.querySelectorAll('.tab-content');
-    tabs.forEach(btn => {
-        btn.addEventListener('click', () => {
-            let id = btn.getAttribute('data-tab');
-            contents.forEach(c => c.classList.remove('active'));
-            tabs.forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-        });
-    });
-
-    // ----- CANVAS EFFETS (Étoiles filantes & Planètes) -----
-    const overlayCanvas = document.getElementById('overlay-canvas');
-    const overlayCtx = overlayCanvas.getContext('2d');
-    let overlayWidth, overlayHeight;
-    function resizeOverlay() {
-        overlayWidth = window.innerWidth;
-        overlayHeight = window.innerHeight;
-        overlayCanvas.width = overlayWidth;
-        overlayCanvas.height = overlayHeight;
-    }
-    window.addEventListener('resize', resizeOverlay);
-    resizeOverlay();
-
-    let shootingStarsOverlay = [];
-    let planetsOverlay = [];
-
-    for (let i = 0; i < 3; i++) {
-        planetsOverlay.push({
-            x: Math.random() * overlayWidth,
-            y: Math.random() * overlayHeight,
-            radius: Math.random() * 20 + 15,
-            color: `hsla(${Math.random() * 60 + 20}, 70%, 60%, 0.3)`,
-            blur: Math.random() * 6 + 4
-        });
-    }
-
-    function addShootingStar() {
-        shootingStarsOverlay.push({
-            x: Math.random() * overlayWidth,
-            y: Math.random() * overlayHeight * 0.3,
-            length: Math.random() * 120 + 80,
-            speedX: Math.random() * 8 + 4,
-            speedY: Math.random() * 6 + 2,
-            alpha: 1,
-            width: Math.random() * 2 + 1
-        });
-    }
-    setInterval(() => { if (Math.random() < 0.3) addShootingStar(); }, 4000);
-
-    function drawOverlay() {
-        overlayCtx.clearRect(0, 0, overlayWidth, overlayHeight);
-        planetsOverlay.forEach(p => {
-            overlayCtx.shadowBlur = p.blur;
-            overlayCtx.shadowColor = "rgba(255,255,200,0.2)";
-            overlayCtx.fillStyle = p.color;
-            overlayCtx.beginPath();
-            overlayCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            overlayCtx.fill();
-        });
-        overlayCtx.shadowBlur = 0;
-        for (let i = shootingStarsOverlay.length-1; i >= 0; i--) {
-            let s = shootingStarsOverlay[i];
-            overlayCtx.beginPath();
-            overlayCtx.moveTo(s.x, s.y);
-            overlayCtx.lineTo(s.x - s.length, s.y - s.length * 0.5);
-            overlayCtx.strokeStyle = `rgba(255, 240, 200, ${s.alpha})`;
-            overlayCtx.lineWidth = s.width;
-            overlayCtx.stroke();
-            s.x += s.speedX;
-            s.y += s.speedY;
-            s.alpha -= 0.01;
-            if (s.alpha <= 0 || s.x > overlayWidth + 200 || s.y > overlayHeight + 200) shootingStarsOverlay.splice(i,1);
-        }
-        requestAnimationFrame(drawOverlay);
-    }
-    drawOverlay();
-</script>
-</body>
-</html>
+        let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees
