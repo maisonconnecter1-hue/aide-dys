@@ -48,7 +48,7 @@
             background: rgba(5,10,30,0.6);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,215,0,0.4);
-            padding: 0 20px;
+            padding: 10px 20px;
             gap: 8px;
             flex-wrap: wrap;
         }
@@ -109,19 +109,22 @@
             font-weight: bold;
             transition: 0.2s;
             border: 1px solid rgba(255,215,0,0.5);
+            margin: 5px 0;
         }
         button:hover { transform: scale(1.02); background: linear-gradient(135deg, #2c4a7a, #1a2a4a); box-shadow: 0 0 15px gold; }
         .correct-char { color: #2ecc71; text-shadow: 0 0 5px #27ae60; }
         .incorrect-char { color: #e74c3c; text-shadow: 0 0 3px #c0392b; }
         .colored-dict-output { background: rgba(10,20,45,0.8); backdrop-filter: blur(8px); border-radius: 30px; padding: 20px; font-size: 28px; line-height: 1.8; border: 1px solid #4ecdc4; margin-top: 10px; cursor: pointer; }
         .hint-box { background: #1e2a4acc; border-radius: 20px; padding: 15px; margin-top: 15px; border-left: 5px solid #f1c40f; backdrop-filter: blur(8px); }
-        .badge { display: inline-block; font-size: 2rem; margin: 5px; cursor: pointer; transition: 0.2s; filter: grayscale(1); opacity: 0.4; }
-        .badge.selected { transform: scale(1.1); filter: grayscale(0); opacity: 1; drop-shadow: 0 0 8px gold; }
-        .speed-control { margin: 10px 0; display: flex; gap: 10px; align-items: center; justify-content: center; }
+        .badge { display: inline-block; font-size: 2rem; margin: 5px; cursor: pointer; transition: 0.2s; opacity: 0.3; filter: grayscale(1); }
+        .badge.selected { transform: scale(1.2); filter: grayscale(0); opacity: 1; filter: drop-shadow(0 0 8px gold); }
+        .speed-control { margin: 10px 0; display: flex; gap: 10px; align-items: center; }
         .mouth-animation { width: 60px; height: 60px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23f5cba0"/><ellipse cx="35" cy="40" rx="6" ry="8" fill="white"/><ellipse cx="65" cy="40" rx="6" ry="8" fill="white"/><ellipse cx="35" cy="40" rx="3" ry="5" fill="black"/><ellipse cx="65" cy="40" rx="3" ry="5" fill="black"/><ellipse cx="50" cy="65" rx="15" ry="8" fill="%23993333" id="mouth"/></svg>') no-repeat center/contain; margin: 0 auto; }
         @keyframes speak { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
         .speaking .mouth-animation { animation: speak 0.3s infinite; }
+        .toggle-container { display: flex; align-items: center; gap: 10px; font-size: 18px; color: #c9e9ff; margin: 5px 15px; }
         footer { text-align: center; font-size: 14px; padding: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-top: 1px solid #2c3e66; }
+        @media (max-width: 700px) { .zone { width: 95%; } textarea, .colored-dict-output { font-size: 20px; } button { padding: 6px 12px; font-size: 12px; } }
     </style>
 </head>
 <body>
@@ -145,15 +148,20 @@
         <div class="editor-container">
             <div class="zone"><textarea id="input-text" placeholder="Écris ton histoire, Méline..."></textarea></div>
             <div class="zone"><div id="output-display" style="min-height:120px; background:rgba(10,20,45,0.8); backdrop-filter:blur(8px); border-radius:30px; padding:20px; cursor:pointer;"></div></div>
+            
+            <div class="zone" id="correction-box" style="display:none; background:rgba(74,20,20,0.8); border-left:5px solid #e74c3c; border-radius:15px; padding:15px; font-size:20px;"></div>
+            
             <div class="toolbar">
+                <div class="toggle-container">
+                    <input type="checkbox" id="auto-color-toggle" style="width:20px; height:20px; cursor:pointer;">
+                    <label name="auto-color-toggle" style="cursor:pointer;">🎨 Syllabes auto</label>
+                </div>
                 <button onclick="insererPhraseAleatoire()">🌟 Phrase au hasard</button>
-                <button onclick="colorerSyllabes()">🎨 Colorer syllabes</button>
-                <button onclick="lireMotSelectionne()">🔊 Lire mot sélectionné</button>
+                <button onclick="lireMotSelectionne()">🔊 Lire sélection</button>
                 <button onclick="changerTaille(2)">🔭 Agrandir</button>
                 <button onclick="changerTaille(-2)">🔭 Réduire</button>
-                <button onclick="reinitialiserAffichage()">🪐 Texte brut</button>
                 <button onclick="relectureGuidee()">🧠 Relecture guidée</button>
-                <button onclick="suggererCorrections()">📝 Suggérer corrections</button>
+                <button onclick="suggererCorrections()">📝 Aide Orthographe</button>
             </div>
         </div>
     </div>
@@ -161,21 +169,23 @@
     <div id="histoire" class="tab-content">
         <div class="editor-container">
             <div class="zone">
-                <label>📝 Entre tes mots-clés pour la suite de l'aventure :</label>
+                <label style="font-size:20px; display:block; margin-bottom:10px;">📝 Entre tes mots-clés :</label>
                 <input type="text" id="storyKeywords" class="story-keywords" placeholder="ex: supernova, galaxie" value="aventure">
-                <button id="generateStoryBtn">✨ Générer l'étape suivante (3 phrases)</button>
+                <button id="generateStoryBtn">✨ Générer 3 phrases</button>
                 
-                <div id="generatedPhrasesArea" style="display:none; background:rgba(10,20,45,0.8); border-radius:30px; padding:20px; margin:15px 0;">
-                    <div id="generatedPhrasesList"></div>
-                    <button id="startRecordingBtn">🎙️ Lire la phrase 3 pour valider la suite</button>
-                    <div id="voiceResult" style="margin-top: 10px; font-weight: bold;"></div>
+                <div id="generatedPhrasesArea" style="display:none; background:rgba(10,20,45,0.8); border-radius:30px; padding:20px; margin:15px 0; border: 1px solid #f1c40f;">
+                    <div id="generatedPhrasesList" style="font-size: 22px; line-height: 1.6; margin-bottom: 15px;"></div>
+                    <button id="startRecordingBtn">🎙️ Lire la dernière phrase pour valider</button>
+                    <div id="voiceResult" style="margin-top:10px; font-weight:bold; color:#ffecb3;"></div>
                 </div>
                 
-                <div id="storyHistoryArea" style="margin-top:20px;">
-                    <h3>📜 Le livre de l'histoire de Méline :</h3>
-                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:15px; min-height: 80px; margin-bottom:10px; font-size:22px; line-height:1.6;"></div>
-                    <button id="animateStoryBtn">🚀 Écouter toute l'histoire</button>
-                    <button id="resetStoryBtn" style="background:linear-gradient(135deg, #7a1a1a, #4a0f0f); margin-left: 10px;">💫 Recommencer une nouvelle histoire</button>
+                <div id="storyHistoryArea" style="margin-top:30px;">
+                    <h3 style="color:#4ecdc4; margin-bottom:10px;">📜 Ton grand livre d'histoire :</h3>
+                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:20px; min-height:100px; font-size:24px; line-height:1.7; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div style="margin-top:15px;">
+                        <button id="animateStoryBtn">🚀 Écouter tout</button>
+                        <button id="resetStoryBtn" style="background:linear-gradient(135deg, #7a1a1a, #4a0f0f); margin-left:10px;">💫 Recommencer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,7 +216,7 @@
                 <div id="coloredDictDisplay" class="colored-dict-output"></div>
                 <div id="dictFeedback" style="margin-top:10px; font-weight:bold;"></div>
                 <div id="hintBox" class="hint-box" style="display:none;"></div>
-                <div id="stepByStepPanel" style="display:none; background:rgba(0,0,0,0.7); border-radius:20px; padding:15px; margin-top:15px; text-align:center;"></div>
+                <div id="stepByStepPanel" style="display:none; background:rgba(0,0,0,0.8); border-radius:20px; padding:20px; margin-top:15px; text-align:center;"></div>
             </div>
         </div>
     </div>
@@ -222,476 +232,3 @@
             <button id="resetProgress">Réinitialiser tous les progrès</button>
         </div></div>
     </div>
-
-    <div id="settings" class="tab-content">
-        <div class="editor-container"><div class="zone"><h2>⚙️ Personnalisation</h2>
-            <div style="margin:20px 0; display:flex; flex-direction:column; gap:15px;">
-                <div>
-                    <label>Police : </label>
-                    <select id="fontSelect" style="padding:5px; font-family:inherit;"><option value="OpenDyslexic">OpenDyslexic</option><option value="Andika">Andika</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select>
-                </div>
-                <div>
-                    <label>Espacement des lettres (px) : </label>
-                    <input type="range" id="letterSpacing" min="0" max="5" step="0.5" value="1">
-                </div>
-                <div>
-                    <label>Mode comparaison dictée : </label>
-                    <select id="compareMode" style="padding:5px;"><option value="strict">Strict (Prend en compte les accents)</option><option value="tolérant">Tolérant (Ignore les accents)</option></select>
-                </div>
-            </div>
-            <button id="saveSettings">💾 Sauvegarder</button>
-        </div></div>
-    </div>
-
-    <div id="badges" class="tab-content">
-        <div class="editor-container"><div class="zone"><h2>🏅 Mes badges spatiaux</h2>
-            <div id="badgeCollection" style="margin:20px 0;"></div>
-            <p>Les badges s'allument quand tu les gagnes ! Clique dessus pour les activer manuellement.</p>
-        </div></div>
-    </div>
-    <footer>🌌 Thème spatial réaliste • Conçu pour Méline</footer>
-</div>
-
-<script>
-    // ----- VARIABLES GLOBALES -----
-    let synth = window.speechSynthesis;
-    let currentPhrase = "";
-    let stepByStepActive = false;
-    let currentWordIndex = 0;
-    let wordsArray = [];
-    let hardWords = JSON.parse(localStorage.getItem('melinaHardWords') || '[]');
-    let availableBadges = ["🚀 Fusée d'or","🏆 Étoile filante","🪐 Planète Saturne","🌠 Nébuleuse","👩‍🚀 Astronaute"];
-
-    const allPhrases = [
-        "Le chat dort.", "Le ciel est étoilé.", "Il fait beau sur Mars.", "Je mange une pomme.", "La fusée décolle.",
-        "La nébuleuse est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
-        "Le vaisseau est rouge.", "Il y a du soleil.", "La mer est calme.", "Le poisson nage bien.", "Je joue au ballon.",
-        "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite."
-    ];
-
-    function cleanPunctuation(str) {
-        return str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~() France?¿¡]/g, "").replace(/\s+/g, " ").trim();
-    }
-
-    function syllaberMot(mot) {
-        let ponctuation = mot.match(/[.,!?;:…]+$/);
-        let propre = ponctuation ? mot.slice(0, -ponctuation[0].length) : mot;
-        if (!propre) return [mot];
-        let voyelles = "aeiouyâàäéèêëôîïûùüÿ";
-        let syllabes = [];
-        let courant = "";
-        
-        for (let i = 0; i < propre.length; i++) {
-            courant += propre[i];
-            if (voyelles.includes(propre[i]) && i+1 < propre.length && !voyelles.includes(propre[i+1])) {
-                if (i + 2 < propre.length) {
-                    syllabes.push(courant);
-                    courant = "";
-                }
-            }
-        }
-        if (courant) syllabes.push(courant);
-        if (ponctuation) syllabes[syllabes.length-1] += ponctuation[0];
-        return syllabes;
-    }
-
-    function colorerTexte(texte) {
-        return texte.split(/\r?\n/).map(ligne => ligne.split(/(\s+)/).map(elem => {
-            if (elem.trim() === "") return elem;
-            let syll = syllaberMot(elem);
-            return syll.map((s,i) => `<span style="color:${i%2===0?'#7df9ff':'#ffb347'}">${s}</span>`).join('');
-        }).join('')).join('\n');
-    }
-
-    // ----- ÉCRITURE LIBRE -----
-    let modeColorie = false;
-    let currentSize = 24;
-    const inputText = document.getElementById('input-text');
-    const outputDiv = document.getElementById('output-display');
-
-    function updateDisplay() {
-        let txt = inputText.value;
-        if (modeColorie) outputDiv.innerHTML = colorerTexte(txt);
-        else outputDiv.innerHTML = txt.replace(/\n/g,'<br>');
-    }
-    if(inputText) inputText.addEventListener('input', updateDisplay);
-    window.colorerSyllabes = function() { modeColorie = true; updateDisplay(); };
-    window.reinitialiserAffichage = function() { modeColorie = false; updateDisplay(); };
-    window.changerTaille = function(delta) { currentSize += delta; if(currentSize<12) currentSize=12; if(currentSize>48) currentSize=48; inputText.style.fontSize = currentSize+'px'; outputDiv.style.fontSize = currentSize+'px'; };
-    window.insererPhraseAleatoire = function() { inputText.value = allPhrases[Math.floor(Math.random()*allPhrases.length)]; updateDisplay(); };
-    window.lireMotSelectionne = function() {
-        let sel = window.getSelection().toString().trim();
-        if(sel) {
-            let u = new SpeechSynthesisUtterance(sel);
-            u.lang = 'fr-FR';
-            synth.speak(u);
-        } else alert("Sélectionne d'abord un mot avec ta souris !");
-    };
-
-    // ----- HISTOIRE INTERACTIVE EN CONTINU (CORRIGÉ) -----
-    let fullStory = localStorage.getItem('melinaFullStory') || "";
-    let currentGeneratedPhrases = [];
-    let recognition = null;
-    
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SR();
-        recognition.lang = 'fr-FR';
-        recognition.continuous = false;
-    }
-    
-    function genererPhrases(mots) {
-        let motsList = mots.split(/[ ,]+/).filter(m=>m.trim());
-        if (!motsList.length) motsList = ["une comète", "un extraterrestre", "un robot"];
-        if (!motsList[1]) motsList.push("un martien");
-        if (!motsList[2]) motsList.push("une étoile magique");
-        
-        // Structures de phrases variées pour que la suite s'enchaîne de manière fluide
-        const structures = [
-            [
-                `Soudain, ${motsList[0]} traversa l'espace profond.`,
-                `Méline utilisa son radar pour observer ${motsList[1]}.`,
-                `C'est alors qu'un grand mystère entoura ${motsList[2]}.`
-            ],
-            [
-                `Plus loin dans la galaxie, on pouvait voir ${motsList[0]}.`,
-                `Méline et son équipage décidèrent d'apprivoiser ${motsList[1]}.`,
-                `Ils ouvrirent un coffre secret contenant ${motsList[2]}.`
-            ]
-        ];
-        
-        // Si l'histoire est vide, on prend une structure de début, sinon une structure de suite
-        if (fullStory.trim() === "") {
-            return [
-                `Un jour, ${motsList[0]} apparut mystérieusement dans le ciel.`,
-                `Méline rencontra un ${motsList[1]} amical.`,
-                `Ensemble, ils partirent à la recherche de ${motsList[2]}.`
-            ];
-        } else {
-            return structures[Math.floor(Math.random() * structures.length)];
-        }
-    }
-    
-    document.getElementById('generateStoryBtn')?.addEventListener('click', () => {
-        let kw = document.getElementById('storyKeywords').value;
-        currentGeneratedPhrases = genererPhrases(kw);
-        document.getElementById('generatedPhrasesList').innerHTML = currentGeneratedPhrases.map((p,i)=>`<p style="margin: 5px 0; color: #ffb347;">✨ Phrase ${i+1} : ${p}</p>`).join('');
-        document.getElementById('generatedPhrasesArea').style.display = "block";
-        document.getElementById('voiceResult').innerHTML = "";
-    });
-    
-    document.getElementById('startRecordingBtn')?.addEventListener('click', () => {
-        if (!recognition) { alert("Désolé, la reconnaissance vocale n'est pas supportée sur ce navigateur."); return; }
-        let last = currentGeneratedPhrases[currentGeneratedPhrases.length-1];
-        document.getElementById('voiceResult').innerHTML = "🎧 Écoute en cours... Méline, lis la troisième phrase à haute voix.";
-        recognition.start();
-        
-        recognition.onresult = e => {
-            let parole = e.results[0][0].transcript;
-            let parolePropre = cleanPunctuation(parole.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
-            let ciblePropre = cleanPunctuation(last.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
-            
-            if (parolePropre === ciblePropre) {
-                // AJOUT EN CONTINU : On ajoute les nouvelles phrases au lieu de tout écraser
-                fullStory += " " + currentGeneratedPhrases.join(" ");
-                localStorage.setItem('melinaFullStory', fullStory);
-                
-                document.getElementById('storyFullHistory').innerHTML = fullStory;
-                document.getElementById('generatedPhrasesArea').style.display = "none";
-                document.getElementById('voiceResult').innerHTML = "✅ Super ! Cette étape a été ajoutée à ton livre ! Tu peux changer les mots-clés pour écrire la suite.";
-                document.getElementById('storyKeywords').value = ""; // Vide la zone pour l'étape suivante
-                
-                let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
-                prog.histoiresCrees++;
-                localStorage.setItem('melinaProgress', JSON.stringify(prog));
-                updateStats();
-            } else {
-                document.getElementById('voiceResult').innerHTML = `❌ Le micro a entendu : "${parole}". Réessaie de lire la phrase 3 en articulant bien !`;
-            }
-        };
-        recognition.onerror = () => { document.getElementById('voiceResult').innerHTML = "❌ Erreur de micro. Réessaie bien."; };
-    });
-    
-    document.getElementById('resetStoryBtn')?.addEventListener('click', () => {
-        if(confirm("Veux-tu vraiment effacer tout ton livre pour en recommencer un nouveau ?")) {
-            fullStory = "";
-            localStorage.removeItem('melinaFullStory');
-            document.getElementById('storyFullHistory').innerHTML = "";
-            document.getElementById('generatedPhrasesArea').style.display = "none";
-            document.getElementById('voiceResult').innerHTML = "";
-            document.getElementById('storyKeywords').value = "aventure";
-        }
-    });
-    
-    document.getElementById('animateStoryBtn')?.addEventListener('click', () => {
-        if (!fullStory.trim()) return;
-        let phrases = fullStory.match(/[^.!?]+[.!?]+/g) || [fullStory];
-        let idx = 0;
-        function next() {
-            if (idx >= phrases.length) return;
-            let u = new SpeechSynthesisUtterance(phrases[idx].trim());
-            u.lang = 'fr-FR';
-            u.rate = 0.85;
-            u.onend = () => { idx++; setTimeout(next, 500); };
-            synth.speak(u);
-        }
-        synth.cancel();
-        next();
-    });
-
-    // ----- DICTÉE VOCALE -----
-    function lire(texte, speed = 0.85) {
-        synth.cancel();
-        let u = new SpeechSynthesisUtterance(texte);
-        u.lang = 'fr-FR';
-        u.rate = speed;
-        let mouthParent = document.getElementById('mouthAnim')?.parentElement;
-        if (mouthParent) mouthParent.classList.add('speaking');
-        u.onend = () => { if (mouthParent) mouthParent.classList.remove('speaking'); };
-        synth.speak(u);
-    }
-
-    function normalize(str, mode) {
-        if (mode === 'tolérant') return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        return str;
-    }
-
-    function updateColoration() {
-        let saisie = document.getElementById('dictInput').value;
-        let mode = document.getElementById('compareMode').value;
-        if (!currentPhrase) return;
-        let html = "";
-        for (let i = 0; i < saisie.length; i++) {
-            let c = saisie[i];
-            if (i < currentPhrase.length) {
-                let ok = normalize(c, mode) === normalize(currentPhrase[i], mode);
-                html += `<span class="${ok ? 'correct-char' : 'incorrect-char'}">${c}</span>`;
-            } else html += `<span class="incorrect-char">${c}</span>`;
-        }
-        if (saisie.length < currentPhrase.length) html += ` <span style="opacity:0.5; color:#c9e9ff;">(il manque ${currentPhrase.length - saisie.length} lettres)</span>`;
-        document.getElementById('coloredDictDisplay').innerHTML = html;
-    }
-
-    function ajouterMotDifficile(mot) {
-        let propre = mot.replace(/[.,!?;:]/g, "");
-        if (propre.length > 1 && !hardWords.includes(propre)) {
-            hardWords.push(propre);
-            localStorage.setItem('melinaHardWords', JSON.stringify(hardWords));
-            afficherMotsDifficiles();
-        }
-    }
-
-    function extraireMotsErreurs(saisie, cible, mode) {
-        let motsSaisie = saisie.split(/\s+/);
-        let motsCible = cible.split(/\s+/);
-        let erreurs = [];
-        for (let i = 0; i < Math.min(motsSaisie.length, motsCible.length); i++) {
-            if (normalize(motsSaisie[i], mode) !== normalize(motsCible[i], mode)) {
-                erreurs.push(motsCible[i]);
-            }
-        }
-        return [...new Set(erreurs)];
-    }
-
-    function genererIndice(saisie, cible, mode) {
-        let indices = [];
-        let ns = normalize(saisie, mode);
-        let nc = normalize(cible, mode);
-        if (ns === nc && saisie !== cible) {
-            indices.push("Regarde bien les majuscules ou les accents !");
-        } else if (saisie.length < cible.length) {
-            let i = 0;
-            while (i < saisie.length && normalize(saisie[i], mode) === normalize(cible[i], mode)) i++;
-            if (i < cible.length) indices.push(`Il manque une lettre après "${saisie.substring(0,i)}".`);
-        } else if (saisie.length > cible.length) {
-            indices.push("C'est un peu trop long, regarde s'il n'y a pas des lettres en trop.");
-        } else {
-            indices.push("Il y a une petite erreur de lettres quelque part, écoute bien.");
-        }
-        return indices[0] || "Réécoute la phrase tranquillement.";
-    }
-
-    function afficherIndice() {
-        let saisie = document.getElementById('dictInput').value;
-        if (!currentPhrase || !saisie.trim()) {
-            document.getElementById('hintBox').innerHTML = "✏️ Écris d'abord quelque chose avant de demander un indice.";
-            document.getElementById('hintBox').style.display = "block";
-            return;
-        }
-        let mode = document.getElementById('compareMode').value;
-        let indice = genererIndice(saisie, currentPhrase, mode);
-        document.getElementById('hintBox').innerHTML = `💡 Indice : ${indice}`;
-        document.getElementById('hintBox').style.display = "block";
-    }
-
-    function verifierAvecAudioEtIndices() {
-        let saisie = document.getElementById('dictInput').value;
-        let mode = document.getElementById('compareMode').value;
-        if (normalize(saisie.trim(), mode) === normalize(currentPhrase.trim(), mode)) {
-            document.getElementById('dictFeedback').innerHTML = "🎉 Parfait ! Tu as réussi ! 🎉";
-            lire(`Bravo Méline ! C'est exactement ça.`);
-            let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees":0}');
-            prog.dictées++;
-            localStorage.setItem('melinaProgress', JSON.stringify(prog));
-            updateStats();
-            document.getElementById('hintBox').style.display = "none";
-            
-            let badges = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
-            if (prog.dictées >= 1 && !badges.includes("🚀 Fusée d'or")) badges.push("🚀 Fusée d'or");
-            if (prog.dictées >= 5 && !badges.includes("🏆 Étoile filante")) badges.push("🏆 Étoile filante");
-            localStorage.setItem('melinaBadges', JSON.stringify(badges));
-            afficherBadges();
-        } else {
-            let indice = genererIndice(saisie, currentPhrase, mode);
-            document.getElementById('dictFeedback').innerHTML = `❌ Oups, regarde l'indice pour corriger !`;
-            document.getElementById('hintBox').innerHTML = `💡 Indice : ${indice}`;
-            document.getElementById('hintBox').style.display = "block";
-            let motsErreurs = extraireMotsErreurs(saisie, currentPhrase, mode);
-            motsErreurs.forEach(mot => ajouterMotDifficile(mot));
-        }
-    }
-
-    function nouvellePhrase() {
-        currentPhrase = allPhrases[Math.floor(Math.random() * allPhrases.length)];
-        let speed = parseFloat(document.getElementById('speedSlider').value);
-        lire(currentPhrase, speed);
-        document.getElementById('dictInput').value = "";
-        document.getElementById('coloredDictDisplay').innerHTML = "";
-        document.getElementById('dictFeedback').innerHTML = "";
-        document.getElementById('hintBox').style.display = "none";
-        stepByStepActive = false;
-        document.getElementById('stepByStepPanel').style.display = "none";
-    }
-
-    function stepByStepMode() {
-        if (!currentPhrase) return;
-        let panel = document.getElementById('stepByStepPanel');
-        if (stepByStepActive) {
-            panel.style.display = "none";
-            stepByStepActive = false;
-            return;
-        }
-        stepByStepActive = true;
-        wordsArray = currentPhrase.split(' ').filter(w=>w.trim());
-        currentWordIndex = 0;
-        panel.style.display = "block";
-        
-        function updatePanel() {
-            if (currentWordIndex < wordsArray.length) {
-                panel.innerHTML = `
-                    <p style="font-size:20px; margin-bottom:10px;">Mot ${currentWordIndex+1}/${wordsArray.length}</p>
-                    <button id="playWordBtn" style="margin-right:10px;">🔊 Écouter le mot</button>
-                    <button id="nextWordBtn" style="margin-right:10px;">➡️ Mot suivant</button>
-                    <button id="cancelStepBtn">❌ Quitter</button>
-                `;
-                document.getElementById('playWordBtn').onclick = () => { lire(wordsArray[currentWordIndex], 0.7); };
-                document.getElementById('nextWordBtn').onclick = () => {
-                    currentWordIndex++;
-                    if (currentWordIndex < wordsArray.length) updatePanel();
-                    else {
-                        panel.innerHTML = "<p>✅ C'était le dernier mot ! À toi d'écrire.</p><button id='closeStepPanel' style='margin-top:10px;'>Fermer</button>";
-                        document.getElementById('closeStepPanel').onclick = () => { panel.style.display = "none"; stepByStepActive = false; };
-                    }
-                };
-                document.getElementById('cancelStepBtn').onclick = () => { panel.style.display = "none"; stepByStepActive = false; };
-            }
-        }
-        updatePanel();
-    }
-
-    // ----- INITIALISATION -----
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('newDictPhrase')?.addEventListener('click', nouvellePhrase);
-        document.getElementById('relistenDictPhrase')?.addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, parseFloat(document.getElementById('speedSlider').value)); });
-        document.getElementById('slowReplay')?.addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, 0.55); });
-        document.getElementById('stepByStepBtn')?.addEventListener('click', stepByStepMode);
-        document.getElementById('checkDictAudio')?.addEventListener('click', verifierAvecAudioEtIndices);
-        document.getElementById('hintButton')?.addEventListener('click', afficherIndice);
-        document.getElementById('dictInput')?.addEventListener('input', updateColoration);
-        
-        // Charger l'histoire sauvegardée s'il y en a une
-        if(fullStory) {
-            document.getElementById('storyFullHistory').innerHTML = fullStory;
-        }
-
-        nouvellePhrase();
-        updateDisplay();
-        afficherMotsDifficiles();
-        afficherBadges();
-        updateStats();
-        applySettings();
-    });
-
-    window.suggererCorrections = function() {
-        let texte = inputText.value;
-        let mots = texte.split(/\s+/);
-        let dico = ["chat", "ciel", "bleu", "maison", "école", "maman", "papa", "fusée", "étoile", "planète", "soleil", "lune", "vaisseau", "mars"];
-        let corrections = {};
-        mots.forEach(mot => {
-            let motClean = mot.toLowerCase().replace(/[.,!?;:]$/, '');
-            if (!dico.includes(motClean) && motClean.length > 2) {
-                let suggestion = dico.find(d => d.startsWith(motClean[0]) && Math.abs(d.length - motClean.length) <= 2);
-                if (suggestion) corrections[mot] = suggestion;
-            }
-        });
-        if (Object.keys(corrections).length) {
-            let msg = "📝 Aide magique : " + Object.entries(corrections).map(([m,s])=>`${m} → ${s}`).join(", ");
-            alert(msg);
-        } else alert("Pas de suggestion trouvée. C'est très bien écrit !");
-    };
-
-    window.relectureGuidee = function() {
-        let texte = inputText.value;
-        if (!texte.trim()) return;
-        let phrases = texte.split(/[.!?]+/);
-        let idx = 0;
-        function lirePhrase() {
-            if (idx >= phrases.length || !phrases[idx].trim()) return;
-            let u = new SpeechSynthesisUtterance(phrases[idx].trim() + ".");
-            u.lang = 'fr-FR';
-            u.rate = 0.8;
-            u.onend = () => { idx++; setTimeout(lirePhrase, 1000); };
-            synth.speak(u);
-        }
-        synth.cancel();
-        lirePhrase();
-    };
-
-    function afficherMotsDifficiles() {
-        let div = document.getElementById('hardWordsList');
-        if (!div) return;
-        if(hardWords.length === 0) { div.innerHTML = "<em>Aucun mot pour l'instant !</em>"; return;}
-        div.innerHTML = hardWords.map(w => `<span style="display:inline-block; margin:5px; padding:8px 12px; background:#1e2a4a; border-radius:20px;">${w} <button style="padding:2px 8px; font-size:14px;" onclick="lire('${w}', 0.7)">🔊</button></span>`).join('');
-    }
-    document.getElementById('resetHardWords')?.addEventListener('click', () => {
-        hardWords = [];
-        localStorage.setItem('melinaHardWords', '[]');
-        afficherMotsDifficiles();
-    });
-
-    function afficherBadges() {
-        let owned = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
-        let container = document.getElementById('badgeCollection');
-        if (container) {
-            container.innerHTML = availableBadges.map(b => `<div class="badge ${owned.includes(b) ? 'selected' : ''}" onclick="toggleBadge('${b}')">${b}</div>`).join('');
-        }
-    }
-    window.toggleBadge = function(badge) {
-        let owned = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
-        if (owned.includes(badge)) owned = owned.filter(b => b !== badge);
-        else owned.push(badge);
-        localStorage.setItem('melinaBadges', JSON.stringify(owned));
-        afficherBadges();
-    };
-
-    function updateStats() {
-        let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
-        let statsDiv = document.getElementById('stats');
-        if (statsDiv) statsDiv.innerHTML = `🚀 Dictées réussies : <strong>${prog.dictées}</strong><br>📖 Étapes d'histoires créées : <strong>${prog.histoiresCrees}</strong>`;
-    }
-    document.getElementById('resetProgress')?.addEventListener('click', () => {
-        localStorage.setItem('melinaProgress', JSON.stringify({dictées: 0, histoiresCrees: 0}));
-        updateStats();
-    });
-    document.getElementById('exportPDF')?.addEventListener('click', () => {
-        let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees
