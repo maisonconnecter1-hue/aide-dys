@@ -2,372 +2,555 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aide à l'écriture - Super Championne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mission Écriture - Super Championne de la Galaxie</title>
   
+  <!-- OpenDyslexic + Google Fonts pour titres -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (gratuit) pour icônes spatiales -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
   <style>
-    body {
-      font-family: 'OpenDyslexic', sans-serif;
-      background: linear-gradient(135deg, #2b1055, #7597de);
-      color: white;
+    * {
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'OpenDyslexic', 'Inter', sans-serif;
+      background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #030514);
+      color: #f0f3ff;
       min-height: 100vh;
-      box-sizing: border-box;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    header {
-      width: 100%;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      background: rgba(0, 0, 0, 0.15);
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 20px;
-      background-color: #6c5ce7;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.1s;
-      font-family: 'OpenDyslexic', sans-serif;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    button:active { transform: scale(0.95); }
-    button:hover { background-color: #a29bfe; }
-
-    .btn-listen-ia { background-color: #fd79a8; }
-    .btn-listen-ia:hover { background-color: #fab1a0; }
-
-    #editor-container {
-      width: 90%;
-      max-width: 850px;
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      padding-bottom: 50px;
-    }
-
-    /* Zone Défi d'origine : Propre et sans boîte grise */
-    #challenge-zone {
-      width: 100%;
-    }
-
-    #progress-container {
-      width: 100%;
-      background-color: rgba(255, 255, 255, 0.2);
-      height: 22px;
-      border-radius: 12px;
-      margin: 15px 0;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    #progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00cec9, #00b894);
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-
-    #prompt-box {
-      font-size: 22px;
-      line-height: 1.5;
-      color: #ffffff;
-      margin: 10px 0;
-      border-left: 4px solid #fdcb6e;
-      padding-left: 15px;
-    }
-
-    #input-text {
-      width: 100%;
-      height: 140px;
-      font-size: 24px;
-      font-family: 'OpenDyslexic', sans-serif;
-      padding: 15px;
-      border: 3px solid #fdcb6e;
-      border-radius: 15px;
-      background-color: white;
-      color: #2d3436;
-      box-sizing: border-box;
-    }
-
-    #output-display {
-      width: 100%;
-      min-height: 110px;
-      background-color: white;
-      color: #2d3436;
-      border-radius: 15px;
-      padding: 15px;
-      font-size: 24px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      box-sizing: border-box;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
-    }
-
-    .syl1 { color: #0984e3; font-weight: bold; text-decoration: underline; }
-    .syl2 { color: #d63031; font-weight: bold; }
-
-    .word-correct { color: #00b894; font-weight: bold; }
-    .word-wrong { color: #d63031; font-weight: bold; border-bottom: 2px dashed #d63031; }
-
-    .btn-validate {
-      background-color: #00b894;
-      font-size: 22px;
-      padding: 15px;
-      width: 100%;
-      border-radius: 15px;
-    }
-    .btn-validate:hover { background-color: #00cec9; }
-
-    /* Fenêtre cadeau originale */
-    .modal {
+    /* === ANIMATION ÉTOILES FILANTES / NÉBULEUSE === */
+    .stars-bg {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      box-shadow: 
+        1250px 340px 2px #fff, 890px 700px 1px #ffe9c7, 450px 120px 2px #ffe0b5,
+        1780px 900px 1px #fff, 80px 1020px 2px #ffd98c, 2100px 450px 1px #fff,
+        340px 1800px 2px #fef0c0, 1650px 1400px 1px #eee, 550px 2100px 2px #ffe6b3;
+      animation: twinkle 5s infinite alternate;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+    /* planètes flottantes décoratives */
+    .planet {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(2px);
+      background: radial-gradient(circle at 30% 30%, rgba(255,200,100,0.3), rgba(80,40,120,0.6));
+      box-shadow: 0 0 30px rgba(255,210,90,0.4);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .planet1 { width: 180px; height: 180px; top: 8%; left: -60px; background: radial-gradient(circle, #ffaa66, #aa4488); opacity: 0.2; animation: float 25s infinite ease-in-out; }
+    .planet2 { width: 100px; height: 100px; bottom: 5%; right: 5%; background: radial-gradient(circle, #4aaaff, #2a2a6e); opacity: 0.25; animation: float 18s infinite reverse; }
+    .planet3 { width: 60px; height: 60px; top: 60%; left: 85%; background: #f9b042; opacity: 0.3; box-shadow: 0 0 25px #ffb347; animation: float 12s infinite alternate; }
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(35px) rotate(8deg); }
+    }
+
+    /* Conteneur principal avec effet glassmorphism */
+    .main-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
+    }
+
+    /* Header spatial */
+    .space-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(10, 15, 35, 0.55);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      padding: 10px 20px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(120, 180, 255, 0.4);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .logo-area h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #FFD966, #FF8C94);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 1px;
+    }
+    .logo-area p {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Boutons modernes galactiques */
+    .galaxy-btn {
+      background: rgba(20, 25, 55, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(100, 180, 250, 0.6);
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-family: 'OpenDyslexic', 'Inter', sans-serif;
+      font-weight: bold;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 6px rgba(70,130,255,0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .galaxy-btn i {
+      font-size: 1.1rem;
+    }
+    .galaxy-btn:hover {
+      background: rgba(80, 120, 255, 0.7);
+      border-color: #f3c26f;
+      transform: scale(0.96);
+      box-shadow: 0 0 12px #ffb347;
+    }
+    .galaxy-btn:active { transform: scale(0.94); }
+
+    /* Zone de défi et progrès */
+    .mission-card {
+      background: rgba(8, 12, 30, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 38px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 215, 120, 0.5);
+      box-shadow: 0 20px 35px -15px black;
+    }
+    .score-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    .star-score {
+      font-size: 1.7rem;
+      font-weight: bold;
+      background: linear-gradient(45deg, #ffe6b0, #ffbc6e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .progress-space {
+      width: 100%;
+      background: rgba(255,255,240,0.2);
+      border-radius: 30px;
+      height: 18px;
+      overflow: hidden;
+      margin: 18px 0;
+      border: 1px solid #f3bc5c;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f7b42c, #fc575e);
+      border-radius: 30px;
+      transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow: 0 0 8px #ffb347;
+    }
+    .prompt-box {
+      font-size: 1.5rem;
+      line-height: 1.4;
+      background: rgba(0,0,0,0.4);
+      border-radius: 32px;
+      padding: 16px 20px;
+      border-left: 6px solid #fdca40;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    /* Éditeur principal */
+    .editor-panel {
+      background: rgba(20, 25, 50, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 44px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(220, 180, 80, 0.5);
+    }
+    label {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: #fef9ef;
+      border: 2px solid #ffcd94;
+      border-radius: 32px;
+      font-family: 'OpenDyslexic', monospace;
+      font-size: 1.5rem;
+      padding: 18px 20px;
+      color: #1e2a3a;
+      resize: vertical;
+      transition: all 0.2s;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #ffaa44;
+      box-shadow: 0 0 0 3px rgba(255,200,100,0.4);
+    }
+    .preview-area {
+      margin-top: 20px;
+      background: #ffffffec;
+      border-radius: 32px;
+      padding: 18px;
+      min-height: 110px;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      color: #1f2a44;
+      word-break: break-word;
+      box-shadow: inset 0 1px 6px #0002, 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .btn-validate {
+      width: 100%;
+      background: linear-gradient(125deg, #ff8c42, #ff3b6f);
+      border: none;
+      padding: 16px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      border-radius: 60px;
+      margin-top: 12px;
+      color: white;
+      text-shadow: 0 1px 2px black;
+      letter-spacing: 1px;
+      transition: 0.2s;
+    }
+    .btn-validate:hover {
+      transform: scale(0.98);
+      background: linear-gradient(125deg, #ff9f5a, #ff4f84);
+      box-shadow: 0 0 18px #ff8866;
+    }
+
+    /* Syllabes et correction */
+    .syl1 { color: #2c7be5; font-weight: bold; text-decoration: underline; }
+    .syl2 { color: #e84118; font-weight: bold; }
+    .word-correct { color: #00b894; font-weight: bold; background: #e0ffe8; border-radius: 12px; padding: 0 4px; }
+    .word-wrong { color: #d63031; font-weight: bold; border-bottom: 2px dotted #ff7675; background: #fff0f0; border-radius: 12px; padding: 0 4px; }
+
+    /* MODAL Cadeau version galactique */
+    .galaxy-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
       display: none;
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
-
-    .modal-content {
-      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
+    .modal-cosmic {
+      background: radial-gradient(ellipse at 30% 20%, #1b1e3c, #020617);
+      border: 2px solid #ffd966;
+      border-radius: 48px;
+      padding: 30px 25px;
       max-width: 500px;
       width: 90%;
-      border: 3px solid #fdcb6e;
+      text-align: center;
+      color: #ffefcf;
+      box-shadow: 0 0 60px #fcb43f55;
+    }
+    .gift-options {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+    .gift-btn {
+      background: #2a235a;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 60px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: 0.2s;
+    }
+    .gift-btn:hover {
+      background: #f39c12;
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 650px) {
+      .space-header { flex-direction: column; text-align: center; }
+      .prompt-box { font-size: 1.2rem; }
+      textarea, .preview-area { font-size: 1.2rem; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <button onclick="lireTexte()" style="background:#00b894">🔊 Écouter</button>
-    <button onclick="verifierLectureIA()" class="btn-listen-ia">🤖 L'IA m'écoute</button>
-    <button onclick="changerTaille(2)">➕ Agrandir</button>
-    <button onclick="changerTaille(-2)">➖ Réduire</button>
-    <button onclick="resetScore()" style="background:#d63031">✨ Recommencer</button>
-  </header>
+<div class="stars-bg">
+  <div class="stars"></div>
+  <div class="planet planet1"></div>
+  <div class="planet planet2"></div>
+  <div class="planet planet3"></div>
+</div>
 
-  <div id="editor-container">
-    
-    <section id="challenge-zone">
-      <div style="font-size: 24px; font-weight: bold;">⭐ Victoires : <span id="score-value">0</span> / 30</div>
-      <div id="progress-container">
-        <div id="progress-fill"></div>
-      </div>
-      <p id="prompt-box"></p>
-    </section>
-
-    <textarea id="input-text" placeholder="Écris ton texte ici..." oninput="decouperSyllabes()"></textarea>
-    
-    <div id="output-display">L'aperçu en couleur s'affichera ici...</div>
-    
-    <button class="btn-validate" onclick="validerExercice()">🚀 Valider l'exercice</button>
-  </div>
-
-  <div id="gift-modal" class="modal">
-    <div class="modal-content">
-      <h2>🎁 BRAVO TU AS GAGNÉ ! 🎁</h2>
-      <p>Tu as atteint les 30 victoires ! Choisis ton cadeau :</p>
-      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-        <button onclick="choisirCadeau('un Produit de Beauté')" style="background:#fd79a8; color:white;">💄 Beauté</button>
-        <button onclick="choisirCadeau('une Sortie')" style="background:#f1c40f; color:black;">🎢 Sortie</button>
-        <button onclick="choisirCadeau('une Surprise')" style="background:#0984e3; color:white;">✨ Surprise</button>
-      </div>
-      <p id="choix-final" style="margin-top: 25px; color: #fdcb6e; font-weight: bold; font-size: 24px;"></p>
-      <button onclick="fermerModal()" style="margin-top: 20px; background: #2d3436; width: 100%;">Fermer</button>
+<div class="main-container">
+  <div class="space-header">
+    <div class="logo-area">
+      <h1><i class="fas fa-rocket"></i> SUPERNOVA ÉCRITURE</h1>
+      <p>⭐ Championne des galaxies · Aide dyslexique spatiale</p>
+    </div>
+    <div class="btn-group">
+      <button class="galaxy-btn" onclick="lireTexte()"><i class="fas fa-head-side-headphones"></i> Écouter</button>
+      <button class="galaxy-btn" onclick="verifierLectureIA()"><i class="fas fa-microphone-alt"></i> IA m'écoute</button>
+      <button class="galaxy-btn" onclick="changerTaille(2)"><i class="fas fa-text-height"></i> +</button>
+      <button class="galaxy-btn" onclick="changerTaille(-2)"><i class="fas fa-text-height"></i> -</button>
+      <button class="galaxy-btn" onclick="resetScore()"><i class="fas fa-saturn"></i> Recommencer</button>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <div class="mission-card">
+    <div class="score-panel">
+      <div><i class="fas fa-star-of-life"></i> Victoires cosmiques : <span id="score-value" class="star-score">0</span> / 30</div>
+      <div><i class="fas fa-chart-line"></i> Mission galactique</div>
+    </div>
+    <div class="progress-space">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div id="prompt-box" class="prompt-box">✨ Chargement de la mission...</div>
+  </div>
 
-  <script>
-    let score = localStorage.getItem('dys_story_score') ? parseInt(localStorage.getItem('dys_story_score')) : 0;
-    let histoireComplete = localStorage.getItem('dys_story_text') ? localStorage.getItem('dys_story_text') : "";
+  <div class="editor-panel">
+    <label><i class="fas fa-pen-fancy"></i> Ta composition spatiale :</label>
+    <textarea id="input-text" placeholder="Écris ta phrase ou ton histoire ici (suis le modèle ci-dessus)..." oninput="decouperSyllabes()"></textarea>
+    
+    <div style="margin-top: 20px;">
+      <label><i class="fas fa-eye"></i> Aperçu coloré (syllabes) :</label>
+      <div id="output-display" class="preview-area">✨ Ton texte magique apparaîtra ici ✨</div>
+    </div>
+    
+    <button class="galaxy-btn btn-validate" onclick="validerExercice()"><i class="fas fa-rocket"></i> VALIDER LA MISSION</button>
+  </div>
+</div>
 
-    // Banques d'histoires fluides pour la suite automatique
-    const heros = ["Un petit lapin astronaute", "Une princesse de la Lune", "Un chaton avec un casque spatial", "Un robot rigolo", "Une étoile filante"];
-    const actions = ["découvre une nouvelle planète", "répare sa fusée de l'espace", "trouve une comète magique", "rencontre un extraterrestre", "regarde les anneaux de Saturne"];
-    const lieux = ["dans la Voie Lactée.", "sur une planète en chocolat.", "dans une station secrète.", "derrière une étoile.", "tout près du Soleil."];
-    const suites = [
-      "Soudain, une météorite brillante passe juste à côté.",
-      "Heureusement, la fusée avance très vite dans l'espace.",
-      "Une lueur magique commence alors à briller au loin.",
-      "C'est le début d'une très grande aventure cosmique.",
-      "Le voyage continue avec beaucoup de joie."
-    ];
+<!-- MODAL Cadeau -->
+<div id="gift-modal" class="galaxy-modal">
+  <div class="modal-cosmic">
+    <h2><i class="fas fa-gift"></i> TROP FORT ! 🚀✨</h2>
+    <p>30 victoires accomplies, héroïne de l'écriture ! Choisis ta récompense cosmique :</p>
+    <div class="gift-options">
+      <button class="gift-btn" onclick="choisirCadeau('🌟 Un coffre à paillettes cosmiques 🌟')"><i class="fas fa-sparkles"></i> Beauté</button>
+      <button class="gift-btn" onclick="choisirCadeau('🎢 Une sortie dans l\'espace 🚀')"><i class="fas fa-space-shuttle"></i> Sortie</button>
+      <button class="gift-btn" onclick="choisirCadeau('✨ Un médaillon d\'étoile magique ✨')"><i class="fas fa-meteor"></i> Surprise</button>
+    </div>
+    <p id="choix-final" style="font-size: 1.4rem; font-weight: bold; background: #00000066; border-radius: 40px; padding: 12px; margin: 15px 0;"></p>
+    <button class="galaxy-btn" onclick="fermerModal()" style="background:#2c3e66;">Fermer le portail</button>
+  </div>
+</div>
 
-    window.onload = () => {
-      actualiserInterface();
-      genererNouvelleEtape();
-    };
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-    function actualiserInterface() {
-      document.getElementById('score-value').textContent = score;
-      const pourcentage = (Math.min(score, 30) / 30) * 100;
-      document.getElementById('progress-fill').style.width = pourcentage + "%";
-      localStorage.setItem('dys_story_score', score);
+<script>
+  // ---------- GESTION SCORE + STORY (identique mais interface modernisée) ----------
+  let score = localStorage.getItem('dys_story_score') ? parseInt(localStorage.getItem('dys_story_score')) : 0;
+  let histoireComplete = localStorage.getItem('dys_story_text') ? localStorage.getItem('dys_story_text') : "";
+
+  // Banques d'histoires fluides
+  const heros = ["✨ Un petit astronaute lunaire", "🌙 Une princesse des anneaux", "🐱 Un chaton en combinaison spatiale", "🤖 Un robot stellaire", "⭐ Une comète espiègle"];
+  const actions = ["découvre une planète inconnue", "répare son vaisseau spatial", "traverse une nébuleuse magique", "rencontre une créature galactique", "explore les anneaux de Saturne"];
+  const lieux = ["dans la Voie Lactée.", "sur une planète de cristal.", "dans une station orbitale secrète.", "près d'un trou de ver.", "au cœur d'une supernova."];
+  const suites = [
+    "Soudain, une pluie d'étoiles filantes scintille devant toi.",
+    "La fusée s'illumine d'une lueur dorée, direction l'aventure !",
+    "Un satellite amical t'envoie un message codé.",
+    "Le commandant galactique te confie une nouvelle mission.",
+    "Les poussières d'étoiles te donnent des super-pouvoirs d'écriture !"
+  ];
+
+  window.onload = () => {
+    actualiserInterface();
+    genererNouvelleEtape();
+  };
+
+  function actualiserInterface() {
+    document.getElementById('score-value').textContent = score;
+    const pourcentage = (Math.min(score, 30) / 30) * 100;
+    document.getElementById('progress-fill').style.width = pourcentage + "%";
+    localStorage.setItem('dys_story_score', score);
+  }
+
+  function genererNouvelleEtape() {
+    let promptText = "";
+    if (!histoireComplete) {
+      const h = heros[Math.floor(Math.random() * heros.length)];
+      const a = actions[Math.floor(Math.random() * actions.length)];
+      const l = lieux[Math.floor(Math.random() * lieux.length)];
+      promptText = `<i class="fas fa-copy"></i> Modèle à suivre : « ${h} ${a} ${l} »`;
+    } else {
+      const s = suites[Math.floor(Math.random() * suites.length)];
+      promptText = `<i class="fas fa-tasks"></i> Mission suite : « ${s} »`;
     }
+    document.getElementById('prompt-box').innerHTML = promptText;
+  }
 
-    function genererNouvelleEtape() {
-      if (!histoireComplete) {
-        const h = heros[Math.floor(Math.random() * heros.length)];
-        const a = actions[Math.floor(Math.random() * actions.length)];
-        const l = lieux[Math.floor(Math.random() * lieux.length)];
-        document.getElementById('prompt-box').innerHTML = `<b>Modèle à copier :</b> "${h} ${a} ${l}"`;
-      } else {
-        const s = suites[Math.floor(Math.random() * suites.length)];
-        document.getElementById('prompt-box').innerHTML = `<b>Mission de la suite :</b> "${s}"`;
-      }
+  // Découpage syllabique
+  function decouperSyllabes() {
+    const text = document.getElementById('input-text').value;
+    if (!text.trim()) {
+      document.getElementById('output-display').innerHTML = "✨ Ton texte magique apparaîtra ici ✨";
+      return;
     }
+    const words = text.split(/(\s+)/);
+    const colored = words.map(word => {
+      if (word.trim() === "") return word;
+      let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
+      return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
+    }).join('');
+    document.getElementById('output-display').innerHTML = colored;
+  }
 
-    function decouperSyllabes() {
-      const text = document.getElementById('input-text').value;
-      if (!text.trim()) {
-        document.getElementById('output-display').innerHTML = "L'aperçu en couleur s'affichera ici...";
-        return;
-      }
-      const words = text.split(/(\s+)/);
-      const colored = words.map(word => {
-        if (word.trim() === "") return word;
-        let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
-        return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
-      }).join('');
-      
-      document.getElementById('output-display').innerHTML = colored;
+  // Reconnaissance vocale IA modernisée
+  function verifierLectureIA() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("🌌 La reconnaissance vocale nécessite Chrome, Edge ou Safari. Mets à jour ton vaisseau !");
+      return;
     }
-
-    // IA Correction vocale : Modifie directement l'aperçu du bas sans créer de bloc
-    function verifierLectureIA() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("L'analyse vocale n'est pas disponible ici. Utilise Chrome ou Safari.");
-        return;
-      }
-
-      const texteAttendu = document.getElementById('input-text').value.trim();
-      if (!texteAttendu) {
-        alert("Écris d'abord ton texte avant de le lire !");
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'fr-FR';
-
-      const btn = document.querySelector('.btn-listen-ia');
-      btn.textContent = "👂 L'IA t'écoute...";
-
-      recognition.onresult = (event) => {
-        const vocal = event.results[0][0].transcript.toLowerCase();
-        const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
-        
-        const motsOriginaux = epurer(texteAttendu);
-        const motsVocals = epurer(vocal);
-        
-        let resultatHTML = "";
-        let fautes = 0;
-
-        motsOriginaux.forEach(mot => {
-          if (motsVocals.includes(mot)) {
-            resultatHTML += `<span class="word-correct">${mot}</span> `;
-          } else {
-            resultatHTML += `<span class="word-wrong" title="À relire">${mot}</span> `;
-            fautes++;
-          }
-        });
-
-        document.getElementById('output-display').innerHTML = resultatHTML;
-        if (fautes === 0) {
-          confetti({ particleCount: 30, spread: 40 });
+    const texteAttendu = document.getElementById('input-text').value.trim();
+    if (!texteAttendu) {
+      alert("🚀 Écris d'abord ton texte dans la zone avant de le lire à l'IA !");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    const btn = document.querySelector('.btn-group .galaxy-btn:nth-child(2)');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "<i class='fas fa-microphone-alt'></i> Écoute en cours... 🛸";
+    recognition.onresult = (event) => {
+      const vocal = event.results[0][0].transcript.toLowerCase();
+      const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
+      const motsOriginaux = epurer(texteAttendu);
+      const motsVocals = epurer(vocal);
+      let resultatHTML = "";
+      let fautes = 0;
+      motsOriginaux.forEach(mot => {
+        if (motsVocals.includes(mot)) {
+          resultatHTML += `<span class="word-correct">${mot}</span> `;
+        } else {
+          resultatHTML += `<span class="word-wrong">${mot}</span> `;
+          fautes++;
         }
-      };
-
-      recognition.onend = () => { btn.textContent = "🤖 L'IA m'écoute"; };
-      recognition.start();
-    }
-
-    function validerExercice() {
-      const inputZone = document.getElementById('input-text');
-      const texteSaisi = inputZone.value.trim();
-
-      if (texteSaisi.length < 5) {
-        alert("Écris ta phrase avant de valider !");
-        return;
-      }
-
-      histoireComplete += " " + texteSaisi;
-      score++;
-      localStorage.setItem('dys_story_text', histoireComplete);
-      
-      actualiserInterface();
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-
-      if (score >= 30) {
-        setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
-      }
-
-      inputZone.value = "";
-      document.getElementById('output-display').innerHTML = "L'aperçu en couleur s'affichera ici...";
-      genererNouvelleEtape();
-    }
-
-    function lireTexte() {
-      const text = document.getElementById('input-text').value;
-      if (!text) return;
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = 'fr-FR';
-      msg.rate = 0.8; 
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(msg);
-    }
-
-    function choisirCadeau(cadeau) {
-      document.getElementById('choix-final').innerHTML = `Gagné ! Tu as choisi : <br><b>${cadeau}</b> ! 🏆`;
-      confetti({ particleCount: 200, spread: 100 });
-    }
-
-    function fermerModal() {
-      document.getElementById('gift-modal').style.display = 'none';
-    }
-
-    function resetScore() {
-      if (confirm("Veux-tu remettre le score à zéro et recommencer ?")) {
-        score = 0;
-        histoireComplete = "";
-        localStorage.removeItem('dys_story_text');
-        document.getElementById('input-text').value = "";
-        document.getElementById('choix-final').textContent = "";
-        actualiserInterface();
-        genererNouvelleEtape();
-      }
-    }
-
-    function changerTaille(n) {
-      const elements = [document.getElementById('input-text'), document.getElementById('output-display')];
-      elements.forEach(el => {
-        let current = parseInt(window.getComputedStyle(el).fontSize);
-        let next = current + n;
-        if(next >= 16 && next <= 46) el.style.fontSize = next + "px";
       });
+      document.getElementById('output-display').innerHTML = resultatHTML;
+      if (fautes === 0) {
+        canvasConfetti({ particleCount: 80, spread: 55, origin: { y: 0.7 }, colors: ['#ffd966', '#ffb347', '#6a5acd'] });
+      } else {
+        canvasConfetti({ particleCount: 20, spread: 30, origin: { y: 0.8 }, colors: ['#ffaa88'] });
+      }
+    };
+    recognition.onend = () => { btn.innerHTML = originalText; };
+    recognition.start();
+  }
+
+  // Validation exercice
+  function validerExercice() {
+    const inputZone = document.getElementById('input-text');
+    const texteSaisi = inputZone.value.trim();
+    if (texteSaisi.length < 5) {
+      alert("🪐 Écris au moins 5 caractères avant de valider ta mission !");
+      return;
     }
-  </script>
+    histoireComplete += " " + texteSaisi;
+    score++;
+    localStorage.setItem('dys_story_text', histoireComplete);
+    actualiserInterface();
+    canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.5 }, startVelocity: 18, colors: ['#f3c26f', '#ff8a5c', '#bc9eff'] });
+    if (score >= 30) {
+      setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 400);
+    }
+    inputZone.value = "";
+    document.getElementById('output-display').innerHTML = "✨ Texte validé ! Nouvelle mission ✨";
+    genererNouvelleEtape();
+  }
+
+  function lireTexte() {
+    const text = document.getElementById('input-text').value;
+    if (!text) return;
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'fr-FR';
+    msg.rate = 0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(msg);
+  }
+
+  function choisirCadeau(cadeau) {
+    document.getElementById('choix-final').innerHTML = `🎉 Tu as gagné : <span style="color:#ffdb7e">${cadeau}</span> ! 🎉<br><i class='fas fa-jedi'></i> Championne de l'espace !`;
+    canvasConfetti({ particleCount: 300, spread: 120, origin: { y: 0.5 } });
+  }
+
+  function fermerModal() {
+    document.getElementById('gift-modal').style.display = 'none';
+  }
+
+  function resetScore() {
+    if (confirm("⚠️ Remettre le compteur à zéro et effacer ton histoire ? Cette action est définitive.")) {
+      score = 0;
+      histoireComplete = "";
+      localStorage.removeItem('dys_story_text');
+      document.getElementById('input-text').value = "";
+      document.getElementById('choix-final').innerHTML = "";
+      actualiserInterface();
+      genererNouvelleEtape();
+      document.getElementById('output-display').innerHTML = "✨ Ton texte magique apparaîtra ici ✨";
+    }
+  }
+
+  function changerTaille(n) {
+    const textarea = document.getElementById('input-text');
+    const preview = document.getElementById('output-display');
+    let current = parseInt(window.getComputedStyle(textarea).fontSize);
+    let next = current + n;
+    if(next >= 18 && next <= 52) {
+      textarea.style.fontSize = next + "px";
+      preview.style.fontSize = next + "px";
+    }
+  }
+</script>
 </body>
 </html>
