@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Espace Écriture - Méline (version complète dys)</title>
+    <title>Espace Écriture - Méline (réaliste)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Andika&family=Lexend&family=Comic+Neue&display=swap" rel="stylesheet">
     <style>
@@ -15,19 +15,21 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            transition: background 0.5s;
         }
-        body.apaisant {
-            background: #0a0e1a;
+        /* Vidéo de fond réaliste (NASA / Hubble style) */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+            filter: brightness(0.9) contrast(1.1);
         }
-        body.apaisant .stars, body.apaisant .twinkling, body.apaisant .shooting-star {
-            opacity: 0.2 !important;
-            animation: none !important;
-        }
-        body.apaisant #universe-canvas {
-            filter: blur(8px) brightness(0.3);
-        }
-        #universe-canvas {
+        /* Couche d'overlay pour les étoiles filantes et planètes supplémentaires */
+        #overlay-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -35,7 +37,6 @@
             height: 100%;
             z-index: 1;
             pointer-events: none;
-            transition: filter 0.5s;
         }
         .app-container {
             position: relative;
@@ -127,7 +128,12 @@
     </style>
 </head>
 <body>
-<canvas id="universe-canvas"></canvas>
+<!-- Vidéo de fond réaliste (NASA / Hubble) - libre de droits -->
+<video id="bg-video" autoplay loop muted playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1247-large.mp4" type="video/mp4">
+    <!-- Fallback : si la vidéo ne charge pas, afficher un dégradé spatial -->
+</video>
+<canvas id="overlay-canvas"></canvas>
 <div class="app-container">
     <div class="tabs">
         <button class="tab-button active" data-tab="ecriture">🚀 Écriture libre</button>
@@ -178,7 +184,7 @@
         </div>
     </div>
 
-    <!-- Dictée vocale -->
+    <!-- Dictée vocale (avec améliorations dys) -->
     <div id="dictee" class="tab-content">
         <div class="editor-container">
             <div class="zone">
@@ -227,7 +233,6 @@
         <div class="editor-container"><div class="zone"><h2>⚙️ Personnalisation</h2>
             <label>Police : </label><select id="fontSelect"><option value="OpenDyslexic">OpenDyslexic</option><option value="Andika">Andika</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select><br>
             <label>Espacement des lettres (px) : </label><input type="range" id="letterSpacing" min="0" max="5" step="0.5" value="1"><br>
-            <label>Mode apaisant (réduit animations) : </label><input type="checkbox" id="calmMode"><br>
             <label>Mode comparaison dictée : </label><select id="compareMode"><option value="strict">Strict</option><option value="tolérant">Tolérant</option></select><br>
             <button id="saveSettings">💾 Sauvegarder</button>
         </div></div>
@@ -240,7 +245,7 @@
             <p>Clique sur un badge pour le mettre en avant !</p>
         </div></div>
     </div>
-    <footer>🌟 12 améliorations pour Méline : orthographe, répétition, badges, export...</footer>
+    <footer>🌌 Thème spatial réaliste (vidéo NASA) • Toutes les aides pour dyslexie</footer>
 </div>
 
 <script>
@@ -378,13 +383,12 @@
         next();
     });
 
-    // ----- DICTÉE VOCALE (corrigée avec ajout mots difficiles) -----
+    // ----- DICTÉE VOCALE (avec indices et mots difficiles) -----
     function lire(texte, speed = 0.85) {
         synth.cancel();
         let u = new SpeechSynthesisUtterance(texte);
         u.lang = 'fr-FR';
         u.rate = speed;
-        // Animation bouche
         let mouthParent = document.getElementById('mouthAnim')?.parentElement;
         if (mouthParent) mouthParent.classList.add('speaking');
         u.onend = () => { if (mouthParent) mouthParent.classList.remove('speaking'); };
@@ -412,7 +416,6 @@
         document.getElementById('coloredDictDisplay').innerHTML = html;
     }
 
-    // Ajoute un mot à la liste des mots difficiles s'il n'existe pas
     function ajouterMotDifficile(mot) {
         if (!hardWords.includes(mot)) {
             hardWords.push(mot);
@@ -421,22 +424,20 @@
         }
     }
 
-    // Extrait les mots mal orthographiés d'une phrase comparée
     function extraireMotsErreurs(saisie, cible, mode) {
         let motsSaisie = saisie.split(/\s+/);
         let motsCible = cible.split(/\s+/);
         let erreurs = [];
         for (let i = 0; i < Math.min(motsSaisie.length, motsCible.length); i++) {
             if (normalize(motsSaisie[i], mode) !== normalize(motsCible[i], mode)) {
-                erreurs.push(motsCible[i]); // le mot correct à réviser
+                erreurs.push(motsCible[i]);
             }
         }
         if (motsSaisie.length !== motsCible.length) {
-            // mot manquant ou en trop
             if (motsSaisie.length < motsCible.length) erreurs.push(...motsCible.slice(motsSaisie.length));
             else erreurs.push(...motsSaisie.slice(motsCible.length));
         }
-        return [...new Set(erreurs)]; // uniques
+        return [...new Set(erreurs)];
     }
 
     function genererIndice(saisie, cible, mode) {
@@ -496,7 +497,6 @@
             localStorage.setItem('melinaProgress', JSON.stringify(prog));
             updateStats();
             document.getElementById('hintBox').style.display = "none";
-            // Déblocage badges
             let badges = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
             if (prog.dictées >= 5 && !badges.includes("🏆 Étoile filante")) badges.push("🏆 Étoile filante");
             if (prog.dictées >= 10 && !badges.includes("🪐 Planète")) badges.push("🪐 Planète");
@@ -508,7 +508,6 @@
             lire(`La phrase à écrire était : ${currentPhrase}. ${indice}`);
             document.getElementById('hintBox').innerHTML = `💡 ${indice}`;
             document.getElementById('hintBox').style.display = "block";
-            // Ajouter les mots mal orthographiés à la liste de révision
             let motsErreurs = extraireMotsErreurs(saisie, currentPhrase, mode);
             motsErreurs.forEach(mot => ajouterMotDifficile(mot));
         }
@@ -561,7 +560,6 @@
         updatePanel();
     }
 
-    // Boutons dictée
     document.getElementById('newDictPhrase').addEventListener('click', nouvellePhrase);
     document.getElementById('relistenDictPhrase').addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, parseFloat(document.getElementById('speedSlider').value)); });
     document.getElementById('slowReplay').addEventListener('click', slowReplay);
@@ -571,7 +569,7 @@
     document.getElementById('dictInput').addEventListener('input', updateColoration);
     nouvellePhrase();
 
-    // ----- SUGGESTIONS ORTHOGRAPHIQUES (simplifiées) -----
+    // ----- SUGGESTIONS ORTHOGRAPHIQUES -----
     window.suggererCorrections = function() {
         let texte = inputText.value;
         let mots = texte.split(/\s+/);
@@ -591,7 +589,6 @@
         } else alert("Aucune suggestion pour l'instant.");
     };
 
-    // ----- RELECTURE GUIDÉE -----
     window.relectureGuidee = function() {
         let texte = inputText.value;
         if (!texte.trim()) return;
@@ -640,7 +637,7 @@
     };
     afficherBadges();
 
-    // ----- PROGRÈS ET STATS -----
+    // ----- PROGRÈS -----
     function updateStats() {
         let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
         let statsDiv = document.getElementById('stats');
@@ -660,32 +657,24 @@
     });
     updateStats();
 
-    // ----- RÉGLAGES (police, espacement, mode apaisant) -----
+    // ----- RÉGLAGES (police, espacement) -----
     function applySettings() {
         let font = document.getElementById('fontSelect').value;
         let fontFamily = font === 'OpenDyslexic' ? "'OpenDyslexic', sans-serif" : font === 'Andika' ? "'Andika', sans-serif" : font === 'Lexend' ? "'Lexend', sans-serif" : "'Comic Neue', cursive";
         document.body.style.fontFamily = fontFamily;
         let spacing = document.getElementById('letterSpacing').value;
         document.body.style.letterSpacing = spacing + 'px';
-        if (document.getElementById('calmMode').checked) document.body.classList.add('apaisant');
-        else document.body.classList.remove('apaisant');
         localStorage.setItem('melinaFont', font);
         localStorage.setItem('melinaSpacing', spacing);
-        localStorage.setItem('melinaCalm', document.getElementById('calmMode').checked);
     }
     document.getElementById('saveSettings').addEventListener('click', applySettings);
-    // Charger réglages sauvegardés
     let savedFont = localStorage.getItem('melinaFont');
     if (savedFont) document.getElementById('fontSelect').value = savedFont;
     let savedSpacing = localStorage.getItem('melinaSpacing');
     if (savedSpacing) document.getElementById('letterSpacing').value = savedSpacing;
-    let savedCalm = localStorage.getItem('melinaCalm') === 'true';
-    if (savedCalm) document.getElementById('calmMode').checked = true;
     applySettings();
-    // Écouteur pour mettre à jour l'apparence à la volée (case à cocher)
-    document.getElementById('calmMode').addEventListener('change', applySettings);
 
-    // ----- SYLLABATION À LA DEMANDE (clic sur l'affichage) -----
+    // ----- SYLLABATION À LA DEMANDE (clic) -----
     outputDiv.addEventListener('click', (e) => {
         let selection = window.getSelection().toString().trim();
         if (selection) {
@@ -700,7 +689,7 @@
         if (selection) lire(selection, 0.7);
     });
 
-    // ----- ONGLETS (navigation) -----
+    // ----- ONGLETS -----
     const tabs = document.querySelectorAll('.tab-button');
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(btn => {
@@ -713,32 +702,93 @@
         });
     });
 
-    // ----- CANVAS SPATIAL RÉALISTE (inchangé) -----
-    const canvas = document.getElementById('universe-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    let stars = [], nebulae = [], planets = [], shootingStars = [], shuttles = [];
-    for (let i = 0; i < 400; i++) stars.push({x: Math.random()*width, y: Math.random()*height, r: Math.random()*2+0.5, alpha: Math.random()*0.7+0.3, twinkle: Math.random()*Math.PI*2, color: `hsl(${Math.random()*60+30},80%,70%)`});
-    for (let i = 0; i < 5; i++) nebulae.push({x: Math.random()*width, y: Math.random()*height, radius: Math.random()*300+150, hue: Math.random()*360, alpha: 0.08+Math.random()*0.1});
-    for (let i = 0; i < 4; i++) planets.push({x: Math.random()*width, y: Math.random()*height, radius: Math.random()*40+20, color1: `hsl(${Math.random()*60+20},80%,50%)`, color2: `hsl(${Math.random()*60+20},80%,30%)`, hasRing: i%2===0, ringColor: `hsla(${Math.random()*60+30},70%,60%,0.6)`, sx: (Math.random()-0.5)*0.15, sy: (Math.random()-0.5)*0.1});
-    shuttles.push({x: width*0.2, y: height*0.5, speedX: 0.8, speedY: -0.3, size: 35});
-    function draw() {
-        ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = "#020410";
-        ctx.fillRect(0, 0, width, height);
-        nebulae.forEach(n => { let g = ctx.createRadialGradient(n.x, n.y, 10, n.x, n.y, n.radius); g.addColorStop(0, `hsla(${n.hue},80%,60%,${n.alpha*1.5})`); g.addColorStop(0.5, `hsla(${n.hue},80%,50%,${n.alpha})`); g.addColorStop(1, `hsla(${n.hue},80%,30%,0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, n.radius, 0, Math.PI*2); ctx.fill(); });
-        stars.forEach(s => { ctx.fillStyle = s.color; ctx.shadowBlur = 5; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); });
-        planets.forEach(p => { p.x += p.sx; p.y += p.sy; if (p.x < -200) p.x = width+200; if (p.x > width+200) p.x = -200; if (p.y < -200) p.y = height+200; if (p.y > height+200) p.y = -200; let g = ctx.createLinearGradient(p.x-p.radius*0.3, p.y-p.radius*0.3, p.x+p.radius*0.5, p.y+p.radius*0.5); g.addColorStop(0, p.color1); g.addColorStop(1, p.color2); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill(); if (p.hasRing) { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.radius*1.6, p.radius*0.5, Math.PI/5, 0, Math.PI*2); ctx.fillStyle = p.ringColor; ctx.fill(); } });
-        shuttles.forEach(s => { s.x += s.speedX; s.y += s.speedY; if (s.x > width+100) s.x = -100; if (s.x < -100) s.x = width+100; if (s.y > height+100) s.y = -100; if (s.y < -100) s.y = height+100; ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(Math.atan2(s.speedY, s.speedX)); ctx.fillStyle = "#e67e22"; ctx.beginPath(); ctx.moveTo(0, -s.size/2); ctx.lineTo(s.size, 0); ctx.lineTo(0, s.size/2); ctx.fill(); ctx.fillStyle = "#f1c40f"; ctx.fillRect(-s.size/4, -s.size/4, s.size/2, s.size/2); ctx.fillStyle = "#4ecdc4"; ctx.beginPath(); ctx.arc(s.size/3, 0, 5, 0, Math.PI*2); ctx.fill(); ctx.restore(); });
-        if (Math.random() < 0.02 && shootingStars.length < 3) shootingStars.push({x: Math.random()*width, y: Math.random()*height*0.4, len: Math.random()*120+60, speedX: Math.random()*10+5, speedY: Math.random()*8+3, alpha: 1});
-        for (let i = shootingStars.length-1; i >= 0; i--) { let s = shootingStars[i]; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.len, s.y - s.len*0.5); ctx.strokeStyle = `rgba(255,255,200,${s.alpha})`; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = `rgba(255,255,200,${s.alpha})`; ctx.beginPath(); ctx.arc(s.x, s.y, 3, 0, Math.PI*2); ctx.fill(); s.x += s.speedX; s.y += s.speedY; s.alpha -= 0.02; if (s.alpha <= 0) shootingStars.splice(i, 1); }
-        requestAnimationFrame(draw);
+    // ----- OVERLAY RÉALISTE (étoiles filantes et planètes discrètes) -----
+    const overlayCanvas = document.getElementById('overlay-canvas');
+    const overlayCtx = overlayCanvas.getContext('2d');
+    let overlayWidth, overlayHeight;
+    function resizeOverlay() {
+        overlayWidth = window.innerWidth;
+        overlayHeight = window.innerHeight;
+        overlayCanvas.width = overlayWidth;
+        overlayCanvas.height = overlayHeight;
     }
-    draw();
-    window.addEventListener('resize', () => { resizeCanvas(); stars.forEach(s => { s.x = Math.random()*width; s.y = Math.random()*height; }); nebulae.forEach(n => { n.x = Math.random()*width; n.y = Math.random()*height; }); planets.forEach(p => { p.x = Math.random()*width; p.y = Math.random()*height; }); });
+    window.addEventListener('resize', resizeOverlay);
+    resizeOverlay();
+
+    let shootingStarsOverlay = [];
+    let planetsOverlay = [];
+
+    // Création de quelques planètes statiques très réalistes (cercles avec halos)
+    for (let i = 0; i < 3; i++) {
+        planetsOverlay.push({
+            x: Math.random() * overlayWidth,
+            y: Math.random() * overlayHeight,
+            radius: Math.random() * 30 + 15,
+            color: `hsla(${Math.random() * 60 + 20}, 80%, 60%, 0.4)`,
+            blur: Math.random() * 8 + 4
+        });
+    }
+
+    function addShootingStar() {
+        shootingStarsOverlay.push({
+            x: Math.random() * overlayWidth,
+            y: Math.random() * overlayHeight * 0.3,
+            length: Math.random() * 120 + 80,
+            speedX: Math.random() * 8 + 4,
+            speedY: Math.random() * 6 + 2,
+            alpha: 1,
+            width: Math.random() * 3 + 1
+        });
+    }
+    setInterval(() => { if (Math.random() < 0.3) addShootingStar(); }, 4000);
+
+    function drawOverlay() {
+        overlayCtx.clearRect(0, 0, overlayWidth, overlayHeight);
+        // Planètes floues (réalistes)
+        planetsOverlay.forEach(p => {
+            overlayCtx.shadowBlur = p.blur;
+            overlayCtx.shadowColor = "rgba(255,255,200,0.3)";
+            overlayCtx.fillStyle = p.color;
+            overlayCtx.beginPath();
+            overlayCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            overlayCtx.fill();
+            // Anneau pour certaines
+            if (p.radius > 25) {
+                overlayCtx.beginPath();
+                overlayCtx.ellipse(p.x, p.y, p.radius * 1.4, p.radius * 0.6, 0.2, 0, Math.PI * 2);
+                overlayCtx.fillStyle = "rgba(255,215,0,0.2)";
+                overlayCtx.fill();
+            }
+        });
+        overlayCtx.shadowBlur = 0;
+        // Étoiles filantes
+        for (let i = shootingStarsOverlay.length-1; i >= 0; i--) {
+            let s = shootingStarsOverlay[i];
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(s.x, s.y);
+            overlayCtx.lineTo(s.x - s.length, s.y - s.length * 0.5);
+            overlayCtx.strokeStyle = `rgba(255, 240, 200, ${s.alpha})`;
+            overlayCtx.lineWidth = s.width;
+            overlayCtx.stroke();
+            overlayCtx.fillStyle = `rgba(255, 255, 210, ${s.alpha})`;
+            overlayCtx.beginPath();
+            overlayCtx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+            overlayCtx.fill();
+            s.x += s.speedX;
+            s.y += s.speedY;
+            s.alpha -= 0.01;
+            if (s.alpha <= 0 || s.x > overlayWidth + 200 || s.y > overlayHeight + 200) shootingStarsOverlay.splice(i,1);
+        }
+        requestAnimationFrame(drawOverlay);
+    }
+    drawOverlay();
+    window.addEventListener('resize', () => {
+        resizeOverlay();
+        planetsOverlay.forEach(p => {
+            p.x = Math.random() * overlayWidth;
+            p.y = Math.random() * overlayHeight;
+        });
+    });
 </script>
 </body>
 </html>
