@@ -1,326 +1,684 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aide à l'Écriture - Super Championne</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Aide à l'Écriture - Dys | Espace & Dictée vocale</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Police OpenDyslexic pour faciliter la lecture -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
+        body {
+            font-family: 'OpenDyslexic', sans-serif;
+            background: radial-gradient(ellipse at top, #0a0f2c 0%, #030617 100%);
+            color: #f0f3ff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-  <style>
-    :root {
-      --bg-color: #fdf6e3;
-      --text-color: #2c3e50;
-      --accent-color: #3498db;
-      --success-color: #27ae60;
-      --warning-color: #e67e22;
-    }
+        /* Étoiles animées */
+        .stars, .twinkling {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .stars {
+            background: #000 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 800"><circle cx="120" cy="80" r="1.5" fill="white"/><circle cx="400" cy="150" r="2" fill="white"/><circle cx="700" cy="50" r="1.2" fill="white"/><circle cx="950" cy="300" r="2.5" fill="white"/><circle cx="1300" cy="120" r="1.8" fill="white"/><circle cx="1600" cy="400" r="2" fill="white"/><circle cx="1800" cy="200" r="1.5" fill="white"/><circle cx="100" cy="500" r="2" fill="white"/><circle cx="500" cy="700" r="1.2" fill="white"/><circle cx="1200" cy="650" r="2.2" fill="white"/><circle cx="1700" cy="720" r="1.7" fill="white"/><circle cx="300" cy="350" r="1" fill="white"/><circle cx="800" cy="450" r="1.9" fill="white"/><circle cx="1450" cy="550" r="1.3" fill="white"/></svg>') repeat;
+            background-size: 400px 200px;
+            animation: starsMove 80s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes starsMove {
+            from { background-position: 0 0; }
+            to { background-position: -800px -400px; }
+        }
+        .twinkling {
+            background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1000"><circle cx="50" cy="90" r="1" fill="white" opacity="0.3"/><circle cx="620" cy="210" r="1.5" fill="white" opacity="0.5"/><circle cx="990" cy="470" r="2" fill="white" opacity="0.4"/><circle cx="1450" cy="130" r="1.2" fill="white" opacity="0.6"/><circle cx="110" cy="780" r="1.8" fill="white" opacity="0.3"/></svg>') repeat;
+            background-size: 300px 200px;
+            animation: twinkle 6s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.8; }
+        }
+        .rocket {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 70,40 60,40 60,70 40,70 40,40 30,40" fill="%23e67e22" stroke="%23f1c40f" stroke-width="1.5"/><polygon points="45,70 55,70 55,85 45,85" fill="%23c0392b"/><circle cx="50" cy="35" r="6" fill="%234ecdc4"/><rect x="47" y="72" width="6" height="12" fill="%23e67e22"/><polygon points="35,40 30,45 40,45" fill="%239b59b6"/><polygon points="65,40 70,45 60,45" fill="%239b59b6"/></svg>') no-repeat center/contain;
+            filter: drop-shadow(0 0 6px cyan);
+            animation: fly 12s ease-in-out infinite;
+            z-index: 15;
+            pointer-events: none;
+        }
+        @keyframes fly {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-20px, -30px) rotate(-5deg); }
+            50% { transform: translate(30px, -15px) rotate(5deg); }
+            75% { transform: translate(-10px, 10px) rotate(-3deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
 
-    body {
-      font-family: 'OpenDyslexic', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+        .app-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
-    header {
-      padding: 15px;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+        /* Onglets cosmos */
+        .tabs {
+            display: flex;
+            background: rgba(5, 10, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 0 20px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-family: 'OpenDyslexic', sans-serif;
+            font-weight: bold;
+            color: #c9e9ff;
+            cursor: pointer;
+            border-radius: 30px 30px 15px 15px;
+            transition: 0.3s;
+        }
+        .tab-button.active {
+            background: #2c3e66;
+            color: #ffecb3;
+            border-bottom: 3px solid #f1c40f;
+            box-shadow: 0 0 12px rgba(241,196,15,0.5);
+        }
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
 
-    #editor-container {
-      flex-grow: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
+        .toolbar {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-top: 1px solid rgba(255,255,200,0.2);
+        }
+        .editor-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+        }
+        .zone {
+            width: 85%;
+            max-width: 1000px;
+        }
+        textarea, .dict-input {
+            width: 100%;
+            font-size: 24px;
+            font-family: 'OpenDyslexic', sans-serif;
+            padding: 20px;
+            border: 2px solid #4ecdc4;
+            border-radius: 30px;
+            line-height: 1.6;
+            background: rgba(15, 25, 55, 0.85);
+            color: #f5f9ff;
+            resize: vertical;
+            box-shadow: 0 0 12px rgba(78, 205, 196, 0.3);
+        }
+        textarea:focus, .dict-input:focus {
+            border-color: #f1c40f;
+            box-shadow: 0 0 20px #f1c40f80;
+            outline: none;
+        }
+        #output-display, #story-output, #dict-consigne {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            background: rgba(10, 20, 45, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            font-size: 24px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 1px solid #4ecdc4;
+        }
+        button {
+            padding: 10px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #2c3e66, #1a2745);
+            color: white;
+            font-family: 'OpenDyslexic', sans-serif;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.4);
+        }
+        button:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #3e5a8f, #2a3b60);
+            box-shadow: 0 0 12px gold;
+        }
+        .micro-btn {
+            background: linear-gradient(135deg, #8e44ad, #5b2c6f);
+        }
+        .story-btn { background: linear-gradient(135deg, #1e6f5c, #0f4c3a); }
+        .dict-btn { background: linear-gradient(135deg, #9b59b6, #6c3483); }
+        .success-btn { background: linear-gradient(135deg, #27ae60, #1e8449); }
 
-    /* Styles de l'éditeur */
-    #input-text {
-      width: 90%;
-      max-width: 850px;
-      height: 150px;
-      font-size: 24px;
-      font-family: 'OpenDyslexic', sans-serif;
-      padding: 15px;
-      border: 3px solid var(--accent-color);
-      border-radius: 15px;
-      line-height: 1.6;
-      background: #fff;
-    }
+        .syl1 { color: #7df9ff; font-weight: 500; text-decoration: underline dotted #f1c40f; text-underline-offset: 5px; }
+        .syl2 { color: #ffb347; font-weight: 500; text-decoration: underline solid #ff6b6b; text-underline-offset: 5px; }
 
-    #output-display {
-      width: 90%;
-      max-width: 850px;
-      min-height: 100px;
-      padding: 15px;
-      background: white;
-      border-radius: 15px;
-      font-size: 24px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      border: 1px solid #ddd;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-    }
+        /* Barre de progression */
+        .score-container {
+            background: rgba(0,0,0,0.5);
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .progress-bar-wrapper {
+            background: #2c3e66;
+            border-radius: 30px;
+            height: 24px;
+            width: 100%;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            width: 0%;
+            height: 100%;
+            border-radius: 30px;
+            transition: width 0.4s ease;
+        }
+        .gift-message {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #f1c40f;
+            text-shadow: 0 0 6px #e67e22;
+            animation: pulse 0.8s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
-    /* Syllabes alternées pour faciliter le décodage */
-    .syl1 { color: #2980b9; text-decoration: underline; }
-    .syl2 { color: #c0392b; }
-
-    button {
-      padding: 10px 15px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      background-color: var(--accent-color);
-      color: white;
-      font-family: inherit;
-      font-weight: bold;
-      transition: transform 0.1s;
-    }
-    button:active { transform: scale(0.95); }
-
-    .btn-dictation { background-color: #9b59b6; }
-    .btn-validate { background-color: var(--success-color); font-size: 20px; padding: 15px 25px; width: 90%; max-width: 850px; }
-
-    /* Zone Défi & Score */
-    #challenge {
-      width: 90%;
-      max-width: 850px;
-      background: white;
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    #progress-container {
-      width: 100%;
-      background: #eee;
-      height: 20px;
-      border-radius: 10px;
-      margin: 10px 0;
-      overflow: hidden;
-    }
-    #progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #2ecc71, #27ae60);
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-
-    /* Modals */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      padding: 20px;
-    }
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 500px;
-      animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  </style>
+        .keyword-group {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        #keywords {
+            flex: 1;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 40px;
+            border: 2px solid #4ecdc4;
+            background: #0a132b;
+            color: white;
+        }
+        .story-history {
+            margin-top: 20px;
+            border-top: 1px dashed #f1c40f;
+            padding-top: 15px;
+        }
+        .feedback {
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .correct-feedback { color: #2ecc71; text-shadow: 0 0 4px #27ae60; }
+        .wrong-feedback { color: #e67e22; text-shadow: 0 0 3px #c0392b; }
+        footer {
+            text-align: center;
+            font-size: 14px;
+            padding: 8px;
+            background: rgba(0,0,0,0.5);
+            color: #aac8ff;
+            border-top: 1px solid #2c3e66;
+        }
+        @media (max-width: 700px) {
+            .zone { width: 95%; }
+            textarea, #output-display, #story-output, #dict-consigne, .dict-input { font-size: 20px; }
+            button { padding: 6px 16px; font-size: 14px; }
+        }
+    </style>
 </head>
 <body>
+<div class="stars"></div>
+<div class="twinkling"></div>
+<div class="rocket"></div>
 
-  <header>
-    <button onclick="lireTexte()" style="background:#2ecc71">🔊 Écouter</button>
-    <button onclick="demarrerDictee()" class="btn-dictation">🎤 Dictée Vocale</button>
-    <button onclick="changerTaille(2)">➕ Agrandir</button>
-    <button onclick="changerTaille(-2)">➖ Réduire</button>
-    <button onclick="effacerTout()" style="background:#95a5a6">🗑️ Effacer</button>
-  </header>
-
-  <div id="editor-container">
-    <section id="challenge">
-      <div style="display:flex; justify-content:space-between; align-items: center;">
-        <span style="font-size: 20px;">⭐ Victoires : <b><span id="score-value">0</span> / 30</b></span>
-        <button onclick="resetScoreManuel()" style="font-size:10px; padding:5px; background:#e74c3c;">Reset Score</button>
-      </div>
-      <div id="progress-container"><div id="progress-fill"></div></div>
-      <p id="prompt-box" style="margin-top:10px; font-style:italic; color:#7f8c8d; border-left: 4px solid var(--accent-color); padding-left: 10px;"></p>
-    </section>
-
-    <!-- Zone de saisie avec mise à jour en temps réel -->
-    <textarea id="input-text" placeholder="Écris ton texte ici..." oninput="decouperSyllabes()"></textarea>
-    
-    <div id="output-display">L'aperçu coloré s'affichera ici...</div>
-    
-    <button class="btn-validate" onclick="validerExercice()">✅ Valider l'exercice</button>
-  </div>
-
-  <!-- Modal Récompense -->
-  <div id="gift-modal" class="modal">
-    <div class="modal-content">
-      <h1>🎁 BRAVO CHAMPIONNE ! 🎁</h1>
-      <p>Tu as atteint les 30 victoires ! Choisis ton cadeau :</p>
-      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button onclick="choisirCadeau('un Produit de Beauté')" style="background:#ff9ff3; color:black;">💄 Beauté</button>
-        <button onclick="choisirCadeau('une Sortie')" style="background:#feca57; color:black;">🎢 Sortie</button>
-        <button onclick="choisirCadeau('une Surprise')" style="background:#54a0ff; color:black;">✨ Surprise</button>
-      </div>
-      <p id="choix-final" style="margin-top:20px; color:var(--success-color); font-weight:bold; font-size: 22px;"></p>
-      <button onclick="fermerModal()" style="margin-top:20px; width:100%; background: #34495e;">Recommencer un défi</button>
+<div class="app-container">
+    <div class="tabs">
+        <button class="tab-button active" data-tab="ecriture">🚀 Écriture libre</button>
+        <button class="tab-button" data-tab="histoire">🌌 Générateur d'histoire</button>
+        <button class="tab-button" data-tab="dictee">🛸 Dictée (recopie + micro)</button>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <!-- Onglet Écriture libre (inchangé) -->
+    <div id="ecriture" class="tab-content active">
+        <div class="editor-container">
+            <div class="zone">
+                <textarea id="input-text" placeholder="Écris ton texte comme un astronaute écrit son journal de bord..."></textarea>
+            </div>
+            <div class="zone">
+                <div id="output-display" title="Aperçu adapté"></div>
+            </div>
+        </div>
+        <div class="toolbar">
+            <button onclick="insererPhraseAleatoire()">🌟 Phrase au hasard</button>
+            <button onclick="colorerSyllabes()">🎨 Colorer les syllabes</button>
+            <button onclick="changerTaille(2)">🔭 Agrandir</button>
+            <button onclick="changerTaille(-2)">🔭 Réduire</button>
+            <button onclick="reinitialiserAffichage()">🪐 Texte brut</button>
+        </div>
+    </div>
 
-  <script>
-    let score = localStorage.getItem('dys_score') ? parseInt(localStorage.getItem('dys_score')) : 0;
-    const prompts = [
-      "Le chat dort sur le tapis bleu.",
-      "J'aime manger des pommes rouges.",
-      "Le soleil brille dans le ciel.",
-      "Je suis capable de réussir mes exercices.",
-      "La lecture est une aventure magique.",
-      "Demain, nous irons au parc s'il fait beau.",
-      "Chaque petit pas me rapproche de mon but."
+    <!-- Onglet Histoire (inchangé) -->
+    <div id="histoire" class="tab-content">
+        <div class="editor-container">
+            <div class="zone">
+                <label style="font-weight: bold; font-size: 1.2rem;">✨ Mots-clés (séparés par virgules ou espaces) :</label>
+                <div class="keyword-group">
+                    <input type="text" id="keywords" placeholder="ex: étoile, fusée, nébuleuse" value="étoile, fusée, nébuleuse">
+                    <button id="generate-story-btn" class="story-btn">🌠 Générer 3 phrases</button>
+                    <button id="reset-story-btn" class="story-btn" style="background:#b86f2c;">💫 Réinitialiser</button>
+                </div>
+                <div id="story-output"><em>Clique sur "Générer" pour créer ton histoire cosmique !</em></div>
+                <div class="story-history">
+                    <h3>📜 Historique des générations</h3>
+                    <div id="story-history-log" style="background: #0a0e1c; padding: 12px; border-radius: 20px;">Aucune phrase.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet Dictée avec micro et barre de progression -->
+    <div id="dictee" class="tab-content">
+        <div class="editor-container">
+            <div class="zone">
+                <div style="background: #0a1430; border-radius: 30px; padding: 15px; margin-bottom: 20px;">
+                    <h3>📡 La phrase à recopier (colorisée) :</h3>
+                    <div id="dict-consigne" style="font-size: 28px; font-weight: bold; background: #010a1f; padding: 20px; border-radius: 25px;">Clique sur "Nouvelle phrase"</div>
+                </div>
+                <label>✏️ Recopie ici (ou utilise le micro) :</label>
+                <textarea id="dict-input" class="dict-input" rows="4" placeholder="Tape la phrase exacte... ou parle dans le micro"></textarea>
+                <div style="display: flex; gap: 15px; margin-top: 20px; justify-content: center; flex-wrap: wrap;">
+                    <button id="micro-btn" class="micro-btn">🎤 Parler (Dictée)</button>
+                    <button id="new-phrase-btn" class="dict-btn">🆕 Nouvelle phrase</button>
+                    <button id="check-dict-btn" class="success-btn">✅ Vérifier</button>
+                </div>
+                <div id="dict-feedback" class="feedback"></div>
+
+                <!-- Barre de progression et score -->
+                <div class="score-container">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <span>🏆 Succès spatiaux :</span>
+                        <span id="score-value">0</span> / <span id="score-max">5</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div id="progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <div id="gift-notification" style="font-size: 1.2rem; margin-top: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>🌙 Police OpenDyslexic + thème espace • Dictée vocale intégrée (micro) • Barre de progression vers le cadeau</footer>
+</div>
+
+<script>
+    // ========== BIBLIOTHÈQUE DE PHRASES ==========
+    const bibliothequePhrases = [
+        "Le chat dort.", "Le ciel est étoilé.", "Il fait beau sur Mars.", "Je mange une pomme.", "La fusée décolle.",
+        "La nébuleuse est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
+        "Le vaisseau est rouge.", "Il y a du soleil.", "La mer est calme.", "Le poisson nage bien.", "Je joue au ballon.",
+        "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite.",
+        "La pluie tombe doucement.", "Le bébé sourit.", "J'aime ma famille.", "Le cartable est lourd.", "La soupe est chaude.",
+        "Je respire et je réussis.", "Mon cerveau est magique.", "Chaque erreur m'aide à apprendre.", "Je fais de mon mieux.",
+        "Je suis une vraie championne.", "J'apprends à mon rythme.", "Écrire est un super pouvoir.", "Je suis fière de mes progrès.",
+        "Je peux essayer encore une fois.", "Rien ne m'arrête aujourd'hui.", "Je prends mon temps pour lire.", "Mon imagination est immense.",
+        "Je progresse chaque jour un peu plus.", "Une lettre après l'autre, c'est facile.", "Je suis capable de tout écrire.",
+        "Les mots sont mes amis.", "Je peux relire si j'ai un doute.", "C'est en s'entraînant qu'on grandit.", "Mon courage est ma plus grande force.",
+        "Je réussis cet exercice avec succès.", "Je prépare mes affaires pour demain.", "Nous allons manger une bonne glace.",
+        "La maîtresse explique la leçon de français.", "Je dessine un grand château fort.", "Les enfants jouent dans la cour d'école.",
+        "Il faut bien se laver les mains.", "Le soir, je regarde les étoiles filantes.", "Nous ramassons des coquillages sur la plage.",
+        "Je mets mes chaussures pour aller courir.", "Le matin, je prends un bon chocolat chaud.", "La trousse contient des crayons de couleur.",
+        "Nous écoutons une belle histoire avant de dormir.", "Je regarde les feuilles tomber des arbres.", "Le jardinier plante de jolies tomates rouges.",
+        "Les vacances approchent à grands pas.", "Je range mes jouets dans ma chambre.", "Nous faisons une grande promenade en forêt.",
+        "Le pain chaud croustille sous la dent.", "J'aide à dresser la table pour le dîner.", "Les oiseaux fabriquent un nid dans l'arbre.",
+        "Le petit lapin blanc se cache derrière un grand buisson vert.", "Un navire de pirates navigue sur les vagues de l'océan Indien.",
+        "Le dragon crache des petites bulles de savon au lieu du feu.", "La fée magique transforme une simple citrouille en carrosse doré.",
+        "Un astronaute voyage dans l'espace pour visiter la planète Mars.", "Le vieux magicien prépare une potion mystérieuse dans son chaudron.",
+        "Une baleine bleue danse joyeusement au milieu des poissons tropicaux.", "L'écureuil agile rassemble des noisettes pour passer un hiver tranquille.",
+        "Le chaton noir adore jouer avec une grosse pelote de laine rouge.", "Un ours brun cherche du miel sucré dans la forêt profonde.",
+        "La princesse porte une magnifique couronne qui brille de mille feux.", "Un petit robot rigolo nettoie toute la maison en chantant.",
+        "Le dauphin joueur saute hors de l'eau pour saluer les marins.", "Une étoile magique réalise les vœux des enfants sages ce soir.",
+        "Le chien de mon voisin adore courir après les papillons jaunes.", "Les lettres s'organisent sagement pour former des mots fantastiques.",
+        "Prendre le temps de bien lire permet de comprendre toute l'histoire.", "Le soleil se couche lentement derrière la montagne en colorant le ciel.",
+        "Nous préparons une excellente tarte aux pommes avec une pincée de cannelle.", "Un grand singe malicieux s'amuse à imiter les grimaces des visiteurs.",
+        "La musique douce m'aide à me concentrer pour écrire mes phrases.", "Les vagues de la mer effacent les châteaux de sable sur la plage.",
+        "Un magnifique arc-en-ciel apparaît dans le ciel juste après la tempête.", "Les petits poussins jaunes suivent leur maman partout dans la ferme.",
+        "J'adore écouter le bruit de la pluie quand je suis au chaud.", "Les papillons volent délicatement de fleur en fleur dans le grand parc.",
+        "Le grand navire active ses lumières pour guider les autres bateaux.", "Les secrets les plus précieux sont souvent cachés au fond des livres.",
+        "Un grand tapis roulant transporte les bagages des voyageurs à l'aéroport.", "La petite tortue marche lentement mais elle arrive toujours à destination.",
+        "Le détective utilise une loupe pour chercher des indices importants.", "Les crayons magiques écrivent des histoires extraordinaires de manière fluide.",
+        "Un groupe de joyeux dauphins accompagne notre voilier pendant le voyage.", "Les feuilles d'automne rousses dansent au milieu du vent frais du matin.",
+        "Je termine ce grand défi d'écriture avec une immense fierté."
     ];
 
-    window.onload = () => {
-      actualiserScore();
-      genererPrompt();
-    };
-
-    function actualiserScore() {
-      document.getElementById('score-value').textContent = score;
-      const pourcentage = (Math.min(score, 30) / 30) * 100;
-      document.getElementById('progress-fill').style.width = pourcentage + "%";
-      localStorage.setItem('dys_score', score);
+    // ========== SYLLABATION (colorisation) ==========
+    function syllaberMot(mot) {
+        const ponctuationMatch = mot.match(/[.,!?;:…]+$/);
+        let motPropre = mot;
+        let ponctuation = '';
+        if (ponctuationMatch) {
+            ponctuation = ponctuationMatch[0];
+            motPropre = mot.slice(0, -ponctuation.length);
+        }
+        if (motPropre.length === 0) return ponctuation ? [ponctuation] : [];
+        const voyelles = 'aeiouyâàäéèêëôîïûùüÿAEIOUYÂÀÄÉÈÊËÔÎÏÛÙÜŸ';
+        const voyellesSet = new Set(voyelles.split(''));
+        function estVoyelle(c) { return voyellesSet.has(c); }
+        const lettres = motPropre.split('');
+        const syllabes = [];
+        let courant = '';
+        const groupesConsonneLiquide = ['pr','tr','br','cr','gr','fr','vr','dr','pl','bl','cl','gl','fl','vl','ph','th','ch','qu','gu'];
+        for (let i = 0; i < lettres.length; i++) {
+            courant += lettres[i];
+            if (i+1 < lettres.length && estVoyelle(lettres[i])) {
+                if (i+2 < lettres.length) {
+                    const deuxLettres = lettres[i+1] + lettres[i+2];
+                    if (groupesConsonneLiquide.includes(deuxLettres.toLowerCase())) continue;
+                }
+                if (!estVoyelle(lettres[i+1]) && (i+2 < lettres.length || (i+1 === lettres.length-1 && !estVoyelle(lettres[i+1])))) {
+                    syllabes.push(courant);
+                    courant = '';
+                }
+            }
+        }
+        if (courant !== '') syllabes.push(courant);
+        if (syllabes.length >= 2 && syllabes[syllabes.length-1].length === 1 && syllabes[syllabes.length-1] === 'e') {
+            const dern = syllabes.pop();
+            syllabes[syllabes.length-1] += dern;
+        }
+        if (syllabes.length === 0) syllabes.push(motPropre);
+        if (ponctuation) syllabes[syllabes.length-1] += ponctuation;
+        return syllabes;
     }
 
-    // Colorisation automatique en TEMPS RÉEL
-    function decouperSyllabes() {
-      const text = document.getElementById('input-text').value;
-      if (!text.trim()) {
-        document.getElementById('output-display').innerHTML = "L'aperçu coloré s'affichera ici...";
-        return;
-      }
-      
-      const words = text.split(/(\s+)/); // Garde les espaces pour l'affichage
-      const colored = words.map(word => {
-        if (word.trim() === "") return word;
-        // Regex syllabique pour le français
-        let syllables = word.match(/[^aeiouyàâéèêëîïôûù]*[aeiouyàâéèêëîïôûù]+(?:[^aeiouyàâéèêëîïôûù](?![aeiouyàâéèêëîïôûù]))*/gi) || [word];
-        return syllables.map((s, i) => `<span class="syl${(i % 2) + 1}">${s}</span>`).join('');
-      }).join('');
-      
-      document.getElementById('output-display').innerHTML = colored;
+    function colorerTexte(texte) {
+        const lignes = texte.split(/\r?\n/);
+        const lignesColorees = lignes.map(ligne => {
+            const elements = ligne.split(/(\s+)/);
+            return elements.map(elem => {
+                if (elem.trim() === "") return elem;
+                const syllabes = syllaberMot(elem);
+                return syllabes.map((syl, idx) => `<span class="syl${(idx % 2) + 1}">${syl}</span>`).join('');
+            }).join('');
+        }).join('\n');
+        return lignesColorees;
     }
 
-    // Dictée Vocale (Chrome/Edge recommandé)
-    function demarrerDictee() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("La dictée n'est pas supportée par ton navigateur.");
-        return;
-      }
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'fr-FR';
-      
-      recognition.onstart = () => { document.querySelector('.btn-dictation').textContent = "🔴 Écoute..."; };
-      recognition.onend = () => { document.querySelector('.btn-dictation').textContent = "🎤 Dictée Vocale"; };
-      
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        const input = document.getElementById('input-text');
-        input.value += (input.value ? " " : "") + transcript;
-        decouperSyllabes();
-      };
-      recognition.start();
+    function colorerConsigne() {
+        const consigneBrute = phraseCouranteDictée;
+        if (!consigneBrute) return;
+        const colore = colorerTexte(consigneBrute);
+        document.getElementById('dict-consigne').innerHTML = colore;
     }
 
-    // Lecture par synthèse vocale
-    function lireTexte() {
-      const text = document.getElementById('input-text').value;
-      if (!text) return;
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = 'fr-FR';
-      msg.rate = 0.8; // Vitesse ralentie pour la compréhension
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(msg);
+    // ========== ÉCRITURE LIBRE ==========
+    function colorerSyllabes() {
+        const texteSource = document.getElementById('input-text').value;
+        document.getElementById('output-display').innerHTML = colorerTexte(texteSource);
+    }
+    function reinitialiserAffichage() {
+        const texteBrut = document.getElementById('input-text').value;
+        document.getElementById('output-display').innerHTML = texteBrut.replace(/\n/g, '<br>');
+    }
+    let modeColorie = false;
+    function mettreAJourAffichage() {
+        if (modeColorie) colorerSyllabes();
+        else reinitialiserAffichage();
+    }
+    window.colorerSyllabes = function() { modeColorie = true; colorerSyllabes(); };
+    window.reinitialiserAffichage = function() { modeColorie = false; reinitialiserAffichage(); };
+    const textareaEcriture = document.getElementById('input-text');
+    textareaEcriture.addEventListener('input', mettreAJourAffichage);
+    let currentSize = 24;
+    function changerTaille(delta) {
+        currentSize += delta;
+        if (currentSize < 12) currentSize = 12;
+        if (currentSize > 48) currentSize = 48;
+        textareaEcriture.style.fontSize = currentSize + 'px';
+        document.getElementById('output-display').style.fontSize = currentSize + 'px';
+        localStorage.setItem('dysFontSize', currentSize);
+    }
+    window.changerTaille = changerTaille;
+    const savedSize = localStorage.getItem('dysFontSize');
+    if (savedSize) { currentSize = parseInt(savedSize); changerTaille(0); }
+    function insererPhraseAleatoire() {
+        const index = Math.floor(Math.random() * bibliothequePhrases.length);
+        document.getElementById('input-text').value = bibliothequePhrases[index];
+        mettreAJourAffichage();
+    }
+    window.insererPhraseAleatoire = insererPhraseAleatoire;
+
+    // ========== HISTOIRE ==========
+    let histoireComplete = "";
+    function genererPhrasesAvecMotsCles(motsCles) {
+        let mots = motsCles.split(/[ ,]+/).filter(m => m.trim().length > 0);
+        if (mots.length === 0) mots = ["aventure"];
+        const structures = [
+            (m) => `🚀 Dans la galaxie, ${m[0] || "un mystère"} apparaît près de ${m[1] || "une étoile mourante"}.`,
+            (m) => `Avec ${m[0] || "un vaisseau spatial"}, ${m[1] || "les astronautes"} découvrent ${m[2] || "une nouvelle planète"}.`,
+            (m) => `Soudain, ${m[0] || "une comète"} traverse le ciel et ${m[1] || "réveille"} d'anciennes ${m[2] || "constellations"}.`,
+            (m) => `Grâce à ${m[0] || "leur courage"}, ils atterrissent sur ${m[1] || "Titan"} et rencontrent ${m[2] || "des formes de vie"}.`,
+            (m) => `Dans ${m[0] || "cette nébuleuse"}, ${m[1] || "la fusée"} capte un signal ${m[2] || "mystérieux"}.`,
+            (m) => `Finalement, ${m[0] || "la clé"} se cache dans ${m[1] || "le trou noir"} de ${m[2] || "l'infini"}.`
+        ];
+        const phrases = [];
+        for (let i = 0; i < 3; i++) {
+            const structure = structures[Math.floor(Math.random() * structures.length)];
+            const motsUtilises = [];
+            for (let j = 0; j < 3; j++) motsUtilises.push(mots[j] || mots[0] + " cosmique");
+            let phrase = structure(motsUtilises);
+            phrase = phrase.charAt(0).toUpperCase() + phrase.slice(1);
+            phrases.push(phrase);
+        }
+        return phrases;
+    }
+    function ajouterPhrasesAHistoire(phrases) {
+        histoireComplete += phrases.join(" ") + " ";
+        document.getElementById('story-output').innerHTML = histoireComplete.replace(/\n/g, '<br>');
+        const bloc = phrases.map(p => "🌠 " + p).join("<br>");
+        const logDiv = document.getElementById('story-history-log');
+        if (logDiv.innerHTML === "Aucune phrase.") logDiv.innerHTML = bloc;
+        else logDiv.innerHTML += "<hr style='border-color:#4ecdc4;'>" + bloc;
+    }
+    function genererHistoire() {
+        const keywords = document.getElementById('keywords').value;
+        const phrases = genererPhrasesAvecMotsCles(keywords);
+        ajouterPhrasesAHistoire(phrases);
+    }
+    function reinitialiserHistoire() {
+        histoireComplete = "";
+        document.getElementById('story-output').innerHTML = "<em>Histoire réinitialisée. Prêt à décoller !</em>";
+        document.getElementById('story-history-log').innerHTML = "Aucune phrase.";
+    }
+    document.getElementById('generate-story-btn').addEventListener('click', genererHistoire);
+    document.getElementById('reset-story-btn').addEventListener('click', reinitialiserHistoire);
+
+    // ========== DICTÉE AVEC MICRO ET BARRE DE PROGRESSION ==========
+    let phraseCouranteDictée = "";
+    let phraseDejaValidee = false;      // pour ne pas recompter la même phrase
+    let scoreActuel = 0;
+    const scoreMax = 5;                 // objectif cadeau
+
+    const scoreSpan = document.getElementById('score-value');
+    const progressFill = document.getElementById('progress-fill');
+    const giftDiv = document.getElementById('gift-notification');
+
+    function mettreAJourBarre() {
+        scoreSpan.textContent = scoreActuel;
+        const pourcentage = (scoreActuel / scoreMax) * 100;
+        progressFill.style.width = pourcentage + '%';
+        if (scoreActuel >= scoreMax) {
+            // Débloquer le cadeau
+            giftDiv.innerHTML = "🎁✨ FÉLICITATIONS ! TU AS GAGNÉ UN CADEAU SPATIAL ! ✨🎁";
+            giftDiv.classList.add('gift-message');
+            // Réinitialiser le score après un court délai (pour recommencer un cycle)
+            setTimeout(() => {
+                scoreActuel = 0;
+                mettreAJourBarre();
+                giftDiv.innerHTML = "";
+                giftDiv.classList.remove('gift-message');
+                // On peut aussi afficher un message "Nouveau cycle !"
+                giftDiv.innerHTML = "🌟 Nouveau cycle ! Continue comme ça ! 🌟";
+                setTimeout(() => { if (giftDiv.innerHTML === "🌟 Nouveau cycle ! Continue comme ça ! 🌟") giftDiv.innerHTML = ""; }, 3000);
+            }, 2000);
+        } else {
+            if (giftDiv.innerHTML.includes("Cadeau") === false && giftDiv.innerHTML !== "🌟 Nouveau cycle ! Continue comme ça ! 🌟")
+                giftDiv.innerHTML = "";
+        }
     }
 
-    function validerExercice() {
-      const input = document.getElementById('input-text').value.trim();
-      if (input.length < 5) {
-        alert("Écris au moins une petite phrase pour valider !");
-        return;
-      }
-
-      score++;
-      actualiserScore();
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
-      if (score >= 30) {
-        setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
-      }
-
-      effacerTout();
-      genererPrompt();
+    function incrementerScore() {
+        if (!phraseDejaValidee && scoreActuel < scoreMax) {
+            scoreActuel++;
+            phraseDejaValidee = true;
+            mettreAJourBarre();
+        } else if (scoreActuel >= scoreMax) {
+            // déjà cadeau, on ne fait rien
+        }
     }
 
-    function genererPrompt() {
-      const p = prompts[Math.floor(Math.random() * prompts.length)];
-      document.getElementById('prompt-box').innerHTML = `<b>Modèle :</b> "${p}"`;
+    function nouvellePhraseDictée() {
+        const index = Math.floor(Math.random() * bibliothequePhrases.length);
+        phraseCouranteDictée = bibliothequePhrases[index];
+        colorerConsigne();          // affiche la consigne colorisée
+        document.getElementById('dict-input').value = "";
+        document.getElementById('dict-feedback').innerHTML = "";
+        phraseDejaValidee = false;
     }
 
-    function choisirCadeau(cadeau) {
-      document.getElementById('choix-final').textContent = "Gagné ! Tu recevras : " + cadeau + " ! 🏆";
-      confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+    function verifierDictée() {
+        const reponse = document.getElementById('dict-input').value.trim();
+        if (reponse === phraseCouranteDictée.trim()) {
+            document.getElementById('dict-feedback').innerHTML = "🎉 Parfait ! Mission réussie ! +1 succès 🎉";
+            document.getElementById('dict-feedback').className = "feedback correct-feedback";
+            incrementerScore();
+            // Option: générer automatiquement une nouvelle phrase après validation ?
+            // On laisse l'utilisateur cliquer sur "Nouvelle phrase" pour garder le contrôle.
+        } else {
+            document.getElementById('dict-feedback').innerHTML = "❌ Ce n'est pas encore exact. Regarde bien la consigne spatiale. ❌";
+            document.getElementById('dict-feedback').className = "feedback wrong-feedback";
+        }
     }
 
-    function fermerModal() {
-      score = 0;
-      actualiserScore();
-      document.getElementById('gift-modal').style.display = 'none';
-      document.getElementById('choix-final').textContent = "";
+    // Reconnaissance vocale
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
     }
 
-    function resetScoreManuel() {
-      if(confirm("Veux-tu vraiment remettre ton score à zéro ?")) {
-        score = 0;
-        actualiserScore();
-      }
+    function demarrerMicro() {
+        if (!recognition) {
+            alert("La reconnaissance vocale n'est pas supportée par ton navigateur. Essaie Chrome ou Edge.");
+            return;
+        }
+        recognition.start();
+        const feedbackDiv = document.getElementById('dict-feedback');
+        feedbackDiv.innerHTML = "🎙️ Écoute... Parle maintenant clairement la phrase.";
+        feedbackDiv.className = "feedback";
+        recognition.onresult = (event) => {
+            const parole = event.results[0][0].transcript;
+            const inputZone = document.getElementById('dict-input');
+            inputZone.value = parole;
+            feedbackDiv.innerHTML = "✅ Texte reconnu ! Vérifie et clique sur 'Vérifier' si c'est bon.";
+            feedbackDiv.className = "feedback correct-feedback";
+        };
+        recognition.onerror = (event) => {
+            console.error("Erreur micro", event);
+            feedbackDiv.innerHTML = "❌ Le micro n'a pas compris. Réessaie ou écris toi-même.";
+            feedbackDiv.className = "feedback wrong-feedback";
+        };
+        recognition.onend = () => {
+            // fin naturelle
+        };
     }
 
-    function effacerTout() {
-      document.getElementById('input-text').value = "";
-      decouperSyllabes();
-    }
+    // Brancher les événements de l'onglet Dictée
+    document.getElementById('new-phrase-btn').addEventListener('click', nouvellePhraseDictée);
+    document.getElementById('check-dict-btn').addEventListener('click', verifierDictée);
+    document.getElementById('micro-btn').addEventListener('click', demarrerMicro);
 
-    function changerTaille(n) {
-      let current = parseInt(window.getComputedStyle(document.getElementById('input-text')).fontSize);
-      let next = current + n;
-      if(next < 16 || next > 50) return;
-      document.getElementById('input-text').style.fontSize = next + "px";
-      document.getElementById('output-display').style.fontSize = next + "px";
-    }
-  </script>
+    // Initialisation de la dictée
+    nouvellePhraseDictée();
+
+    // Gestion des onglets
+    const tabs = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            contents.forEach(c => c.classList.remove('active'));
+            tabs.forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            if (tabId === 'ecriture') {
+                document.getElementById('output-display').style.fontSize = currentSize + 'px';
+                textareaEcriture.style.fontSize = currentSize + 'px';
+            }
+        });
+    });
+
+    // Initialisation écriture
+    reinitialiserAffichage();
+    mettreAJourAffichage();
+</script>
 </body>
 </html>
