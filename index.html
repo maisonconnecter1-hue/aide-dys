@@ -117,10 +117,10 @@
         .incorrect-char { color: #e74c3c; text-shadow: 0 0 3px #c0392b; }
         .colored-dict-output { background: rgba(10,20,45,0.8); backdrop-filter: blur(8px); border-radius: 30px; padding: 20px; font-size: 28px; line-height: 1.8; border: 1px solid #4ecdc4; margin-top: 10px; cursor: pointer; }
         .hint-box { background: #1e2a4acc; border-radius: 20px; padding: 15px; margin-top: 15px; border-left: 5px solid #f1c40f; backdrop-filter: blur(8px); }
-        .badge { display: inline-block; font-size: 2rem; margin: 5px; cursor: pointer; transition: 0.2s; }
-        .badge.selected { transform: scale(1.2); filter: drop-shadow(0 0 8px gold); }
-        .speed-control { margin: 10px 0; display: flex; gap: 10px; align-items: center; }
-        .mouth-animation { width: 60px; height: 60px; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23f5cba0\"/><ellipse cx=\"35\" cy=\"40\" rx=\"6\" ry=\"8\" fill=\"white\"/><ellipse cx=\"65\" cy=\"40\" rx=\"6\" ry=\"8\" fill=\"white\"/><ellipse cx=\"35\" cy=\"40\" rx=\"3\" ry=\"5\" fill=\"black\"/><ellipse cx=\"65\" cy=\"40\" rx=\"3\" ry=\"5\" fill=\"black\"/><ellipse cx=\"50\" cy=\"65\" rx=\"15\" ry=\"8\" fill=\"%23993333\" id=\"mouth\"/></svg>') no-repeat center/contain; margin: 0 auto; }
+        .badge { display: inline-block; font-size: 2rem; margin: 5px; cursor: pointer; transition: 0.2s; filter: grayscale(1); opacity: 0.4; }
+        .badge.selected { transform: scale(1.1); filter: grayscale(0); opacity: 1; drop-shadow: 0 0 8px gold; }
+        .speed-control { margin: 10px 0; display: flex; gap: 10px; align-items: center; justify-content: center; }
+        .mouth-animation { width: 60px; height: 60px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23f5cba0"/><ellipse cx="35" cy="40" rx="6" ry="8" fill="white"/><ellipse cx="65" cy="40" rx="6" ry="8" fill="white"/><ellipse cx="35" cy="40" rx="3" ry="5" fill="black"/><ellipse cx="65" cy="40" rx="3" ry="5" fill="black"/><ellipse cx="50" cy="65" rx="15" ry="8" fill="%23993333" id="mouth"/></svg>') no-repeat center/contain; margin: 0 auto; }
         @keyframes speak { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.5); } 100% { transform: scaleY(1); } }
         .speaking .mouth-animation { animation: speak 0.3s infinite; }
         footer { text-align: center; font-size: 14px; padding: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-top: 1px solid #2c3e66; }
@@ -128,12 +128,12 @@
     </style>
 </head>
 <body>
-<!-- Vidéo de fond réaliste (NASA / Hubble) - libre de droits -->
+
 <video id="bg-video" autoplay loop muted playsinline>
     <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1247-large.mp4" type="video/mp4">
-    <!-- Fallback : si la vidéo ne charge pas, afficher un dégradé spatial -->
 </video>
 <canvas id="overlay-canvas"></canvas>
+
 <div class="app-container">
     <div class="tabs">
         <button class="tab-button active" data-tab="ecriture">🚀 Écriture libre</button>
@@ -144,7 +144,6 @@
         <button class="tab-button" data-tab="badges">🏅 Mes badges</button>
     </div>
 
-    <!-- Écriture libre -->
     <div id="ecriture" class="tab-content active">
         <div class="editor-container">
             <div class="zone"><textarea id="input-text" placeholder="Écris ton histoire, Méline..."></textarea></div>
@@ -162,7 +161,6 @@
         </div>
     </div>
 
-    <!-- Histoire interactive -->
     <div id="histoire" class="tab-content">
         <div class="editor-container">
             <div class="zone">
@@ -172,19 +170,18 @@
                 <div id="generatedPhrasesArea" style="display:none; background:rgba(10,20,45,0.8); border-radius:30px; padding:20px; margin:15px 0;">
                     <div id="generatedPhrasesList"></div>
                     <button id="startRecordingBtn">🎙️ Lire dernière phrase</button>
-                    <div id="voiceResult"></div>
+                    <div id="voiceResult" style="margin-top: 10px; font-weight: bold;"></div>
                 </div>
-                <div id="storyHistoryArea">
+                <div id="storyHistoryArea" style="margin-top:20px;">
                     <h3>📜 Ton histoire :</h3>
-                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:15px;"></div>
+                    <div id="storyFullHistory" style="background:rgba(10,20,45,0.7); border-radius:20px; padding:15px; min-height: 50px; margin-bottom:10px;"></div>
                     <button id="animateStoryBtn">🚀 Animer l'histoire</button>
                 </div>
-                <button id="resetStoryBtn">💫 Réinitialiser</button>
+                <button id="resetStoryBtn" style="margin-top:15px;">💫 Réinitialiser</button>
             </div>
         </div>
     </div>
 
-    <!-- Dictée vocale (avec améliorations dys) -->
     <div id="dictee" class="tab-content">
         <div class="editor-container">
             <div class="zone">
@@ -205,47 +202,55 @@
                         <button id="hintButton" class="hint-btn">💡 Indice</button>
                     </div>
                 </div>
-                <label>✏️ Écris ce que tu as entendu :</label>
+                <label style="display:block; margin-top:20px;">✏️ Écris ce que tu as entendu :</label>
                 <textarea id="dictInput" rows="4" placeholder="Tape ici..."></textarea>
                 <div id="coloredDictDisplay" class="colored-dict-output"></div>
-                <div id="dictFeedback" style="margin-top:10px;"></div>
+                <div id="dictFeedback" style="margin-top:10px; font-weight:bold;"></div>
                 <div id="hintBox" class="hint-box" style="display:none;"></div>
-                <div id="stepByStepPanel" style="display:none; background:rgba(0,0,0,0.7); border-radius:20px; padding:15px; margin-top:15px;"></div>
+                <div id="stepByStepPanel" style="display:none; background:rgba(0,0,0,0.7); border-radius:20px; padding:15px; margin-top:15px; text-align:center;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Progrès -->
     <div id="progres" class="tab-content">
         <div class="editor-container"><div class="zone">
             <h2>📈 Suivi de Méline</h2>
-            <div id="stats"></div>
-            <h3>📝 Mots à réviser (répétition espacée)</h3>
-            <div id="hardWordsList"></div>
+            <div id="stats" style="font-size:20px; margin:15px 0; line-height:1.8;"></div>
+            <h3>📝 Mots à réviser</h3>
+            <div id="hardWordsList" style="margin:10px 0;"></div>
             <button id="resetHardWords">Réinitialiser liste</button>
-            <button id="exportPDF">📄 Exporter pour l'orthophoniste (PDF)</button>
+            <button id="exportPDF">📄 Exporter pour l'orthophoniste</button>
             <button id="resetProgress">Réinitialiser tous les progrès</button>
         </div></div>
     </div>
 
-    <!-- Réglages -->
     <div id="settings" class="tab-content">
         <div class="editor-container"><div class="zone"><h2>⚙️ Personnalisation</h2>
-            <label>Police : </label><select id="fontSelect"><option value="OpenDyslexic">OpenDyslexic</option><option value="Andika">Andika</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select><br>
-            <label>Espacement des lettres (px) : </label><input type="range" id="letterSpacing" min="0" max="5" step="0.5" value="1"><br>
-            <label>Mode comparaison dictée : </label><select id="compareMode"><option value="strict">Strict</option><option value="tolérant">Tolérant</option></select><br>
+            <div style="margin:20px 0; display:flex; flex-direction:column; gap:15px;">
+                <div>
+                    <label>Police : </label>
+                    <select id="fontSelect" style="padding:5px; font-family:inherit;"><option value="OpenDyslexic">OpenDyslexic</option><option value="Andika">Andika</option><option value="Lexend">Lexend</option><option value="Comic Neue">Comic Neue</option></select>
+                </div>
+                <div>
+                    <label>Espacement des lettres (px) : </label>
+                    <input type="range" id="letterSpacing" min="0" max="5" step="0.5" value="1">
+                </div>
+                <div>
+                    <label>Mode comparaison dictée : </label>
+                    <select id="compareMode" style="padding:5px;"><option value="strict">Strict (Prend en compte les accents)</option><option value="tolérant">Tolérant (Ignore les accents)</option></select>
+                </div>
+            </div>
             <button id="saveSettings">💾 Sauvegarder</button>
         </div></div>
     </div>
 
-    <!-- Badges -->
     <div id="badges" class="tab-content">
         <div class="editor-container"><div class="zone"><h2>🏅 Mes badges spatiaux</h2>
-            <div id="badgeCollection"></div>
-            <p>Clique sur un badge pour le mettre en avant !</p>
+            <div id="badgeCollection" style="margin:20px 0;"></div>
+            <p>Les badges s'allument quand tu les gagnes ! Clique dessus pour les activer manuellement.</p>
         </div></div>
     </div>
-    <footer>🌌 Thème spatial réaliste (vidéo NASA) • Toutes les aides pour dyslexie</footer>
+    <footer>🌌 Thème spatial réaliste • Conçu pour Méline</footer>
 </div>
 
 <script>
@@ -258,7 +263,6 @@
     let hardWords = JSON.parse(localStorage.getItem('melinaHardWords') || '[]');
     let availableBadges = ["🚀 Fusée d'or","🏆 Étoile filante","🪐 Planète Saturne","🌠 Nébuleuse","👩‍🚀 Astronaute"];
 
-    // ----- BIBLIOTHÈQUE DE PHRASES -----
     const allPhrases = [
         "Le chat dort.", "Le ciel est étoilé.", "Il fait beau sur Mars.", "Je mange une pomme.", "La fusée décolle.",
         "La nébuleuse est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
@@ -266,7 +270,12 @@
         "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite."
     ];
 
-    // ----- SYLLABATION -----
+    // ----- NETTOYAGE PONCTUATION POUR IA ET RECONNAISSANCE VOCALE -----
+    function cleanPunctuation(str) {
+        return str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~() France?¿¡]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    // ----- SYLLABATION AMÉLIORÉE (Anti-lettre seule à la fin) -----
     function syllaberMot(mot) {
         let ponctuation = mot.match(/[.,!?;:…]+$/);
         let propre = ponctuation ? mot.slice(0, -ponctuation[0].length) : mot;
@@ -274,11 +283,15 @@
         let voyelles = "aeiouyâàäéèêëôîïûùüÿ";
         let syllabes = [];
         let courant = "";
+        
         for (let i = 0; i < propre.length; i++) {
             courant += propre[i];
             if (voyelles.includes(propre[i]) && i+1 < propre.length && !voyelles.includes(propre[i+1])) {
-                syllabes.push(courant);
-                courant = "";
+                // Évite de couper si c'est la toute dernière lettre (ex: "chat" ne fera pas cha-t)
+                if (i + 2 < propre.length) {
+                    syllabes.push(courant);
+                    courant = "";
+                }
             }
         }
         if (courant) syllabes.push(courant);
@@ -305,7 +318,7 @@
         if (modeColorie) outputDiv.innerHTML = colorerTexte(txt);
         else outputDiv.innerHTML = txt.replace(/\n/g,'<br>');
     }
-    inputText.addEventListener('input', updateDisplay);
+    if(inputText) inputText.addEventListener('input', updateDisplay);
     window.colorerSyllabes = function() { modeColorie = true; updateDisplay(); };
     window.reinitialiserAffichage = function() { modeColorie = false; updateDisplay(); };
     window.changerTaille = function(delta) { currentSize += delta; if(currentSize<12) currentSize=12; if(currentSize>48) currentSize=48; inputText.style.fontSize = currentSize+'px'; outputDiv.style.fontSize = currentSize+'px'; };
@@ -316,11 +329,10 @@
             let u = new SpeechSynthesisUtterance(sel);
             u.lang = 'fr-FR';
             synth.speak(u);
-        } else alert("Sélectionne un mot ou une phrase");
+        } else alert("Sélectionne d'abord un mot avec ta souris !");
     };
-    updateDisplay();
 
-    // ----- HISTOIRE INTERACTIVE (inchangée) -----
+    // ----- HISTOIRE INTERACTIVE -----
     let fullStory = "";
     let currentGeneratedPhrases = [];
     let recognition = null;
@@ -330,44 +342,64 @@
         recognition.lang = 'fr-FR';
         recognition.continuous = false;
     }
+    
     function genererPhrases(mots) {
-        let motsList = mots.split(/[ ,]+/).filter(m=>m);
-        if (!motsList.length) motsList = ["aventure"];
+        let motsList = mots.split(/[ ,]+/).filter(m=>m.trim());
+        // Sécurité si Méline ne tape rien ou met des espaces vides
+        if (!motsList.length) motsList = ["une comète", "un extraterrestre", "un robot"];
+        if (!motsList[1]) motsList.push("un martien");
+        if (!motsList[2]) motsList.push("une étoile magique");
+        
         return [
             `Un jour, ${motsList[0]} apparut dans le ciel.`,
-            `Méline rencontra un ${motsList[1] || "ami"} mystérieux.`,
-            `Ensemble, ils trouvèrent ${motsList[2] || "un trésor"} cosmique.`
+            `Méline rencontra un ${motsList[1]} mystérieux.`,
+            `Ensemble, ils trouvèrent ${motsList[2]} cosmique.`
         ];
     }
+    
     document.getElementById('generateStoryBtn')?.addEventListener('click', () => {
         let kw = document.getElementById('storyKeywords').value;
         currentGeneratedPhrases = genererPhrases(kw);
-        document.getElementById('generatedPhrasesList').innerHTML = currentGeneratedPhrases.map((p,i)=>`<p>${i+1}. ${p}</p>`).join('');
+        document.getElementById('generatedPhrasesList').innerHTML = currentGeneratedPhrases.map((p,i)=>`<p style="margin: 5px 0;">${i+1}. ${p}</p>`).join('');
         document.getElementById('generatedPhrasesArea').style.display = "block";
+        document.getElementById('voiceResult').innerHTML = "";
     });
+    
     document.getElementById('startRecordingBtn')?.addEventListener('click', () => {
-        if (!recognition) { alert("Micro non supporté"); return; }
+        if (!recognition) { alert("Désolé, la reconnaissance vocale n'est pas supportée sur ce navigateur."); return; }
         let last = currentGeneratedPhrases[currentGeneratedPhrases.length-1];
+        document.getElementById('voiceResult').innerHTML = "🎧 Écoute en cours... Parle maintenant.";
         recognition.start();
+        
         recognition.onresult = e => {
             let parole = e.results[0][0].transcript;
-            if (parole.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase() === last.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()) {
-                fullStory += currentGeneratedPhrases.join(" ") + " ";
+            // Nettoyage de sécurité complet (accents + ponctuation) pour éviter les faux rejets
+            let parolePropre = cleanPunctuation(parole.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
+            let ciblePropre = cleanPunctuation(last.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
+            
+            if (parolePropre === ciblePropre) {
+                fullStory += currentGeneratedPhrases.join(" ") + "\n";
                 document.getElementById('storyFullHistory').innerHTML = fullStory.replace(/\n/g,'<br>');
                 document.getElementById('generatedPhrasesArea').style.display = "none";
-                document.getElementById('voiceResult').innerHTML = "✅ Ajouté !";
-                let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"histoiresCrees":0}');
+                document.getElementById('voiceResult').innerHTML = "✅ Super ! Histoire ajoutée !";
+                let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
                 prog.histoiresCrees++;
                 localStorage.setItem('melinaProgress', JSON.stringify(prog));
                 updateStats();
-            } else document.getElementById('voiceResult').innerHTML = "❌ Pas exact, réessaie.";
+            } else {
+                document.getElementById('voiceResult').innerHTML = `❌ Tu as dit : "${parole}". Réessaie bien la phrase 3 !`;
+            }
         };
+        recognition.onerror = () => { document.getElementById('voiceResult').innerHTML = "❌ Erreur de micro. Réessaie."; };
     });
+    
     document.getElementById('resetStoryBtn')?.addEventListener('click', () => {
         fullStory = "";
         document.getElementById('storyFullHistory').innerHTML = "";
         document.getElementById('generatedPhrasesArea').style.display = "none";
+        document.getElementById('voiceResult').innerHTML = "";
     });
+    
     document.getElementById('animateStoryBtn')?.addEventListener('click', () => {
         if (!fullStory.trim()) return;
         let phrases = fullStory.match(/[^.!?]+[.!?]+/g) || [fullStory];
@@ -383,7 +415,7 @@
         next();
     });
 
-    // ----- DICTÉE VOCALE (avec indices et mots difficiles) -----
+    // ----- DICTÉE VOCALE -----
     function lire(texte, speed = 0.85) {
         synth.cancel();
         let u = new SpeechSynthesisUtterance(texte);
@@ -412,13 +444,14 @@
                 html += `<span class="${ok ? 'correct-char' : 'incorrect-char'}">${c}</span>`;
             } else html += `<span class="incorrect-char">${c}</span>`;
         }
-        if (saisie.length < currentPhrase.length) html += ` <span style="opacity:0.5;">(il manque ${currentPhrase.length - saisie.length} caractères)</span>`;
+        if (saisie.length < currentPhrase.length) html += ` <span style="opacity:0.5; color:#c9e9ff;">(il manque ${currentPhrase.length - saisie.length} lettres)</span>`;
         document.getElementById('coloredDictDisplay').innerHTML = html;
     }
 
     function ajouterMotDifficile(mot) {
-        if (!hardWords.includes(mot)) {
-            hardWords.push(mot);
+        let propre = mot.replace(/[.,!?;:]/g, "");
+        if (propre.length > 1 && !hardWords.includes(propre)) {
+            hardWords.push(propre);
             localStorage.setItem('melinaHardWords', JSON.stringify(hardWords));
             afficherMotsDifficiles();
         }
@@ -433,10 +466,6 @@
                 erreurs.push(motsCible[i]);
             }
         }
-        if (motsSaisie.length !== motsCible.length) {
-            if (motsSaisie.length < motsCible.length) erreurs.push(...motsCible.slice(motsSaisie.length));
-            else erreurs.push(...motsSaisie.slice(motsCible.length));
-        }
         return [...new Set(erreurs)];
     }
 
@@ -445,37 +474,23 @@
         let ns = normalize(saisie, mode);
         let nc = normalize(cible, mode);
         if (ns === nc && saisie !== cible) {
-            for (let i = 0; i < Math.min(saisie.length, cible.length); i++) {
-                if (saisie[i] !== cible[i] && normalize(saisie[i], mode) === normalize(cible[i], mode)) {
-                    indices.push(`À la position ${i+1}, tu as écrit "${saisie[i]}" mais il fallait "${cible[i]}". Vérifie les accents.`);
-                    break;
-                }
-            }
-            if (!indices.length) indices.push("Vérifie la ponctuation.");
+            indices.push("Regarde bien les majuscules ou les accents !");
         } else if (saisie.length < cible.length) {
             let i = 0;
             while (i < saisie.length && normalize(saisie[i], mode) === normalize(cible[i], mode)) i++;
-            if (i < cible.length) indices.push(`Il manque le caractère "${cible[i]}" (position ${i+1}) après "${saisie.substring(0,i)}".`);
-            else indices.push(`Il manque la fin : "${cible.substring(saisie.length)}".`);
+            if (i < cible.length) indices.push(`Il manque une lettre après "${saisie.substring(0,i)}".`);
         } else if (saisie.length > cible.length) {
-            indices.push("Ta phrase est trop longue.");
+            indices.push("C'est un peu trop long, regarde s'il n'y a pas des lettres en trop.");
         } else {
-            let diff = [];
-            for (let i = 0; i < saisie.length; i++) {
-                if (normalize(saisie[i], mode) !== normalize(cible[i], mode))
-                    diff.push(`"${saisie[i]}" au lieu de "${cible[i]}" (pos ${i+1})`);
-            }
-            if (diff.length) indices.push(`Erreurs : ${diff.join(", ")}.`);
-            else indices.push("Vérifie espaces ou ponctuation.");
+            indices.push("Il y a une petite erreur de lettres quelque part, écoute bien.");
         }
-        if (!indices.length) indices.push("Réécoute la phrase.");
-        return indices[0];
+        return indices[0] || "Réécoute la phrase tranquillement.";
     }
 
     function afficherIndice() {
         let saisie = document.getElementById('dictInput').value;
         if (!currentPhrase || !saisie.trim()) {
-            document.getElementById('hintBox').innerHTML = "✏️ Écris d'abord quelque chose.";
+            document.getElementById('hintBox').innerHTML = "✏️ Écris d'abord quelque chose avant de demander un indice.";
             document.getElementById('hintBox').style.display = "block";
             return;
         }
@@ -488,25 +503,25 @@
     function verifierAvecAudioEtIndices() {
         let saisie = document.getElementById('dictInput').value;
         let mode = document.getElementById('compareMode').value;
-        if (normalize(saisie, mode) === normalize(currentPhrase, mode)) {
-            let msg = "🎉 Parfait ! 🎉 Tu progresses !";
-            document.getElementById('dictFeedback').innerHTML = msg;
-            lire(`Bravo ! Tu as écrit : ${saisie}. La phrase était : ${currentPhrase}.`);
-            let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0}');
+        if (normalize(saisie.trim(), mode) === normalize(currentPhrase.trim(), mode)) {
+            document.getElementById('dictFeedback').innerHTML = "🎉 Parfait ! Tu as réussi ! 🎉";
+            lire(`Bravo Méline ! C'est exactement ça.`);
+            let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees":0}');
             prog.dictées++;
             localStorage.setItem('melinaProgress', JSON.stringify(prog));
             updateStats();
             document.getElementById('hintBox').style.display = "none";
+            
+            // Gain automatique de badge
             let badges = JSON.parse(localStorage.getItem('melinaBadges') || '[]');
+            if (prog.dictées >= 1 && !badges.includes("🚀 Fusée d'or")) badges.push("🚀 Fusée d'or");
             if (prog.dictées >= 5 && !badges.includes("🏆 Étoile filante")) badges.push("🏆 Étoile filante");
-            if (prog.dictées >= 10 && !badges.includes("🪐 Planète")) badges.push("🪐 Planète");
             localStorage.setItem('melinaBadges', JSON.stringify(badges));
             afficherBadges();
         } else {
             let indice = genererIndice(saisie, currentPhrase, mode);
-            document.getElementById('dictFeedback').innerHTML = `❌ ${indice} Réessaie !`;
-            lire(`La phrase à écrire était : ${currentPhrase}. ${indice}`);
-            document.getElementById('hintBox').innerHTML = `💡 ${indice}`;
+            document.getElementById('dictFeedback').innerHTML = `❌ Oups, regarde l'indice pour corriger !`;
+            document.getElementById('hintBox').innerHTML = `💡 Indice : ${indice}`;
             document.getElementById('hintBox').style.display = "block";
             let motsErreurs = extraireMotsErreurs(saisie, currentPhrase, mode);
             motsErreurs.forEach(mot => ajouterMotDifficile(mot));
@@ -525,32 +540,38 @@
         document.getElementById('stepByStepPanel').style.display = "none";
     }
 
-    function slowReplay() {
-        if (currentPhrase) lire(currentPhrase, 0.55);
-    }
-
     function stepByStepMode() {
         if (!currentPhrase) return;
-        if (stepByStepActive) {
-            document.getElementById('stepByStepPanel').style.display = "none";
-            stepByStepActive = false;
-        }
-        stepByStepActive = true;
-        wordsArray = currentPhrase.split(' ');
-        currentWordIndex = 0;
+        
+        // Fix : Nettoyer proprement le panneau s'il était déjà actif
         let panel = document.getElementById('stepByStepPanel');
+        if (stepByStepActive) {
+            panel.style.display = "none";
+            stepByStepActive = false;
+            return;
+        }
+        
+        stepByStepActive = true;
+        wordsArray = currentPhrase.split(' ').filter(w=>w.trim());
+        currentWordIndex = 0;
         panel.style.display = "block";
+        
         function updatePanel() {
             if (currentWordIndex < wordsArray.length) {
-                panel.innerHTML = `<p>Mot ${currentWordIndex+1}/${wordsArray.length} : <strong>${wordsArray[currentWordIndex]}</strong></p>
-                                    <button id="nextWordBtn">Suivant</button>
-                                    <button id="cancelStepBtn">Annuler</button>`;
+                panel.innerHTML = `
+                    <p style="font-size:20px; margin-bottom:10px;">Mot ${currentWordIndex+1}/${wordsArray.length}</p>
+                    <button id="playWordBtn" style="margin-right:10px;">🔊 Écouter le mot</button>
+                    <button id="nextWordBtn" style="margin-right:10px;">➡️ Mot suivant</button>
+                    <button id="cancelStepBtn">❌ Quitter</button>
+                `;
+                
+                // Fix boutons
+                document.getElementById('playWordBtn').onclick = () => { lire(wordsArray[currentWordIndex], 0.7); };
                 document.getElementById('nextWordBtn').onclick = () => {
-                    lire(wordsArray[currentWordIndex], 0.7);
                     currentWordIndex++;
                     if (currentWordIndex < wordsArray.length) updatePanel();
                     else {
-                        panel.innerHTML = "<p>✅ Fin de la phrase ! Maintenant écris-la entièrement.</p><button id='closeStepPanel'>Fermer</button>";
+                        panel.innerHTML = "<p>✅ C'était le dernier mot ! À toi d'écrire.</p><button id='closeStepPanel' style='margin-top:10px;'>Fermer</button>";
                         document.getElementById('closeStepPanel').onclick = () => { panel.style.display = "none"; stepByStepActive = false; };
                     }
                 };
@@ -560,20 +581,30 @@
         updatePanel();
     }
 
-    document.getElementById('newDictPhrase').addEventListener('click', nouvellePhrase);
-    document.getElementById('relistenDictPhrase').addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, parseFloat(document.getElementById('speedSlider').value)); });
-    document.getElementById('slowReplay').addEventListener('click', slowReplay);
-    document.getElementById('stepByStepBtn').addEventListener('click', stepByStepMode);
-    document.getElementById('checkDictAudio').addEventListener('click', verifierAvecAudioEtIndices);
-    document.getElementById('hintButton').addEventListener('click', afficherIndice);
-    document.getElementById('dictInput').addEventListener('input', updateColoration);
-    nouvellePhrase();
+    // ----- EXÉCUTION APRÈS CHARGEMENT COMPLET (Fix critique) -----
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('newDictPhrase')?.addEventListener('click', nouvellePhrase);
+        document.getElementById('relistenDictPhrase')?.addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, parseFloat(document.getElementById('speedSlider').value)); });
+        document.getElementById('slowReplay')?.addEventListener('click', () => { if (currentPhrase) lire(currentPhrase, 0.55); });
+        document.getElementById('stepByStepBtn')?.addEventListener('click', stepByStepMode);
+        document.getElementById('checkDictAudio')?.addEventListener('click', verifierAvecAudioEtIndices);
+        document.getElementById('hintButton')?.addEventListener('click', afficherIndice);
+        document.getElementById('dictInput')?.addEventListener('input', updateColoration);
+        
+        // Lancer la première phrase maintenant que tout est prêt
+        nouvellePhrase();
+        updateDisplay();
+        afficherMotsDifficiles();
+        afficherBadges();
+        updateStats();
+        applySettings();
+    });
 
     // ----- SUGGESTIONS ORTHOGRAPHIQUES -----
     window.suggererCorrections = function() {
         let texte = inputText.value;
         let mots = texte.split(/\s+/);
-        let dico = ["chat", "ciel", "bleu", "maison", "école", "maman", "papa", "fusée", "étoile", "planète"];
+        let dico = ["chat", "ciel", "bleu", "maison", "école", "maman", "papa", "fusée", "étoile", "planète", "soleil", "lune", "vaisseau", "mars"];
         let corrections = {};
         mots.forEach(mot => {
             let motClean = mot.toLowerCase().replace(/[.,!?;:]$/, '');
@@ -583,10 +614,9 @@
             }
         });
         if (Object.keys(corrections).length) {
-            let msg = "📝 Suggestions : " + Object.entries(corrections).map(([m,s])=>`${m} → ${s}`).join(", ");
+            let msg = "📝 Aide magique : " + Object.entries(corrections).map(([m,s])=>`${m} → ${s}`).join(", ");
             alert(msg);
-            lire(msg);
-        } else alert("Aucune suggestion pour l'instant.");
+        } else alert("Pas de suggestion trouvée. C'est très bien écrit !");
     };
 
     window.relectureGuidee = function() {
@@ -595,7 +625,7 @@
         let phrases = texte.split(/[.!?]+/);
         let idx = 0;
         function lirePhrase() {
-            if (idx >= phrases.length) return;
+            if (idx >= phrases.length || !phrases[idx].trim()) return;
             let u = new SpeechSynthesisUtterance(phrases[idx].trim() + ".");
             u.lang = 'fr-FR';
             u.rate = 0.8;
@@ -610,15 +640,14 @@
     function afficherMotsDifficiles() {
         let div = document.getElementById('hardWordsList');
         if (!div) return;
-        div.innerHTML = hardWords.map(w => `<span style="display:inline-block; margin:5px; padding:5px 10px; background:#1e2a4a; border-radius:20px;">${w} <button onclick="reviserMot('${w}')">🔊</button></span>`).join('');
+        if(hardWords.length === 0) { div.innerHTML = "<em>Aucun mot pour l'instant !</em>"; return;}
+        div.innerHTML = hardWords.map(w => `<span style="display:inline-block; margin:5px; padding:8px 12px; background:#1e2a4a; border-radius:20px;">${w} <button style="padding:2px 8px; font-size:14px;" onclick="lire('${w}', 0.7)">🔊</button></span>`).join('');
     }
-    window.reviserMot = function(mot) { lire(mot, 0.7); };
     document.getElementById('resetHardWords')?.addEventListener('click', () => {
         hardWords = [];
         localStorage.setItem('melinaHardWords', '[]');
         afficherMotsDifficiles();
     });
-    afficherMotsDifficiles();
 
     // ----- BADGES -----
     function afficherBadges() {
@@ -635,13 +664,12 @@
         localStorage.setItem('melinaBadges', JSON.stringify(owned));
         afficherBadges();
     };
-    afficherBadges();
 
     // ----- PROGRÈS -----
     function updateStats() {
         let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0, "histoiresCrees":0}');
         let statsDiv = document.getElementById('stats');
-        if (statsDiv) statsDiv.innerHTML = `🎤 Dictées réussies : ${prog.dictées}<br>📖 Histoires créées : ${prog.histoiresCrees}`;
+        if (statsDiv) statsDiv.innerHTML = `🚀 Dictées réussies : <strong>${prog.dictées}</strong><br>📖 Histoires créées : <strong>${prog.histoiresCrees}</strong>`;
     }
     document.getElementById('resetProgress')?.addEventListener('click', () => {
         localStorage.setItem('melinaProgress', JSON.stringify({dictées: 0, histoiresCrees: 0}));
@@ -649,15 +677,14 @@
     });
     document.getElementById('exportPDF')?.addEventListener('click', () => {
         let prog = JSON.parse(localStorage.getItem('melinaProgress') || '{"dictées":0,"histoiresCrees":0}');
-        let hard = hardWords.join(', ');
-        let content = `Rapport pour Méline\n\nDictées réussies : ${prog.dictées}\nHistoires créées : ${prog.histoiresCrees}\nMots à réviser : ${hard}\nDate : ${new Date().toLocaleDateString()}`;
+        let hard = hardWords.length > 0 ? hardWords.join(', ') : "Aucun mot difficile";
+        let content = `Rapport d'activité de Méline\n\nDictées réussies : ${prog.dictées}\nHistoires créées : ${prog.histoiresCrees}\nMots clés à retravailler : ${hard}\nDate du suivi : ${new Date().toLocaleDateString()}`;
         let win = window.open();
-        win.document.write(`<html><head><title>Progrès Méline</title></head><body><pre>${content}</pre></body></html>`);
+        win.document.write(`<html><head><title>Progrès de Méline</title></head><body style="font-family:sans-serif; padding:40px;"><pre style="font-size:16px; line-height:1.6;">${content}</pre></body></html>`);
         win.print();
     });
-    updateStats();
 
-    // ----- RÉGLAGES (police, espacement) -----
+    // ----- RÉGLAGES -----
     function applySettings() {
         let font = document.getElementById('fontSelect').value;
         let fontFamily = font === 'OpenDyslexic' ? "'OpenDyslexic', sans-serif" : font === 'Andika' ? "'Andika', sans-serif" : font === 'Lexend' ? "'Lexend', sans-serif" : "'Comic Neue', cursive";
@@ -667,29 +694,23 @@
         localStorage.setItem('melinaFont', font);
         localStorage.setItem('melinaSpacing', spacing);
     }
-    document.getElementById('saveSettings').addEventListener('click', applySettings);
+    document.getElementById('saveSettings')?.addEventListener('click', applySettings);
     let savedFont = localStorage.getItem('melinaFont');
-    if (savedFont) document.getElementById('fontSelect').value = savedFont;
+    if (savedFont && document.getElementById('fontSelect')) document.getElementById('fontSelect').value = savedFont;
     let savedSpacing = localStorage.getItem('melinaSpacing');
-    if (savedSpacing) document.getElementById('letterSpacing').value = savedSpacing;
-    applySettings();
+    if (savedSpacing && document.getElementById('letterSpacing')) document.getElementById('letterSpacing').value = savedSpacing;
 
-    // ----- SYLLABATION À LA DEMANDE (clic) -----
-    outputDiv.addEventListener('click', (e) => {
+    // ----- INTERACTIONS DE CLICS -----
+    outputDiv?.addEventListener('click', () => {
         let selection = window.getSelection().toString().trim();
-        if (selection) {
-            let u = new SpeechSynthesisUtterance(selection);
-            u.lang = 'fr-FR';
-            u.rate = 0.7;
-            synth.speak(u);
-        }
+        if (selection) lire(selection, 0.7);
     });
     document.getElementById('coloredDictDisplay')?.addEventListener('click', () => {
         let selection = window.getSelection().toString().trim();
         if (selection) lire(selection, 0.7);
     });
 
-    // ----- ONGLETS -----
+    // ----- NAVIGATION ONGLETS -----
     const tabs = document.querySelectorAll('.tab-button');
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(btn => {
@@ -702,7 +723,7 @@
         });
     });
 
-    // ----- OVERLAY RÉALISTE (étoiles filantes et planètes discrètes) -----
+    // ----- CANVAS EFFETS (Étoiles filantes & Planètes) -----
     const overlayCanvas = document.getElementById('overlay-canvas');
     const overlayCtx = overlayCanvas.getContext('2d');
     let overlayWidth, overlayHeight;
@@ -718,14 +739,13 @@
     let shootingStarsOverlay = [];
     let planetsOverlay = [];
 
-    // Création de quelques planètes statiques très réalistes (cercles avec halos)
     for (let i = 0; i < 3; i++) {
         planetsOverlay.push({
             x: Math.random() * overlayWidth,
             y: Math.random() * overlayHeight,
-            radius: Math.random() * 30 + 15,
-            color: `hsla(${Math.random() * 60 + 20}, 80%, 60%, 0.4)`,
-            blur: Math.random() * 8 + 4
+            radius: Math.random() * 20 + 15,
+            color: `hsla(${Math.random() * 60 + 20}, 70%, 60%, 0.3)`,
+            blur: Math.random() * 6 + 4
         });
     }
 
@@ -737,31 +757,22 @@
             speedX: Math.random() * 8 + 4,
             speedY: Math.random() * 6 + 2,
             alpha: 1,
-            width: Math.random() * 3 + 1
+            width: Math.random() * 2 + 1
         });
     }
     setInterval(() => { if (Math.random() < 0.3) addShootingStar(); }, 4000);
 
     function drawOverlay() {
         overlayCtx.clearRect(0, 0, overlayWidth, overlayHeight);
-        // Planètes floues (réalistes)
         planetsOverlay.forEach(p => {
             overlayCtx.shadowBlur = p.blur;
-            overlayCtx.shadowColor = "rgba(255,255,200,0.3)";
+            overlayCtx.shadowColor = "rgba(255,255,200,0.2)";
             overlayCtx.fillStyle = p.color;
             overlayCtx.beginPath();
             overlayCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             overlayCtx.fill();
-            // Anneau pour certaines
-            if (p.radius > 25) {
-                overlayCtx.beginPath();
-                overlayCtx.ellipse(p.x, p.y, p.radius * 1.4, p.radius * 0.6, 0.2, 0, Math.PI * 2);
-                overlayCtx.fillStyle = "rgba(255,215,0,0.2)";
-                overlayCtx.fill();
-            }
         });
         overlayCtx.shadowBlur = 0;
-        // Étoiles filantes
         for (let i = shootingStarsOverlay.length-1; i >= 0; i--) {
             let s = shootingStarsOverlay[i];
             overlayCtx.beginPath();
@@ -770,10 +781,6 @@
             overlayCtx.strokeStyle = `rgba(255, 240, 200, ${s.alpha})`;
             overlayCtx.lineWidth = s.width;
             overlayCtx.stroke();
-            overlayCtx.fillStyle = `rgba(255, 255, 210, ${s.alpha})`;
-            overlayCtx.beginPath();
-            overlayCtx.arc(s.x, s.y, 3, 0, Math.PI * 2);
-            overlayCtx.fill();
             s.x += s.speedX;
             s.y += s.speedY;
             s.alpha -= 0.01;
@@ -782,13 +789,6 @@
         requestAnimationFrame(drawOverlay);
     }
     drawOverlay();
-    window.addEventListener('resize', () => {
-        resizeOverlay();
-        planetsOverlay.forEach(p => {
-            p.x = Math.random() * overlayWidth;
-            p.y = Math.random() * overlayHeight;
-        });
-    });
 </script>
 </body>
 </html>
