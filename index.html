@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Mission Écriture - Super Championne de la Galaxie</title>
   
-  <!-- OpenDyslexic + Google Fonts pour titres -->
+  <!-- OpenDyslexic + polices modernes -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/dist/opendyslexic.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
-  <!-- Font Awesome 6 (gratuit) pour icônes spatiales -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <style>
@@ -19,7 +18,7 @@
     }
 
     body {
-      font-family: 'OpenDyslexic', 'Inter', sans-serif;
+      font-family: 'OpenDyslexic', sans-serif;
       background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #030514);
       color: #f0f3ff;
       min-height: 100vh;
@@ -27,7 +26,7 @@
       overflow-x: hidden;
     }
 
-    /* === ANIMATION ÉTOILES FILANTES / NÉBULEUSE === */
+    /* --- Étoiles et planètes flottantes --- */
     .stars-bg {
       position: fixed;
       top: 0;
@@ -45,32 +44,30 @@
       box-shadow: 
         1250px 340px 2px #fff, 890px 700px 1px #ffe9c7, 450px 120px 2px #ffe0b5,
         1780px 900px 1px #fff, 80px 1020px 2px #ffd98c, 2100px 450px 1px #fff,
-        340px 1800px 2px #fef0c0, 1650px 1400px 1px #eee, 550px 2100px 2px #ffe6b3;
+        340px 1800px 2px #fef0c0, 1650px 1400px 1px #eee;
       animation: twinkle 5s infinite alternate;
     }
     @keyframes twinkle {
       0% { opacity: 0.4; }
       100% { opacity: 1; }
     }
-    /* planètes flottantes décoratives */
     .planet {
       position: fixed;
       border-radius: 50%;
       filter: blur(2px);
       background: radial-gradient(circle at 30% 30%, rgba(255,200,100,0.3), rgba(80,40,120,0.6));
-      box-shadow: 0 0 30px rgba(255,210,90,0.4);
       pointer-events: none;
       z-index: 0;
     }
     .planet1 { width: 180px; height: 180px; top: 8%; left: -60px; background: radial-gradient(circle, #ffaa66, #aa4488); opacity: 0.2; animation: float 25s infinite ease-in-out; }
     .planet2 { width: 100px; height: 100px; bottom: 5%; right: 5%; background: radial-gradient(circle, #4aaaff, #2a2a6e); opacity: 0.25; animation: float 18s infinite reverse; }
-    .planet3 { width: 60px; height: 60px; top: 60%; left: 85%; background: #f9b042; opacity: 0.3; box-shadow: 0 0 25px #ffb347; animation: float 12s infinite alternate; }
+    .planet3 { width: 60px; height: 60px; top: 60%; left: 85%; background: #f9b042; opacity: 0.3; animation: float 12s infinite alternate; }
     @keyframes float {
       0% { transform: translateY(0px) rotate(0deg); }
       100% { transform: translateY(35px) rotate(8deg); }
     }
 
-    /* Conteneur principal avec effet glassmorphism */
+    /* --- Conteneur principal --- */
     .main-container {
       position: relative;
       z-index: 2;
@@ -79,7 +76,7 @@
       padding: 20px 24px 60px;
     }
 
-    /* Header spatial */
+    /* --- Header spatial --- */
     .space-header {
       display: flex;
       justify-content: space-between;
@@ -103,46 +100,36 @@
       color: transparent;
       letter-spacing: 1px;
     }
-    .logo-area p {
-      font-size: 0.75rem;
-      opacity: 0.8;
-    }
     .btn-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
-
-    /* Boutons modernes galactiques */
     .galaxy-btn {
       background: rgba(20, 25, 55, 0.75);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(100, 180, 250, 0.6);
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: 40px;
       font-family: 'OpenDyslexic', 'Inter', sans-serif;
       font-weight: bold;
       color: white;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 0 6px rgba(70,130,255,0.3);
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
-    .galaxy-btn i {
-      font-size: 1.1rem;
-    }
+    .galaxy-btn i { font-size: 1rem; }
     .galaxy-btn:hover {
       background: rgba(80, 120, 255, 0.7);
       border-color: #f3c26f;
       transform: scale(0.96);
-      box-shadow: 0 0 12px #ffb347;
     }
     .galaxy-btn:active { transform: scale(0.94); }
 
-    /* Zone de défi et progrès */
+    /* --- Carte mission --- */
     .mission-card {
       background: rgba(8, 12, 30, 0.65);
       backdrop-filter: blur(12px);
@@ -150,7 +137,6 @@
       padding: 24px 28px;
       margin-bottom: 28px;
       border: 1px solid rgba(255, 215, 120, 0.5);
-      box-shadow: 0 20px 35px -15px black;
     }
     .score-panel {
       display: flex;
@@ -182,27 +168,24 @@
       background: linear-gradient(90deg, #f7b42c, #fc575e);
       border-radius: 30px;
       transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      box-shadow: 0 0 8px #ffb347;
     }
     .prompt-box {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       line-height: 1.4;
       background: rgba(0,0,0,0.4);
       border-radius: 32px;
       padding: 16px 20px;
       border-left: 6px solid #fdca40;
-      font-weight: 500;
       margin-top: 10px;
     }
 
-    /* Éditeur principal */
+    /* --- Zone d'édition --- */
     .editor-panel {
       background: rgba(20, 25, 50, 0.6);
       backdrop-filter: blur(10px);
       border-radius: 44px;
       padding: 20px;
       margin-bottom: 24px;
-      border: 1px solid rgba(220, 180, 80, 0.5);
     }
     label {
       font-weight: bold;
@@ -210,7 +193,7 @@
       align-items: center;
       gap: 8px;
       margin-bottom: 10px;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     textarea {
       width: 100%;
@@ -223,8 +206,6 @@
       padding: 18px 20px;
       color: #1e2a3a;
       resize: vertical;
-      transition: all 0.2s;
-      box-shadow: 0 5px 12px rgba(0,0,0,0.3);
     }
     textarea:focus {
       outline: none;
@@ -236,12 +217,21 @@
       background: #ffffffec;
       border-radius: 32px;
       padding: 18px;
-      min-height: 110px;
+      min-height: 100px;
       font-size: 1.5rem;
       line-height: 1.5;
       color: #1f2a44;
       word-break: break-word;
       box-shadow: inset 0 1px 6px #0002, 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .ia-feedback {
+      margin-top: 15px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 28px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      border-left: 4px solid #ffb347;
+      color: #ffecb3;
     }
     .btn-validate {
       width: 100%;
@@ -253,23 +243,17 @@
       border-radius: 60px;
       margin-top: 12px;
       color: white;
-      text-shadow: 0 1px 2px black;
-      letter-spacing: 1px;
-      transition: 0.2s;
+      cursor: pointer;
     }
-    .btn-validate:hover {
-      transform: scale(0.98);
-      background: linear-gradient(125deg, #ff9f5a, #ff4f84);
-      box-shadow: 0 0 18px #ff8866;
-    }
+    .btn-validate:hover { transform: scale(0.98); }
 
-    /* Syllabes et correction */
+    /* Styles syllabes */
     .syl1 { color: #2c7be5; font-weight: bold; text-decoration: underline; }
     .syl2 { color: #e84118; font-weight: bold; }
     .word-correct { color: #00b894; font-weight: bold; background: #e0ffe8; border-radius: 12px; padding: 0 4px; }
     .word-wrong { color: #d63031; font-weight: bold; border-bottom: 2px dotted #ff7675; background: #fff0f0; border-radius: 12px; padding: 0 4px; }
 
-    /* MODAL Cadeau version galactique */
+    /* Modal cadeau */
     .galaxy-modal {
       position: fixed;
       top: 0; left: 0;
@@ -289,8 +273,6 @@
       max-width: 500px;
       width: 90%;
       text-align: center;
-      color: #ffefcf;
-      box-shadow: 0 0 60px #fcb43f55;
     }
     .gift-options {
       display: flex;
@@ -307,18 +289,9 @@
       color: white;
       font-weight: bold;
       font-size: 1.2rem;
-      transition: 0.2s;
+      cursor: pointer;
     }
-    .gift-btn:hover {
-      background: #f39c12;
-      transform: scale(1.02);
-    }
-
-    @media (max-width: 650px) {
-      .space-header { flex-direction: column; text-align: center; }
-      .prompt-box { font-size: 1.2rem; }
-      textarea, .preview-area { font-size: 1.2rem; }
-    }
+    .gift-btn:hover { background: #f39c12; }
   </style>
 </head>
 <body>
@@ -334,14 +307,16 @@
   <div class="space-header">
     <div class="logo-area">
       <h1><i class="fas fa-rocket"></i> SUPERNOVA ÉCRITURE</h1>
-      <p>⭐ Championne des galaxies · Aide dyslexique spatiale</p>
+      <p>⭐ Championne des galaxies · Défis d'écriture</p>
     </div>
     <div class="btn-group">
       <button class="galaxy-btn" onclick="lireTexte()"><i class="fas fa-head-side-headphones"></i> Écouter</button>
-      <button class="galaxy-btn" onclick="verifierLectureIA()"><i class="fas fa-microphone-alt"></i> IA m'écoute</button>
+      <button class="galaxy-btn" onclick="demarrerDictee()"><i class="fas fa-microphone"></i> Dictée</button>
+      <button class="galaxy-btn" onclick="verifierLectureIA()"><i class="fas fa-robot"></i> IA compare</button>
       <button class="galaxy-btn" onclick="changerTaille(2)"><i class="fas fa-text-height"></i> +</button>
       <button class="galaxy-btn" onclick="changerTaille(-2)"><i class="fas fa-text-height"></i> -</button>
-      <button class="galaxy-btn" onclick="resetScore()"><i class="fas fa-saturn"></i> Recommencer</button>
+      <button class="galaxy-btn" onclick="effacerTout()"><i class="fas fa-trash-alt"></i> Effacer</button>
+      <button class="galaxy-btn" onclick="resetScoreManuel()"><i class="fas fa-saturn"></i> Reset score</button>
     </div>
   </div>
 
@@ -353,17 +328,17 @@
     <div class="progress-space">
       <div class="progress-fill" id="progress-fill"></div>
     </div>
-    <div id="prompt-box" class="prompt-box">✨ Chargement de la mission...</div>
+    <div id="prompt-box" class="prompt-box">✨ Chargement du défi...</div>
   </div>
 
   <div class="editor-panel">
-    <label><i class="fas fa-pen-fancy"></i> Ta composition spatiale :</label>
-    <textarea id="input-text" placeholder="Écris ta phrase ou ton histoire ici (suis le modèle ci-dessus)..." oninput="decouperSyllabes()"></textarea>
+    <label><i class="fas fa-pen-fancy"></i> Ta composition :</label>
+    <textarea id="input-text" placeholder="Écris ou dicte la phrase modèle ci-dessus..." oninput="decouperSyllabes()"></textarea>
     
-    <div style="margin-top: 20px;">
-      <label><i class="fas fa-eye"></i> Aperçu coloré (syllabes) :</label>
-      <div id="output-display" class="preview-area">✨ Ton texte magique apparaîtra ici ✨</div>
-    </div>
+    <label style="margin-top: 20px;"><i class="fas fa-eye"></i> Aperçu syllabique :</label>
+    <div id="output-display" class="preview-area">✨ Les syllabes colorées apparaîtront ici ✨</div>
+    
+    <div id="ia-feedback" class="ia-feedback">🤖 L'IA t'attend pour comparer ta voix au texte saisi.</div>
     
     <button class="galaxy-btn btn-validate" onclick="validerExercice()"><i class="fas fa-rocket"></i> VALIDER LA MISSION</button>
   </div>
@@ -373,13 +348,13 @@
 <div id="gift-modal" class="galaxy-modal">
   <div class="modal-cosmic">
     <h2><i class="fas fa-gift"></i> TROP FORT ! 🚀✨</h2>
-    <p>30 victoires accomplies, héroïne de l'écriture ! Choisis ta récompense cosmique :</p>
+    <p>30 victoires accomplies ! Choisis ta récompense cosmique :</p>
     <div class="gift-options">
       <button class="gift-btn" onclick="choisirCadeau('🌟 Un coffre à paillettes cosmiques 🌟')"><i class="fas fa-sparkles"></i> Beauté</button>
       <button class="gift-btn" onclick="choisirCadeau('🎢 Une sortie dans l\'espace 🚀')"><i class="fas fa-space-shuttle"></i> Sortie</button>
       <button class="gift-btn" onclick="choisirCadeau('✨ Un médaillon d\'étoile magique ✨')"><i class="fas fa-meteor"></i> Surprise</button>
     </div>
-    <p id="choix-final" style="font-size: 1.4rem; font-weight: bold; background: #00000066; border-radius: 40px; padding: 12px; margin: 15px 0;"></p>
+    <p id="choix-final" style="font-size: 1.4rem; font-weight: bold; margin: 15px 0;"></p>
     <button class="galaxy-btn" onclick="fermerModal()" style="background:#2c3e66;">Fermer le portail</button>
   </div>
 </div>
@@ -387,53 +362,66 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 <script>
-  // ---------- GESTION SCORE + STORY (identique mais interface modernisée) ----------
-  let score = localStorage.getItem('dys_story_score') ? parseInt(localStorage.getItem('dys_story_score')) : 0;
-  let histoireComplete = localStorage.getItem('dys_story_text') ? localStorage.getItem('dys_story_text') : "";
-
-  // Banques d'histoires fluides
-  const heros = ["✨ Un petit astronaute lunaire", "🌙 Une princesse des anneaux", "🐱 Un chaton en combinaison spatiale", "🤖 Un robot stellaire", "⭐ Une comète espiègle"];
-  const actions = ["découvre une planète inconnue", "répare son vaisseau spatial", "traverse une nébuleuse magique", "rencontre une créature galactique", "explore les anneaux de Saturne"];
-  const lieux = ["dans la Voie Lactée.", "sur une planète de cristal.", "dans une station orbitale secrète.", "près d'un trou de ver.", "au cœur d'une supernova."];
-  const suites = [
-    "Soudain, une pluie d'étoiles filantes scintille devant toi.",
-    "La fusée s'illumine d'une lueur dorée, direction l'aventure !",
-    "Un satellite amical t'envoie un message codé.",
-    "Le commandant galactique te confie une nouvelle mission.",
-    "Les poussières d'étoiles te donnent des super-pouvoirs d'écriture !"
+  // ======================= BANQUE DE 100 PHRASES (issue du 2e code) =======================
+  const prompts = [
+    "Le chat dort.", "Le ciel est bleu.", "Il fait beau.", "Je mange une pomme.", "Le chien court vite.",
+    "La fleur est jolie.", "Papa lit un livre.", "Maman fait un gâteau.", "J'aime le chocolat.", "L'oiseau chante fort.",
+    "Le vélo est rouge.", "Il y a du soleil.", "La mer est calme.", "Le poisson nage bien.", "Je joue au ballon.",
+    "La lune brille la nuit.", "Mon ami est gentil.", "Le lion est fort.", "J'ai un joli stylo.", "Le train va vite.",
+    "La pluie tombe doucement.", "Le bébé sourit.", "J'aime ma famille.", "Le cartable est lourd.", "La soupe est chaude.",
+    "Je respire et je réussis.", "Mon cerveau est magique.", "Chaque erreur m'aide à apprendre.", "Je fais de mon mieux.",
+    "Je suis une vraie championne.", "J'apprends à mon rythme.", "Écrire est un super pouvoir.", "Je suis fière de mes progrès.",
+    "Je peux essayer encore une fois.", "Rien ne m'arrête aujourd'hui.", "Je prends mon temps pour lire.", "Mon imagination est immense.",
+    "Je progresse chaque jour un peu plus.", "Une lettre après l'autre, c'est facile.", "Je suis capable de tout écrire.",
+    "Les mots sont mes amis.", "Je peux relire si j'ai un doute.", "C'est en s'entraînant qu'on grandit.", "Mon courage est ma plus grande force.",
+    "Je réussis cet exercice avec succès.", "Je prépare mes affaires pour demain.", "Nous allons manger une bonne glace.",
+    "La maîtresse explique la leçon de français.", "Je dessine un grand château fort.", "Les enfants jouent dans la cour d'école.",
+    "Il faut bien se laver les mains.", "Le soir, je regarde les étoiles filantes.", "Nous ramassons des coquillages sur la plage.",
+    "Je mets mes chaussures pour aller courir.", "Le matin, je prends un bon chocolat chaud.", "La trousse contient des crayons de couleur.",
+    "Nous écoutons une belle histoire avant de dormir.", "Je regarde les feuilles tomber des arbres.", "Le jardinier plante de jolies tomates rouges.",
+    "Les vacances approchent à grands pas.", "Je range mes jouets dans ma chambre.", "Nous faisons une grande promenade en forêt.",
+    "Le pain chaud croustille sous la dent.", "J'aide à dresser la table pour le dîner.", "Les oiseaux fabriquent un nid dans l'arbre.",
+    "Le petit lapin blanc se cache derrière un grand buisson vert.", "Un navire de pirates navigue sur les vagues de l'océan Indien.",
+    "Le dragon crache des petites bulles de savon au lieu du feu.", "La fée magique transforme une simple citrouille en carrosse doré.",
+    "Un astronaute voyage dans l'espace pour visiter la planète Mars.", "Le vieux magicien prépare une potion mystérieuse dans son chaudron.",
+    "Une baleine bleue danse joyeusement au milieu des poissons tropicaux.", "L'écureuil agile rassemble des noisettes pour passer un hiver tranquille.",
+    "Le chaton noir adore jouer avec une grosse pelote de laine rouge.", "Un ours brun cherche du miel sucré dans la forêt profonde.",
+    "La princesse porte une magnifique couronne qui brille de mille feux.", "Un petit robot rigolo nettoie toute la maison en chantant.",
+    "Le dauphin joueur saute hors de l'eau pour saluer les marins.", "Une étoile magique réalise les vœux des enfants sages ce soir.",
+    "Le chien de mon voisin adore courir après les papillons jaunes.", "Les lettres s'organisent sagement pour former des mots fantastiques.",
+    "Prendre le temps de bien lire permet de comprendre toute l'histoire.", "Le soleil se couche lentement derrière la montagne en colorant le ciel.",
+    "Nous préparons une excellente tarte aux pommes avec une pincée de cannelle.", "Un grand singe malicieux s'amuse à imiter les grimaces des visiteurs.",
+    "La musique douce m'aide à me concentrer pour écrire mes phrases.", "Les vagues de la mer effacent les châteaux de sable sur la plage.",
+    "Un magnifique arc-en-ciel apparaît dans le ciel juste après la tempête.", "Les petits poussins jaunes suivent leur maman partout dans la ferme.",
+    "J'adore écouter le bruit de la pluie quand je suis au chaud.", "Les papillons volent délicatement de fleur en fleur dans le grand parc.",
+    "Le grand navire active ses lumières pour guider les autres bateaux.", "Les secrets les plus précieux sont souvent cachés au fond des livres.",
+    "Un grand tapis roulant transporte les bagages des voyageurs à l'aéroport.", "La petite tortue marche lentement mais elle arrive toujours à destination.",
+    "Le détective utilise une loupe pour chercher des indices importants.", "Les crayons magiques écrivent des histoires extraordinaires de manière fluide.",
+    "Un groupe de joyeux dauphins accompagne notre voilier pendant le voyage.", "Les feuilles d'automne rousses dansent au milieu du vent frais du matin.",
+    "Je termine ce grand défi d'écriture avec une immense fierté."
   ];
 
-  window.onload = () => {
-    actualiserInterface();
-    genererNouvelleEtape();
-  };
-
-  function actualiserInterface() {
+  // ======================= GESTION SCORE & PROGRESSION =======================
+  let score = localStorage.getItem('dys_score_fusion') ? parseInt(localStorage.getItem('dys_score_fusion')) : 0;
+  
+  function actualiserScore() {
     document.getElementById('score-value').textContent = score;
     const pourcentage = (Math.min(score, 30) / 30) * 100;
     document.getElementById('progress-fill').style.width = pourcentage + "%";
-    localStorage.setItem('dys_story_score', score);
+    localStorage.setItem('dys_score_fusion', score);
   }
 
-  function genererNouvelleEtape() {
-    let promptText = "";
-    if (!histoireComplete) {
-      const h = heros[Math.floor(Math.random() * heros.length)];
-      const a = actions[Math.floor(Math.random() * actions.length)];
-      const l = lieux[Math.floor(Math.random() * lieux.length)];
-      promptText = `<i class="fas fa-copy"></i> Modèle à suivre : « ${h} ${a} ${l} »`;
-    } else {
-      const s = suites[Math.floor(Math.random() * suites.length)];
-      promptText = `<i class="fas fa-tasks"></i> Mission suite : « ${s} »`;
-    }
-    document.getElementById('prompt-box').innerHTML = promptText;
+  function genererPrompt() {
+    const randomIndex = Math.floor(Math.random() * prompts.length);
+    const phrase = prompts[randomIndex];
+    document.getElementById('prompt-box').innerHTML = `<i class="fas fa-copy"></i> Modèle à copier : « ${phrase} »`;
   }
 
-  // Découpage syllabique
+  // ======================= DÉCOUPAGE SYLLABIQUE (temps réel) =======================
   function decouperSyllabes() {
     const text = document.getElementById('input-text').value;
     if (!text.trim()) {
-      document.getElementById('output-display').innerHTML = "✨ Ton texte magique apparaîtra ici ✨";
+      document.getElementById('output-display').innerHTML = "✨ Les syllabes colorées apparaîtront ici ✨";
       return;
     }
     const words = text.split(/(\s+)/);
@@ -445,23 +433,52 @@
     document.getElementById('output-display').innerHTML = colored;
   }
 
-  // Reconnaissance vocale IA modernisée
-  function verifierLectureIA() {
+  // ======================= DICTÉE VOCALE SIMPLE (ajoute dans le textarea) =======================
+  function demarrerDictee() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("🌌 La reconnaissance vocale nécessite Chrome, Edge ou Safari. Mets à jour ton vaisseau !");
-      return;
-    }
-    const texteAttendu = document.getElementById('input-text').value.trim();
-    if (!texteAttendu) {
-      alert("🚀 Écris d'abord ton texte dans la zone avant de le lire à l'IA !");
+      document.getElementById('ia-feedback').innerHTML = "⚠️ Dictée non supportée par ce navigateur. Utilise Chrome ou Edge.";
       return;
     }
     const recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
-    const btn = document.querySelector('.btn-group .galaxy-btn:nth-child(2)');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = "<i class='fas fa-microphone-alt'></i> Écoute en cours... 🛸";
+    recognition.interimResults = false;
+    recognition.onstart = () => {
+      document.getElementById('ia-feedback').innerHTML = "🎙️ Je t'écoute, parle maintenant...";
+    };
+    recognition.onend = () => {
+      document.getElementById('ia-feedback').innerHTML = "✅ Dictée terminée. Tu peux réécouter ou corriger.";
+    };
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const input = document.getElementById('input-text');
+      input.value += (input.value ? " " : "") + transcript;
+      decouperSyllabes();
+    };
+    recognition.start();
+  }
+
+  // ======================= IA COMPARATRICE (vérifie la voix par rapport au texte saisi) =======================
+  function verifierLectureIA() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      document.getElementById('ia-feedback').innerHTML = "⚠️ La reconnaissance vocale n'est pas disponible. Utilise Chrome ou Edge.";
+      return;
+    }
+    const texteAttendu = document.getElementById('input-text').value.trim();
+    if (!texteAttendu) {
+      document.getElementById('ia-feedback').innerHTML = "❌ Écris d'abord ton texte dans la zone avant de le lire à l'IA.";
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.interimResults = false;
+    recognition.onstart = () => {
+      document.getElementById('ia-feedback').innerHTML = "🛸 IA à l'écoute, lis ton texte à voix haute...";
+    };
+    recognition.onend = () => {
+      document.getElementById('ia-feedback').innerHTML += " (fin de l'écoute)";
+    };
     recognition.onresult = (event) => {
       const vocal = event.results[0][0].transcript.toLowerCase();
       const epurer = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
@@ -477,38 +494,32 @@
           fautes++;
         }
       });
-      document.getElementById('output-display').innerHTML = resultatHTML;
+      document.getElementById('ia-feedback').innerHTML = `<strong>📊 Résultat de la comparaison :</strong><br>${resultatHTML}<br>${fautes === 0 ? "🎉 Parfait ! Tous les mots reconnus." : "⚠️ Attention, certains mots n'ont pas été compris. Relis-les bien."}`;
       if (fautes === 0) {
-        canvasConfetti({ particleCount: 80, spread: 55, origin: { y: 0.7 }, colors: ['#ffd966', '#ffb347', '#6a5acd'] });
-      } else {
-        canvasConfetti({ particleCount: 20, spread: 30, origin: { y: 0.8 }, colors: ['#ffaa88'] });
+        canvasConfetti({ particleCount: 80, spread: 55, colors: ['#ffd966', '#ffb347'] });
       }
     };
-    recognition.onend = () => { btn.innerHTML = originalText; };
     recognition.start();
   }
 
-  // Validation exercice
+  // ======================= VALIDATION EXERCICE =======================
   function validerExercice() {
-    const inputZone = document.getElementById('input-text');
-    const texteSaisi = inputZone.value.trim();
-    if (texteSaisi.length < 5) {
-      alert("🪐 Écris au moins 5 caractères avant de valider ta mission !");
+    const input = document.getElementById('input-text').value.trim();
+    if (input.length < 5) {
+      alert("📝 Écris au moins une petite phrase avant de valider !");
       return;
     }
-    histoireComplete += " " + texteSaisi;
     score++;
-    localStorage.setItem('dys_story_text', histoireComplete);
-    actualiserInterface();
-    canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.5 }, startVelocity: 18, colors: ['#f3c26f', '#ff8a5c', '#bc9eff'] });
+    actualiserScore();
+    canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     if (score >= 30) {
-      setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 400);
+      setTimeout(() => { document.getElementById('gift-modal').style.display = 'flex'; }, 500);
     }
-    inputZone.value = "";
-    document.getElementById('output-display').innerHTML = "✨ Texte validé ! Nouvelle mission ✨";
-    genererNouvelleEtape();
+    effacerTout();
+    genererPrompt();
   }
 
+  // ======================= UTILITAIRES =======================
   function lireTexte() {
     const text = document.getElementById('input-text').value;
     if (!text) return;
@@ -519,25 +530,18 @@
     window.speechSynthesis.speak(msg);
   }
 
-  function choisirCadeau(cadeau) {
-    document.getElementById('choix-final').innerHTML = `🎉 Tu as gagné : <span style="color:#ffdb7e">${cadeau}</span> ! 🎉<br><i class='fas fa-jedi'></i> Championne de l'espace !`;
-    canvasConfetti({ particleCount: 300, spread: 120, origin: { y: 0.5 } });
+  function effacerTout() {
+    document.getElementById('input-text').value = "";
+    decouperSyllabes();
+    document.getElementById('ia-feedback').innerHTML = "🤖 L'IA t'attend pour comparer ta voix au texte saisi.";
   }
 
-  function fermerModal() {
-    document.getElementById('gift-modal').style.display = 'none';
-  }
-
-  function resetScore() {
-    if (confirm("⚠️ Remettre le compteur à zéro et effacer ton histoire ? Cette action est définitive.")) {
+  function resetScoreManuel() {
+    if (confirm("⚠️ Remettre le score à zéro ? Toutes tes victoires seront perdues.")) {
       score = 0;
-      histoireComplete = "";
-      localStorage.removeItem('dys_story_text');
-      document.getElementById('input-text').value = "";
-      document.getElementById('choix-final').innerHTML = "";
-      actualiserInterface();
-      genererNouvelleEtape();
-      document.getElementById('output-display').innerHTML = "✨ Ton texte magique apparaîtra ici ✨";
+      actualiserScore();
+      genererPrompt();
+      effacerTout();
     }
   }
 
@@ -546,11 +550,29 @@
     const preview = document.getElementById('output-display');
     let current = parseInt(window.getComputedStyle(textarea).fontSize);
     let next = current + n;
-    if(next >= 18 && next <= 52) {
+    if (next >= 16 && next <= 52) {
       textarea.style.fontSize = next + "px";
       preview.style.fontSize = next + "px";
     }
   }
+
+  // Gestion du cadeau
+  function choisirCadeau(cadeau) {
+    document.getElementById('choix-final').innerHTML = `🎉 Tu as gagné : <span style="color:#ffdb7e">${cadeau}</span> ! 🎉<br><i class='fas fa-jedi'></i> Championne de l'espace !`;
+    canvasConfetti({ particleCount: 300, spread: 120, origin: { y: 0.5 } });
+  }
+
+  function fermerModal() {
+    document.getElementById('gift-modal').style.display = 'none';
+    // Optionnel : on peut aussi remettre le score à 0 après le cadeau ? Non, on laisse le score tel quel.
+    // Mais l'utilisateur peut continuer ou reset manuellement.
+  }
+
+  // Initialisation
+  window.onload = () => {
+    actualiserScore();
+    genererPrompt();
+  };
 </script>
 </body>
 </html>
